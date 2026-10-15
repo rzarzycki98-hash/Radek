@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Listy</title>
+  <meta name="description" content="Lista zadań i zakupów działająca offline.">
+  <meta name="theme-color" content="#2f6f4f">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Listy">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Listy</h1>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-list="zadania" aria-selected="true">Zadania</button>
+      <button class="tab" role="tab" data-list="zakupy" aria-selected="false">Zakupy</button>
+    </nav>
+  </header>
+
+  <main>
+    <form id="add-form" class="add" autocomplete="off">
+      <input id="add-input" type="text" placeholder="Dodaj zadanie…" aria-label="Nowa pozycja" maxlength="200" enterkeyhint="done">
+      <button type="submit" aria-label="Dodaj">+</button>
+    </form>
+
+    <ul id="items" class="items"></ul>
+    <p id="empty" class="empty" hidden>Lista jest pusta.</p>
+
+    <footer class="actions">
+      <span id="counter"></span>
+      <button id="clear-done" type="button" class="link">Usuń zrobione</button>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
