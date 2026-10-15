@@ -38,4 +38,4 @@ Szwajcaria Super League      played  60 fx   6 tips   0 grade {'ou': None, 'x': 
 USA        MLS               played 420 fx  16 tips   0 grade {'ou': None, 'x': 'no'} x1 {'bets': 54, 'roi': 0.2159, 'clv': None} ou1 None prm {'half_life': 180.0, 'prior': 12.0, 'w_ou': 0.3, 'w_x': 0.0}
 journal {'model_ou': {'settled': 0, 'won': 0, 'open': 5, 'profit': 0, 'roi': None, 'clv': None}, 'model_x': {'settled': 0, 'won': 0, 'open': 35, 'profit': 0, 'roi': None, 'clv': None}, 'market_ou': {'settled': 0, 'won': 0, 'open': 2, 'profit': 0, 'roi': None, 'clv': None}, 'market_x': {'settled': 0, 'won': 0, 'open': 34, 'profit': 0, 'roi': None, 'clv': None}}
 bookmakers {'enabled': True, 'calls': 0, 'errors': [], 'allowance_today': 26, 'remaining': 467, 'leagues_with_prices': ['ARG', 'AUT', 'CHN', 'D1', 'D2', 'DNK', 'E0', 'E2', 'F1', 'I1', 'POL', 'SP1', 'SWE', 'T1']}
-runtime 30.1 s, downloads 0
+runtime 31.7 s, downloads 0
