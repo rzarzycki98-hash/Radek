@@ -1,0 +1,43 @@
+name: Linia Goli – aktualizacja danych
+
+on:
+  schedule:
+    - cron: "17 */4 * * *"   # co 4 godziny
+  workflow_dispatch:          # ręczne uruchomienie: Actions → Run workflow
+  push:
+    branches: [main]
+    paths: ["gole/engine.py", ".github/workflows/linia-goli.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: linia-goli
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pobierz wyniki i kursy, przelicz model
+        run: python gole/engine.py --out gole
+
+      - name: Zapisz zmiany (dane i dziennik)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gole/data.json gole/journal.json
+          if git diff --cached --quiet; then
+            echo "Bez zmian w danych"
+          else
+            git commit -m "Linia Goli: aktualizacja danych $(date -u +'%Y-%m-%d %H:%M') UTC"
+            git pull --rebase --quiet
+            git push
+          fi
