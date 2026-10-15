@@ -1,0 +1,32 @@
+name: Test statystyk (tymczasowy)
+on:
+  push:
+    branches: [test-statystyki]
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: gole/.cache
+          key: fd-${{ github.run_id }}
+          restore-keys: fd-
+      - name: Uruchom silnik
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: python gole/engine.py --out gole 2>&1 | tee gole/test_log.txt
+      - name: Zapisz wynik testu na gałęzi
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f gole/data.json gole/journal.json gole/predictions.json gole/odds_cache.json gole/test_log.txt
+          git commit -m "test statystyk: wynik" || true
+          git pull --rebase --quiet || true
+          git push

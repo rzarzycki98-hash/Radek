@@ -627,7 +627,160 @@ def evaluate_league(seasons, extra, use_sot):
     out["x"] = {"one": res_["x_one"], "best": res_["x_best"], "market": None if extra else res_["mk_x"],
                 "ll": {k: r4(ll["x_" + k] / ll["n_x"]) for k in ("model", "blend", "close")} if ll["n_x"] else None}
     out["grade"] = {"ou": None if extra else grade(res_["ou_one"], False), "x": grade(res_["x_one"], extra)}
+    combo = live["combo"] if live else GRID.index((DEFAULT["half_life"], DEFAULT["prior"]))
+    out["stats_test"] = stats_test(seasons, preds_by_combo[combo], extra)
     return out
+
+
+# ---------------------------------------------------------------- statistics verdict (no bookmaker input)
+#
+# For every match the app weighs several plain statistics: the model of goals and shots, the league
+# table, recent form, home/away form, goal difference and head-to-head meetings (for 1X2), and goal
+# rates, recent overs, both-teams-score and head-to-head goals (for over/under 2.5). A match is
+# "worth attention" when the model is confident and most statistics point the same way.
+
+class TeamRec:
+    __slots__ = ("gp", "pts", "gf", "ga", "h_gp", "h_pts", "a_gp", "a_pts", "h_o25", "a_o25", "btts", "last")
+
+    def __init__(self):
+        self.gp = self.pts = self.gf = self.ga = self.h_gp = self.h_pts = self.a_gp = self.a_pts = 0
+        self.h_o25 = self.a_o25 = self.btts = 0
+        self.last = []  # (points, over 2.5) of recent matches
+
+
+class SeasonState:
+    def __init__(self):
+        self.t = {}
+
+    def rec(self, name):
+        r = self.t.get(name)
+        if r is None:
+            r = self.t[name] = TeamRec()
+        return r
+
+    def add(self, m):
+        hg, ag = m["hg"], m["ag"]
+        over, btts = hg + ag > 2, hg > 0 and ag > 0
+        for team, home, gf, ga in ((m["h"], True, hg, ag), (m["a"], False, ag, hg)):
+            r = self.rec(team)
+            pts = 3 if gf > ga else (1 if gf == ga else 0)
+            r.gp += 1; r.pts += pts; r.gf += gf; r.ga += ga; r.btts += btts
+            if home:
+                r.h_gp += 1; r.h_pts += pts; r.h_o25 += over
+            else:
+                r.a_gp += 1; r.a_pts += pts; r.a_o25 += over
+            r.last.append((pts, over))
+            if len(r.last) > 5:
+                r.last.pop(0)
+
+    def ranks(self, teams=()):
+        names = set(self.t) | set(teams)
+        order = sorted(names, key=lambda n: (-(self.t[n].pts if n in self.t else 0),
+                                             -((self.t[n].gf - self.t[n].ga) if n in self.t else 0),
+                                             -(self.t[n].gf if n in self.t else 0), n))
+        return {n: i + 1 for i, n in enumerate(order)}, len(order)
+
+
+def h2h_key(a, b):
+    return (a, b) if a < b else (b, a)
+
+
+def stats_verdict(h, a, S, meetings, px, pover):
+    """Factors and verdicts for one match. px = model [home, draw, away], pover = model P(over 2.5)."""
+    th, ta = S.t.get(h), S.t.get(a)
+    meet = [x for x in meetings[-6:]]
+    fx, fo = [], []
+    # --- 1X2
+    fx.append({"k": "model", "v": [r4(px[0]), r4(px[1]), r4(px[2])],
+               "l": "h" if px[0] - px[2] >= 0.15 else "a" if px[2] - px[0] >= 0.15 else None})
+    if th and ta and th.gp >= 4 and ta.gp >= 4:
+        rk, n = S.ranks((h, a))
+        gap = max(3, round(n / 4))
+        fx.append({"k": "table", "v": [rk[h], rk[a], n, th.pts, ta.pts],
+                   "l": "h" if rk[a] - rk[h] >= gap else "a" if rk[h] - rk[a] >= gap else None})
+        gdh, gda = (th.gf - th.ga) / th.gp, (ta.gf - ta.ga) / ta.gp
+        fx.append({"k": "gd", "v": [round(gdh, 2), round(gda, 2)],
+                   "l": "h" if gdh - gda >= 0.6 else "a" if gda - gdh >= 0.6 else None})
+    if th and ta and len(th.last) >= 3 and len(ta.last) >= 3:
+        fh = sum(p for p, _ in th.last) / len(th.last) * 5
+        fa = sum(p for p, _ in ta.last) / len(ta.last) * 5
+        fx.append({"k": "form", "v": [sum(p for p, _ in th.last), len(th.last), sum(p for p, _ in ta.last), len(ta.last)],
+                   "l": "h" if fh - fa >= 4 else "a" if fa - fh >= 4 else None})
+    if th and ta and th.h_gp >= 2 and ta.a_gp >= 2:
+        hp, ap = th.h_pts / th.h_gp, ta.a_pts / ta.a_gp
+        fx.append({"k": "venue", "v": [round(hp, 2), round(ap, 2), th.h_gp, ta.a_gp],
+                   "l": "h" if hp - ap >= 0.6 else "a" if ap - hp >= 0.6 else None})
+    if len(meet) >= 3:
+        wh = sum(1 for m in meet if (m["h"] == h and m["hg"] > m["ag"]) or (m["a"] == h and m["ag"] > m["hg"]))
+        wa = sum(1 for m in meet if (m["h"] == a and m["hg"] > m["ag"]) or (m["a"] == a and m["ag"] > m["hg"]))
+        fx.append({"k": "h2h", "v": [wh, len(meet) - wh - wa, wa, len(meet)],
+                   "l": "h" if wh - wa >= 2 else "a" if wa - wh >= 2 else None})
+    # --- over/under 2.5
+    fo.append({"k": "model", "v": [r4(pover)], "l": "o" if pover >= 0.58 else "u" if pover <= 0.42 else None})
+    if th and ta and th.h_gp >= 2 and ta.a_gp >= 2:
+        rh, ra = th.h_o25 / th.h_gp, ta.a_o25 / ta.a_gp
+        avg = (rh + ra) / 2
+        fo.append({"k": "venue", "v": [round(rh, 2), round(ra, 2)], "l": "o" if avg >= 0.6 else "u" if avg <= 0.4 else None})
+    if th and ta and th.gp >= 4 and ta.gp >= 4:
+        gh, ga_ = (th.gf + th.ga) / th.gp, (ta.gf + ta.ga) / ta.gp
+        avg = (gh + ga_) / 2
+        fo.append({"k": "gpg", "v": [round(gh, 2), round(ga_, 2)], "l": "o" if avg >= 3.0 else "u" if avg <= 2.2 else None})
+        bh, ba = th.btts / th.gp, ta.btts / ta.gp
+        fo.append({"k": "btts", "v": [round(bh, 2), round(ba, 2)],
+                   "l": "o" if bh >= 0.6 and ba >= 0.6 else "u" if bh <= 0.35 and ba <= 0.35 else None})
+    if th and ta and len(th.last) + len(ta.last) >= 6:
+        oh, oa = sum(o for _, o in th.last), sum(o for _, o in ta.last)
+        ratio = (oh + oa) / (len(th.last) + len(ta.last))
+        fo.append({"k": "last5", "v": [oh, len(th.last), oa, len(ta.last)], "l": "o" if ratio >= 0.7 else "u" if ratio <= 0.3 else None})
+    if len(meet) >= 3:
+        g = sum(m["hg"] + m["ag"] for m in meet) / len(meet)
+        fo.append({"k": "h2h", "v": [round(g, 2), len(meet)], "l": "o" if g >= 3.0 else "u" if g <= 2.0 else None})
+
+    def verdict(F, side, lean, other, p, hi, lo):
+        agree = sum(1 for f in F if f["l"] == lean)
+        against = sum(1 for f in F if f["l"] == other)
+        level = 2 if p >= hi and agree >= 4 and against == 0 else (1 if p >= lo and agree >= 3 and against <= 1 else 0)
+        return {"side": side, "level": level, "agree": agree, "against": against, "n": len(F), "f": F}
+
+    hx = px[0] >= px[2]
+    vx = verdict(fx, 0 if hx else 2, "h" if hx else "a", "a" if hx else "h", px[0] if hx else px[2], 0.55, 0.45)
+    ov = pover >= 0.5
+    vo = verdict(fo, 0 if ov else 1, "o" if ov else "u", "u" if ov else "o", pover if ov else 1 - pover, 0.60, 0.53)
+    return {"x": vx, "ou": vo}
+
+
+def stats_test(seasons, preds, extra):
+    """How often the statistics verdicts came true in the last seasons (walk-forward, no peeking)."""
+    out = {mk: {lv: [0, 0, 0.0, 0] for lv in ("2", "1")} for mk in ("x", "ou")}  # n, hits, market prob sum, market n
+    meetings = {}
+    first_test = max(1, len(seasons) - 3)
+    for si, rows in enumerate(seasons):
+        S = SeasonState()
+        played = [m for m in rows if m["hg"] is not None]
+        i = 0
+        while i < len(played):
+            day = [m for m in played[i:] if m["d"] == played[i]["d"]]
+            for m in day:
+                p = preds.get(id(m))
+                if si < first_test or p is None:
+                    continue
+                v = stats_verdict(m["h"], m["a"], S, meetings.get(h2h_key(m["h"], m["a"]), []), p[1], p[0])
+                res, over = result_idx(m), m["hg"] + m["ag"] > 2
+                for mk, hit, q in (("x", v["x"]["side"] == res, demargin(m["xc"].get("P") or m["xc"].get("Avg"))),
+                                   ("ou", (v["ou"]["side"] == 0) == over, None if extra else demargin(m["ouc"].get("P") or m["ouc"].get("Avg")))):
+                    lv = v[mk]["level"]
+                    if not lv or (mk == "ou" and extra):
+                        continue
+                    a = out[mk][str(lv)]
+                    a[0] += 1; a[1] += hit
+                    if q:
+                        a[2] += q[v[mk]["side"]]; a[3] += 1
+            for m in day:
+                S.add(m)
+                meetings.setdefault(h2h_key(m["h"], m["a"]), []).append(m)
+            i += len(day)
+    return {mk: {lv: {"n": a[0], "hit": r4(a[1] / a[0]) if a[0] else None, "mkt": r4(a[2] / a[3]) if a[3] else None}
+                 for lv, a in d.items()} for mk, d in out.items()}
 
 
 # ---------------------------------------------------------------- team stats for the UI
@@ -1146,7 +1299,7 @@ def update_predictions(preds, code, priced, results, now):
                       "m_ou": f["over"]["2.5"], "m_x": f["x12"],
                       "k_ou": f["fair"]["ou"][0] if f["fair"]["ou"] else None, "k_x": f["fair"]["x"],
                       "f_ou": f["final"]["ou"][0] if f["final"]["ou"] else None, "f_x": f["final"]["x"],
-                      "xg": f["xg"]}
+                      "xg": f["xg"], "sv": [f["stats"]["x"]["side"], f["stats"]["x"]["level"], f["stats"]["ou"]["side"], f["stats"]["ou"]["level"]]}
     today = now.date()
     for mid, p in list(P.items()):
         if p["l"] != code or "score" in p:
@@ -1188,6 +1341,17 @@ def prediction_report(preds, codes):
             n = sc["n"]
             acc[mk] = {"n": n, "ll_model": r4(sc["m"] / n) if n else None, "ll_market": r4(sc["k"] / n) if n else None,
                        "ll_final": r4(sc["f"] / n) if n else None, "hit": r4(sc["hit"] / n) if n else None}
+        sv = {mk: {"2": [0, 0], "1": [0, 0]} for mk in ("x", "ou")}
+        for p in rows:
+            if not p.get("sv"):
+                continue
+            hg, ag = p["score"]
+            xs, xl, os_, ol = p["sv"]
+            if xl:
+                sv["x"][str(xl)][0] += 1; sv["x"][str(xl)][1] += xs == (0 if hg > ag else (1 if hg == ag else 2))
+            if ol:
+                sv["ou"][str(ol)][0] += 1; sv["ou"][str(ol)][1] += (os_ == 0) == (hg + ag > 2)
+        acc["sv"] = sv
         if code == "ALL":
             bins = [[0, 0] for _ in range(10)]
             for p in rows:
@@ -1278,13 +1442,22 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         _, r = run_rater(hist_seasons, prm["half_life"], prm["prior"], SOT_W if use_sot else 0.0, upto=today)
         live = live_grade(journal, code)
         grades = {"ou": final_grade(ev["grade"]["ou"], live["ou"]), "x": final_grade(ev["grade"]["x"], live["x"])}
-        # 4) price the fixtures
+        # 4) price the fixtures; table, form and head-to-head for the statistics verdict
+        S = SeasonState()
+        for m in sorted(played, key=lambda m: m["d"]):
+            S.add(m)
+        meetings = {}
+        for srows in seasons:
+            for m in srows:
+                if m["hg"] is not None:
+                    meetings.setdefault(h2h_key(m["h"], m["a"]), []).append(m)
         priced = []
         for m in sorted(fx, key=lambda m: (m["d"], m.get("t") or "")):
             if m["h"] == m["a"]:
                 continue
             f = price_fixture(m, r, prev, prm, extra, code, now)
             if dt.datetime.fromisoformat(f["ko"]) > now - dt.timedelta(hours=2):  # hide matches already played
+                f["stats"] = stats_verdict(m["h"], m["a"], S, meetings.get(h2h_key(m["h"], m["a"]), []), f["x12"], f["over"]["2.5"])
                 priced.append(f)
         update_journal(journal, code, f"{country} · {name}", priced, played, now, grades)
         update_predictions(preds_log, code, priced, played, now)
@@ -1297,7 +1470,7 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
             "o25_rate": round(sum(1 for m in played if m["hg"] + m["ag"] > 2) / len(played), 3) if played else None,
             "home_rate": round(sum(1 for m in played if m["hg"] > m["ag"]) / len(played), 3) if played else None,
             "avg": [round(H, 2), round(A, 2)], "shots": use_sot,
-            "params": prm, "test": {k: ev[k] for k in ("tested_seasons", "matches", "ou", "x")},
+            "params": prm, "test": {k: ev[k] for k in ("tested_seasons", "matches", "ou", "x")}, "stats_test": ev["stats_test"],
             "grade_test": ev["grade"], "grade": grades, "live": live,
             "teams": {t: team_stats(played, t, r, today, prev) for t in sorted(teams_of(cur) | teams_of(fx))},
             "fixtures": priced,
