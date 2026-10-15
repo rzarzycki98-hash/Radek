@@ -325,6 +325,13 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 .del { border: 0; background: none; color: var(--muted); font-size: 20px; line-height: 1; padding: 2px 6px; }
 .jrow:has(.del) { grid-template-columns: 24px 1fr auto auto; }
 .note.err { color: var(--loss); }
+.wt.inj { background: rgb(255 122 107 / .16); color: var(--loss); }
+.inj-team { display: grid; gap: 6px; }
+.inj-team h4 { margin: 4px 0 0; font-size: 15px; font-weight: 700; }
+.inj-row { background: var(--raised); border-radius: 10px; padding: 8px 10px; display: grid; gap: 2px; }
+.inj-row.key { box-shadow: inset 3px 0 0 var(--loss); }
+.inj-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.inj-news { font-size: 12px; color: var(--ink); opacity: .8; }
 .jrow.tap { cursor: pointer; }
 .jrow.tap:active { background: var(--raised); }
 .kt { font-size: 13px; font-weight: 700; color: var(--ink); }
@@ -484,7 +491,8 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     const mine = myBetsFor(f.id).length;
     const tags = (lv ? `<em class="wt s${lv}">${LEVEL[lv]}: ${esc(sideName(v.side))}</em>` : "") +
       (tl && st.show === "tips" ? `<em class="wt w${tl}">${tl === 2 ? "Kurs z przewagą" : "Przewaga na sucho"}</em>` : "") +
-      (mine ? `<em class="wt mine">Obstawiony</em>` : "");
+      (mine ? `<em class="wt mine">Obstawiony</em>` : "") +
+      (f.abs && (f.abs[0] || f.abs[1]) ? `<em class="wt inj">Braki kluczowych: ${f.abs[0]} – ${f.abs[1]}</em>` : "");
     return `<button class="row ${lv ? "s" + lv : "w0"}" data-id="${esc(f.id)}">
       <span class="rtime num">${esc(localTime(f))}</span>
       <span class="rnames"><b>${esc(nm(L, f.home))}</b><b>${esc(nm(L, f.away))}</b>${tags ? `<span class="tags">${tags}</span>` : ""}</span>
@@ -856,6 +864,19 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     </div>`;
   }
 
+  // injuries and suspensions (Premier League, from Fantasy Premier League); information only
+  const INJ = { i: "kontuzja", d: "niepewny", s: "zawieszony", a: "niepewny" };
+  function absencesCard(f, L) {
+    const a = f.absences;
+    if (!a) return "";
+    const side = (team, rows) => `<div class="inj-team"><h4>${esc(nm(L, team))}</h4>${rows.length ? rows.map((r) => `<div class="inj-row ${r.key ? "key" : ""}">
+        <div class="inj-top"><b>${esc(r.n)}</b><span class="meta">${esc(r.pos)}</span>${r.key ? `<em class="wt inj">kluczowy</em>` : ""}</div>
+        <div class="meta">${esc(INJ[r.st] || "niepewny")}${r.ch != null ? `, szansa gry ${r.ch}%` : ""}, w składzie ${r.starts} z ${r.of} meczów${r.xgi >= 0.05 ? `, ${pct(r.xgi)} goli i asyst drużyny` : ""}</div>
+        ${r.news ? `<div class="inj-news">${esc(r.news)}</div>` : ""}</div>`).join("") : `<p class="note">Brak zgłoszonych kontuzji i zawieszeń.</p>`}</div>`;
+    return `<div class="card"><h3>Kontuzje i zawieszenia</h3>${side(f.home, a.home)}${side(f.away, a.away)}
+      <p class="note">Źródło: Fantasy Premier League (opis po angielsku). „Kluczowy” to zawodnik, który zwykle gra w pierwszym składzie albo ma duży udział w golach i asystach. To informacja dodatkowa: nie zmienia oceny statystyk, bo nie da się jej uczciwie sprawdzić na historii.</p></div>`;
+  }
+
   function priceBlock(f, mk) {
     const sides = mk === "x" ? ["1", "X", "2"] : ["Over", "Under"];
     const model = mk === "x" ? f.x12 : [f.over["2.5"], 1 - f.over["2.5"]];
@@ -916,7 +937,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       <div class="scoreline num"><div class="t" id="sheet-title">${esc(nm(L, f.home))}<small>xG ${f.xg[0].toFixed(2)}</small></div><div class="x">${(f.xg[0] + f.xg[1]).toFixed(2)}<small>xG razem</small></div><div class="t">${esc(nm(L, f.away))}<small>xG ${f.xg[1].toFixed(2)}</small></div></div>
     </div></div>
     <main><div class="wrap">
-      ${analysisCard(f, first, L)}${analysisCard(f, first === "x" ? "ou" : "x", L)}
+      ${analysisCard(f, first, L)}${absencesCard(f, L)}${analysisCard(f, first === "x" ? "ou" : "x", L)}
       ${betForm(f)}
       <div class="two">${formBlock(L, det, f.home)}${formBlock(L, det, f.away)}</div>
       ${f.dist ? `<div class="card"><h3>Rozkład liczby goli</h3>

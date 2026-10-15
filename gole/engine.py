@@ -258,6 +258,27 @@ class Source:
             self.errors.append(f"fixtures: {e}")
             return []
 
+    def fpl(self):
+        """Fantasy Premier League player list: injuries, suspensions, chance of playing (Premier League only)."""
+        try:
+            if self.local:
+                p = os.path.join(self.local, "fpl.json")
+                return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else None
+            path = os.path.join(self.cache_dir, "fpl.json") if self.cache_dir else None
+            if path and os.path.exists(path) and (time.time() - os.path.getmtime(path)) / 3600 < 3.5:
+                return json.load(open(path, encoding="utf-8"))
+            req = urllib.request.Request(FPL_URL, headers={"User-Agent": "Mozilla/5.0 (linia-goli; +github actions)", "Accept": "application/json"})
+            with urllib.request.urlopen(req, timeout=60) as r:
+                text = r.read().decode("utf-8")
+            self.downloads += 1
+            if path:
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(text)
+            return json.loads(text)
+        except Exception as e:
+            self.errors.append(f"FPL: {str(e)[:120]}")
+            return None
+
     def extra_fixtures(self):
         """Upcoming matches of the 'new' leagues (optional file; the Odds API fills gaps)."""
         if self.local:
@@ -946,6 +967,52 @@ def apply_learned(stats, W, fx, fo):
     return stats
 
 
+# ---------------------------------------------------------------- injuries and suspensions (Premier League, Fantasy Premier League)
+
+FPL_URL = "https://fantasy.premierleague.com/api/bootstrap-static/"
+FPL_POS = {1: "BR", 2: "OBR", 3: "POM", 4: "NAP"}
+
+
+def fpl_absences(fpl, known):
+    """Per football-data team name: players who are injured, doubtful or suspended, with how much they matter."""
+    if not fpl or not fpl.get("elements"):
+        return {}
+    teams = {}
+    for t in fpl.get("teams", []):
+        fd = best_team(t.get("name", ""), known) or best_team(t.get("short_name", ""), known)
+        if fd:
+            teams[t["id"]] = fd
+    by_team = {}
+    for p in fpl["elements"]:
+        by_team.setdefault(p.get("team"), []).append(p)
+    out = {}
+    for tid, players in by_team.items():
+        fd = teams.get(tid)
+        if not fd:
+            continue
+        games = max((p.get("starts") or 0) for p in players) or 0
+        fx = lambda p: float(p.get("expected_goal_involvements") or 0)
+        team_xgi = sum(fx(p) for p in players) or 0.0
+        rows = []
+        for p in players:
+            stt, ch = p.get("status"), p.get("chance_of_playing_next_round")
+            if stt in ("u", "n"):  # left the club or not eligible
+                continue
+            if stt == "a" and (ch is None or ch >= 100):
+                continue
+            starts, minutes = p.get("starts") or 0, p.get("minutes") or 0
+            if starts == 0 and minutes < 180:  # fringe players do not change a match
+                continue
+            share = starts / games if games else 0.0
+            xgi = fx(p) / team_xgi if team_xgi else 0.0
+            rows.append({"n": p.get("web_name"), "pos": FPL_POS.get(p.get("element_type"), ""), "st": stt, "ch": ch,
+                         "news": (p.get("news") or "")[:120], "starts": starts, "of": games, "xgi": round(xgi, 3),
+                         "key": share >= 0.6 or xgi >= 0.15})
+        rows.sort(key=lambda r: (not r["key"], -r["starts"]))
+        out[fd] = rows
+    return out
+
+
 # ---------------------------------------------------------------- team stats for the UI
 
 def team_stats(played, team, r, d, prev):
@@ -987,7 +1054,8 @@ STOP = {"fc", "cf", "afc", "sc", "ac", "as", "ssc", "us", "rc", "cd", "ud", "sd"
         "1", "05", "04", "club", "de", "calcio", "and", "the", "hotspur", "albion", "wanderers", "town", "city", "united",
         "cf", "fk", "if", "bk", "ik", "sk", "aik", "kv", "krc", "rsc", "nk", "cd", "ca", "club", "sport", "esporte", "clube"}
 ALIASES = {  # normalised feed name -> football-data name
-    "manchester united": "Man United", "manchester city": "Man City", "man utd": "Man United",
+    "manchester united": "Man United", "manchester city": "Man City", "man utd": "Man United", "spurs": "Tottenham",
+    "tottenham hotspur": "Tottenham", "nottm forest": "Nott'm Forest",
     "brighton hove": "Brighton", "wolverhampton": "Wolves", "nottingham forest": "Nott'm Forest",
     "sheffield wednesday": "Sheffield Weds", "sheffield united": "Sheffield United", "queens park rangers": "QPR",
     "west bromwich": "West Brom", "west bromwich albion": "West Brom", "peterborough united": "Peterboro",
@@ -1064,6 +1132,9 @@ def team_sim(raw, known):
 
 
 def best_team(raw, known):
+    exact = [k for k in known if ascii_low(k) == ascii_low(raw)]
+    if len(exact) == 1:
+        return exact[0]
     sc = sorted(((team_sim(raw, k), k) for k in known), reverse=True)
     if sc and sc[0][0] >= 0.65 and (len(sc) == 1 or sc[0][0] - sc[1][0] >= 0.1):
         return sc[0][1]
@@ -1219,7 +1290,10 @@ def light_fixture(f):
     lite = {mk: {k: st[mk][k] for k in ("side", "level", "p", "agree", "against", "n") if k in st[mk]} for mk in ("x", "ou") if mk in st}
     if "px" in st:
         lite["px"], lite["po"] = st["px"], st["po"]
-    return {k: f[k] for k in ("id", "date", "time", "ko", "home", "away", "xg", "x12", "over", "final", "tips", "best")} | {"stats": lite}
+    extra = {}
+    if f.get("absences") is not None:
+        extra["abs"] = [sum(1 for r in f["absences"][side] if r["key"] and (r["ch"] is None or r["ch"] <= 50)) for side in ("home", "away")]
+    return {k: f[k] for k in ("id", "date", "time", "ko", "home", "away", "xg", "x12", "over", "final", "tips", "best")} | {"stats": lite} | extra
 
 
 def merge_events(fx, events, known, unmatched, names=None):
@@ -1626,6 +1700,11 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
                     meetings.setdefault(h2h_key(m["h"], m["a"]), []).append(m)
         ctx[code] = {"seasons": seasons, "fx": fx, "played": played, "use_sot": use_sot, "ev": ev, "r": r, "S": S,
                      "meetings": meetings, "rows": build_rows(seasons, ev.pop("_preds"))}
+    # injuries and suspensions for the Premier League (information only, not part of the tested verdict)
+    absences = {}
+    if "E0" in ctx:
+        known_e0 = teams_of(ctx["E0"]["seasons"][-1]) | teams_of(ctx["E0"]["fx"])
+        absences = fpl_absences(src.fpl(), known_e0)
     # 4) learn how much each statistic matters, on all leagues together and then per league
     learned, pooled_w = learn_all(ctx) if ctx else ({}, None)
     details = {}
@@ -1651,6 +1730,8 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
                 f["stats"] = stats_verdict(m["h"], m["a"], S, meet, f["x12"], f["over"]["2.5"])
                 if W:
                     apply_learned(f["stats"], W, feat_x(m["h"], m["a"], S, meet[-6:], f["x12"]), feat_ou(m["h"], m["a"], S, meet[-6:], f["over"]["2.5"]))
+                if code == "E0" and absences:
+                    f["absences"] = {"home": absences.get(m["h"], []), "away": absences.get(m["a"], [])}
                 priced.append(f)
         update_journal(journal, code, f"{country} · {name}", priced, played, now, grades)
         update_predictions(preds_log, code, priced, played, now)
