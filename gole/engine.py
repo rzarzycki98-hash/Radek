@@ -68,9 +68,9 @@ N_SEASONS = 6
 RHO = -0.08                                   # Dixon-Coles low-score correction
 SOT_W = 0.5                                   # weight of shots-on-target expected goals (leagues with shots)
 PROMOTED = (0.82, 1.18)                       # prior attack/defence of a newly promoted team
-GRID = [(h, k) for h in (120.0, 240.0, 480.0) for k in (8.0, 20.0, 50.0)]   # half-life days x prior matches
+GRID = [(h, k) for h in (180.0, 360.0, 720.0, 1200.0) for k in (3.0, 6.0, 12.0, 25.0)]   # half-life days x prior matches
 W_GRID = [i / 10 for i in range(11)]          # model weight in the blend with the market (0 = market only)
-DEFAULT = {"half_life": 240.0, "prior": 20.0, "w_ou": 0.3, "w_x": 0.3}
+DEFAULT = {"half_life": 360.0, "prior": 12.0, "w_ou": 0.3, "w_x": 0.3}
 EDGE_MIN = 0.03                               # model+market tip: probability x odds - 1 above 3%
 MARKET_EDGE_MIN = 0.02                        # market tip: a bookmaker beats the fair price by 2%
 MIN_BOOKS_FAIR = 3
@@ -523,11 +523,12 @@ def best_side(probs, odds_by_book, books):
     return best
 
 
-def acc_bet(acc, won, odds, close):
+def acc_bet(acc, won, odds, q_close):
+    """q_close: fair closing probability of the side (Pinnacle without margin) -> beat-the-close value."""
     acc["n"] += 1
     acc["profit"] += odds - 1 if won else -1.0
-    if close:
-        acc["clv"] += odds / close - 1
+    if q_close:
+        acc["clv"] += odds * q_close - 1
         acc["nc"] += 1
 
 
@@ -594,14 +595,10 @@ def evaluate_league(seasons, extra, use_sot):
                 for key, book in (("ou_one", "B365"), ("ou_best", "Max")):
                     b = best_side(po, m["ou"], [book])
                     if b and b[0] > EDGE_MIN:
-                        c = m["ouc"].get(book)
-                        acc_bet(accs[key], (b[1] == 0) == over, b[2], c[b[1]] if c else None)
-                fair = [qo, 1 - qo]
-                for book in ("Max",):
-                    b = best_side(fair, m["ou"], [book])
-                    if b and b[0] > MARKET_EDGE_MIN:
-                        c = m["ouc"].get(book)
-                        acc_bet(accs["mk_ou"], (b[1] == 0) == over, b[2], c[b[1]] if c else None)
+                        acc_bet(accs[key], (b[1] == 0) == over, b[2], qc[b[1]] if qc else None)
+                b = best_side([qo, 1 - qo], m["ou"], ["Max"])
+                if b and b[0] > MARKET_EDGE_MIN:
+                    acc_bet(accs["mk_ou"], (b[1] == 0) == over, b[2], qc[b[1]] if qc else None)
             # 1X2
             if qx is not None:
                 px = pool(p[1], qx, prm["w_x"])
@@ -609,18 +606,18 @@ def evaluate_league(seasons, extra, use_sot):
                 if qc:
                     ll["x_model"] += ll_x(p[1], res); ll["x_blend"] += ll_x(px, res)
                     ll["x_close"] += ll_x(qc, res); ll["n_x"] += 1
-                src, csrc = ("xc", None) if extra else ("x", "xc")
+                src = "xc" if extra else "x"
                 one = "B365" if m[src].get("B365") else "Avg"
+                # extra leagues bet at closing prices, so a closing-line check would be circular
+                qcl = None if extra else qc
                 for key, book in (("x_one", one), ("x_best", "Max")):
                     b = best_side(px, m[src], [book])
                     if b and b[0] > EDGE_MIN:
-                        c = m[csrc].get(book) if csrc else None
-                        acc_bet(accs[key], b[1] == res, b[2], c[b[1]] if c else None)
+                        acc_bet(accs[key], b[1] == res, b[2], qcl[b[1]] if qcl else None)
                 if not extra:
                     b = best_side(qx, m["x"], ["Max"])
                     if b and b[0] > MARKET_EDGE_MIN:
-                        c = m["xc"].get("Max")
-                        acc_bet(accs["mk_x"], b[1] == res, b[2], c[b[1]] if c else None)
+                        acc_bet(accs["mk_x"], b[1] == res, b[2], qcl[b[1]] if qcl else None)
     res_ = {k: fin_acc(a) for k, a in accs.items()}
     out["ou"] = None if extra else {
         "one": res_["ou_one"], "best": res_["ou_best"], "market": res_["mk_ou"],
@@ -675,11 +672,21 @@ ALIASES = {  # normalised feed name -> football-data name
     "manchester united": "Man United", "manchester city": "Man City", "man utd": "Man United",
     "brighton hove": "Brighton", "wolverhampton": "Wolves", "nottingham forest": "Nott'm Forest",
     "sheffield wednesday": "Sheffield Weds", "sheffield united": "Sheffield United", "queens park rangers": "QPR",
-    "west bromwich": "West Brom", "west bromwich albion": "West Brom", "peterborough united": "Peterborough",
+    "west bromwich": "West Brom", "west bromwich albion": "West Brom", "peterborough united": "Peterboro",
+    "peterborough": "Peterboro", "dundee fc": "Dundee", "dundee": "Dundee", "dundee united": "Dundee United",
+    "stade lavallois": "Laval", "vitoria sc": "Guimaraes", "basaksehir": "Buyuksehyr", "istanbul basaksehir": "Buyuksehyr",
+    "erzurum bb": "Erzurumspor", "estudiantes": "Estudiantes L.P.", "estudiantes la plata": "Estudiantes L.P.",
+    "gimnasia la plata": "Gimnasia L.P.", "independiente rivadavia": "Ind. Rivadavia", "austria lustenau": "A. Lustenau",
+    "austria wien": "Austria Vienna", "atletico mineiro": "Atletico-MG", "atletico paranaense": "Athletico-PR",
+    "athletico paranaense": "Athletico-PR", "henan fc": "Henan Songshan Longmen", "henan": "Henan Songshan Longmen",
+    "shanghai sipg": "Shanghai Port", "shanghai sipg fc": "Shanghai Port", "shenzhen peng city": "Shenzhen Xinpengcheng",
+    "shenzhen peng city fc": "Shenzhen Xinpengcheng", "tokyo verdy": "Verdy", "zaglebie lubin": "Zaglebie",
+    "akron tolyatti": "Akron Togliatti", "fc akron tolyatti": "Akron Togliatti", "dinamo moscow": "Dynamo Moscow",
+    "d c united": "DC United", "dc united": "DC United", "la galaxy": "Los Angeles Galaxy",
     "atletico madrid": "Ath Madrid", "atletico": "Ath Madrid", "athletic bilbao": "Ath Bilbao", "athletic": "Ath Bilbao",
     "real betis": "Betis", "celta vigo": "Celta", "rayo vallecano": "Vallecano", "real sociedad": "Sociedad",
     "espanyol": "Espanol", "deportivo la coruna": "La Coruna", "racing santander": "Santander",
-    "real oviedo": "Oviedo", "real valladolid": "Valladolid", "sporting gijon": "Sp Gijon", "deportivo alaves": "Alaves",
+    "real oviedo": "Oviedo", "celta fortuna": "Celta B", "real valladolid": "Valladolid", "sporting gijon": "Sp Gijon", "deportivo alaves": "Alaves",
     "inter milan": "Inter", "internazionale": "Inter", "hellas verona": "Verona",
     "bayern munchen": "Bayern Munich", "borussia dortmund": "Dortmund", "borussia monchengladbach": "M'gladbach",
     "monchengladbach": "M'gladbach", "bayer leverkusen": "Leverkusen", "eintracht frankfurt": "Ein Frankfurt",
@@ -1076,18 +1083,21 @@ def update_journal(journal, code, name, priced, results, now, grade_now):
                   "profit": round(e["odds"] - 1, 3) if won else -1.0})
         bk = e.get("book_key") or e.get("book")
         if bk in ("B365", "P") and close_rows.get(bk):
-            e["close_odds"], e["close_src"] = close_rows[bk][i], "fd"
+            e["close_odds"] = close_rows[bk][i]
         elif e.get("last_odds"):
-            e["close_odds"], e["close_src"] = e["last_odds"], "last"
+            e["close_odds"] = e["last_odds"]
         elif close_rows.get("Avg"):
-            e["close_odds"], e["close_src"] = close_rows["Avg"][i], "avg"
+            e["close_odds"] = close_rows["Avg"][i]
+        fair_close = demargin(close_rows.get("P") or close_rows.get("Avg"))
+        if fair_close:  # beat the close: our price against the fair closing price (Pinnacle without margin)
+            e["clv"] = round(e["odds"] * fair_close[i] - 1, 4)
 
 
 def summarize(entries):
     settled = [e for e in entries if e["status"] in ("won", "lost")]
     n = len(settled)
     profit = sum(e["profit"] for e in settled)
-    clv = [e["odds"] / e["close_odds"] - 1 for e in settled if e.get("close_odds")]
+    clv = [e["clv"] if "clv" in e else e["odds"] / e["close_odds"] - 1 for e in settled if "clv" in e or e.get("close_odds")]
     return {"settled": n, "won": sum(1 for e in settled if e["status"] == "won"),
             "open": sum(1 for e in entries if e["status"] == "open"),
             "profit": round(profit, 2), "roi": r4(profit / n) if n else None,
