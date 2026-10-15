@@ -222,7 +222,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 /* compact list: day chips, tips of the day, league groups with one-line rows */
 .days { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-inline: -14px; padding: 0 14px 2px; }
 .days::-webkit-scrollbar { display: none; }
-.dchip { flex: none; display: grid; justify-items: center; min-width: 58px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 6px 10px 5px; font-size: 14px; font-weight: 700; }
+.dchip { flex: none; display: grid; justify-items: center; min-width: 58px; white-space: nowrap; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 6px 10px 5px; font-size: 14px; font-weight: 700; }
 .dchip small { font-size: 11px; font-weight: 600; color: var(--muted); }
 .dchip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .dchip[aria-pressed="true"] small { color: inherit; opacity: .7; }
@@ -371,11 +371,11 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     few: "Za mało zakładów w teście, żeby coś ocenić.",
     off: "Bezpiecznik: w dzienniku typy przegrywały z kursem zamknięcia, więc liga jest wyłączona.",
   };
-  const st = { data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "matches", jstrat: "model", sortKey: "pts", sortDir: -1, day: null, show: "all", jview: "mine", sheet: null, form: null, lastBook: "" };
+  const st = { data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "matches", jstrat: "model", sortKey: "pts", sortDir: -1, day: "ALL", show: "all", jview: "mine", sheet: null, form: null, lastBook: "" };
   try {
     const s = JSON.parse(localStorage.getItem("linia-goli-3") || "{}");
     if (MARKETS.includes(s.line)) st.line = s.line;
-    if (s.league) st.league = s.league;
+    // the page always opens on all leagues and all days; the chosen market is remembered
     if (["matches", "journal", "report", "leagues", "teams"].includes(s.tab)) st.tab = s.tab;
     if (s.jstrat === "model" || s.jstrat === "market") st.jstrat = s.jstrat;
     if (["all", "strong", "tips"].includes(s.show)) st.show = s.show;
@@ -486,19 +486,20 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     </button>`;
   }
 
-  function worthRow(f, L) {
+  const when = (f, withDay) => withDay ? `${dayLabel(localDate(f), isoDay(new Date()), isoDay(new Date(Date.now() + 864e5)))} ${localTime(f)}` : localTime(f);
+  function worthRow(f, L, withDay) {
     const v = verdict(f), p = probs(f)[v.side], bp = bestPrice(f, v.side);
     const why = v.simple ? `model ${pct(p)}` : `${v.agree} z ${v.n} statystyk za${v.against ? `, ${v.against} przeciw` : ""}`;
     return `<button class="trow" data-id="${esc(f.id)}">
-      <span class="tl"><em class="wt s${v.level}">${LEVEL[v.level]}</em><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(localTime(f))}, ${esc(flag(L) + " " + L.name)}, ${esc(why)}${bp ? `, kurs ${odd(bp.odds)} (${esc(bp.book)})` : ""}</span></span>
+      <span class="tl"><em class="wt s${v.level}">${LEVEL[v.level]}</em><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(when(f, withDay))}, ${esc(flag(L) + " " + L.name)}, ${esc(why)}${bp ? `, kurs ${odd(bp.odds)} (${esc(bp.book)})` : ""}</span></span>
       <span class="tr num"><span class="side">${esc(sideName(v.side))}</span><span class="odds sg">${pct(p)}</span></span>
     </button>`;
   }
 
-  function tipRow(f, L) {
+  function tipRow(f, L, withDay) {
     const tip = tipOf(f), t = tip.t, tl = tipLevel(f, L);
     return `<button class="trow w${tl}" data-id="${esc(f.id)}">
-      <span class="tl"><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(localTime(f))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}${tl === 2 ? "" : ", na sucho"}</span></span>
+      <span class="tl"><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(when(f, withDay))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}${tl === 2 ? "" : ", na sucho"}</span></span>
       <span class="tr num"><span class="side">${esc(sideName(t.side, "2.5"))}</span><span class="odds">${odd(t.odds)}</span><span class="edge ${tl === 2 ? "" : "dry"}">${pct1(t.edge)}</span></span>
     </button>`;
   }
@@ -521,16 +522,17 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     const all = ls.flatMap((L) => L.fixtures.map((f) => [f, L])).sort((a, b) => a[0].ko.localeCompare(b[0].ko));
     if (!all.length) return errorsNote() + `<div class="empty">Brak nadchodzących meczów. Terminarz pojawia się kilka dni przed kolejką, aplikacja pobierze go sama.</div>`;
     const days = [...new Set(all.map(([f]) => localDate(f)))];
-    if (!days.includes(st.day)) st.day = days[0];
+    if (st.day !== "ALL" && !days.includes(st.day)) st.day = "ALL";
     const today = isoDay(new Date()), tomorrow = isoDay(new Date(Date.now() + 864e5));
-    const dayFx = all.filter(([f]) => localDate(f) === st.day);
+    const allDays = st.day === "ALL";
+    const dayFx = allDays ? all : all.filter(([f]) => localDate(f) === st.day);
     const lvl = ([f]) => { const v = verdict(f); return v ? v.level : 0; };
     const worthFx = dayFx.filter((x) => lvl(x) > 0).sort((a, b) => (lvl(b) - lvl(a)) || ((verdict(b[0]).agree - verdict(b[0]).against) - (verdict(a[0]).agree - verdict(a[0]).against)) || (probs(b[0])[verdict(b[0]).side] - probs(a[0])[verdict(a[0]).side]));
     const tipFx = dayFx.filter(([f]) => tipOf(f)).sort((a, b) => (tipLevel(b[0], b[1]) - tipLevel(a[0], a[1])) || (tipOf(b[0]).t.edge - tipOf(a[0]).t.edge));
     const show = ["all", "strong", "tips"].includes(st.show) ? st.show : "all";
     const fx = show === "strong" ? worthFx.slice().sort((a, b) => a[0].ko.localeCompare(b[0].ko)) : show === "tips" ? dayFx.filter(([f]) => tipOf(f)) : dayFx;
-    const dayName = st.day === today ? "dziś" : st.day === tomorrow ? "jutro" : "tego dnia";
-    let out = errorsNote() + `<div class="days" role="group" aria-label="Dzień">${days.slice(0, 10).map((x) => {
+    const dayName = allDays ? "w najbliższych dniach" : st.day === today ? "dziś" : st.day === tomorrow ? "jutro" : "tego dnia";
+    let out = errorsNote() + `<div class="days" role="group" aria-label="Dzień"><button class="dchip" data-day="ALL" aria-pressed="${allDays}">Wszystkie dni<small class="num">${all.length}</small></button>${days.slice(0, 10).map((x) => {
       const n = all.filter(([f]) => localDate(f) === x).length;
       return `<button class="dchip" data-day="${x}" aria-pressed="${x === st.day}">${esc(dayLabel(x, today, tomorrow))}<small class="num">${n}</small></button>`;
     }).join("")}</div>`;
@@ -538,19 +540,25 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       <button data-show="all" aria-pressed="${show === "all"}">Wszystkie<small>${dayFx.length}</small></button>
       <button data-show="strong" aria-pressed="${show === "strong"}">Warte uwagi<small>${worthFx.length}</small></button>
       <button data-show="tips" aria-pressed="${show === "tips"}">Kursy z przewagą<small>${tipFx.length}</small></button></div>`;
-    if (show === "all" && worthFx.length) out += `<div class="tips sbox"><div class="tips-h"><b>Warte uwagi ${dayName}</b><span class="meta">wg statystyk</span></div>${worthFx.slice(0, 5).map(([f, L]) => worthRow(f, L)).join("")}${worthFx.length > 5 ? `<button class="trow more" data-show="strong">Pokaż wszystkie (${worthFx.length})</button>` : ""}</div>`;
-    if (show === "tips" && tipFx.length) out += `<div class="tips"><div class="tips-h"><b>Kursy z przewagą</b><span class="meta">kurs wyższy niż szansa</span></div>${tipFx.slice(0, 5).map(([f, L]) => tipRow(f, L)).join("")}</div>`;
+    if (show === "all" && worthFx.length) out += `<div class="tips sbox"><div class="tips-h"><b>Warte uwagi ${dayName}</b><span class="meta">wg statystyk</span></div>${worthFx.slice(0, 5).map(([f, L]) => worthRow(f, L, allDays)).join("")}${worthFx.length > 5 ? `<button class="trow more" data-show="strong">Pokaż wszystkie (${worthFx.length})</button>` : ""}</div>`;
+    if (show === "tips" && tipFx.length) out += `<div class="tips"><div class="tips-h"><b>Kursy z przewagą</b><span class="meta">kurs wyższy niż szansa</span></div>${tipFx.slice(0, 5).map(([f, L]) => tipRow(f, L, allDays)).join("")}</div>`;
     const groups = [];
     for (const [f, L] of fx) {
-      let g = groups.find((x) => x.L === L);
-      if (!g) groups.push(g = { L, rows: [] });
+      const day = localDate(f);
+      let g = groups.find((x) => x.L === L && x.day === day);
+      if (!g) groups.push(g = { L, day, rows: [] });
       g.rows.push(f);
     }
     const head = isX() ? ["1", "X", "2"] : [`Over ${st.line}`, `Under ${st.line}`];
-    out += groups.map(({ L, rows }) => `<section class="lgrp">
+    let lastDay = null;
+    out += groups.map(({ L, day, rows }) => {
+      const dh = allDays && day !== lastDay ? `<div class="day">${esc(dayFmt.format(d(day)))}${day === today ? " (dziś)" : day === tomorrow ? " (jutro)" : ""}</div>` : "";
+      lastDay = day;
+      return dh + `<section class="lgrp">
       <div class="lgh"><span class="ln">${esc(flag(L))} ${esc(L.country)} <b>${esc(L.name)}</b></span><span class="cols ${isX() ? "n3" : "n2"}">${head.map((h) => `<span>${h}</span>`).join("")}</span></div>
-      ${rows.map((f) => matchRow(f, L)).join("")}</section>`).join("");
-    if (!groups.length) out += `<div class="empty">Tego dnia nie ma takich meczów. Wybierz inny dzień albo „Wszystkie”.</div>`;
+      ${rows.map((f) => matchRow(f, L)).join("")}</section>`;
+    }).join("");
+    if (!groups.length) out += `<div class="empty">${allDays ? "Nie ma takich meczów" : "Tego dnia nie ma takich meczów"}. Wybierz „Wszystkie”${allDays ? "" : " albo inny dzień"}.</div>`;
     return out + `<div class="card legend-w">
       <div><em class="wt s2">Warte uwagi</em><span class="note">Model daje wyraźną przewagę i co najmniej 4 statystyki wskazują to samo (tabela, forma, u siebie i na wyjeździe, bramki, mecze bezpośrednie), żadna przeciw.</span></div>
       <div><em class="wt s1">Możliwe</em><span class="note">Przewaga mniejsza albo statystyki mniej zgodne.</span></div>
