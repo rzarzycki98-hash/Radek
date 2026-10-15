@@ -169,6 +169,11 @@ body { margin: 0; }
 img { max-width: 100%; }
 .paper { grid-column: 1 / -1; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--sunk); border-radius: 8px; padding: 6px 9px; }
 .paper span { font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.minodds { grid-column: 1 / -1; font-size: 13px; font-weight: 600; color: var(--ink); }
+.minodds span { font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.minodds.big { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; background: var(--sunk); border-radius: 10px; padding: 9px 12px; }
+.minodds.big span { flex-basis: 100%; }
+.minodds.big b { font-family: var(--display); font-size: 20px; font-weight: 800; }
 .paper.mk { background: color-mix(in srgb, var(--win) 14%, var(--surface)); }
 .seg-light { background: var(--sunk); justify-self: start; }
 .seg-light button { color: var(--muted); }
@@ -273,8 +278,9 @@ td small.pos, td small.neg { font-weight: 600; }
     const o = f.over[st.line];
     const lg = st.league === "ALL" ? ` · ${esc(f.L.name)}` : "";
     const cb = cardBook(f.odds);
-    const oddsTxt = st.line === "2.5" && cb ? ` · ${BOOKS[cb]} O/U ${odd(f.odds[cb][0])} / ${odd(f.odds[cb][1])}` : "";
+    const oddsTxt = st.line === "2.5" && cb && !f.min_odds ? ` · ${BOOKS[cb]} O/U ${odd(f.odds[cb][0])} / ${odd(f.odds[cb][1])}` : "";
     const mkt = st.line === "2.5" && f.fair_over != null ? ` · rynek ${pct(f.fair_over)}` : "";
+    const minTxt = st.line === "2.5" && f.min_odds ? `<div class="minodds num"><span>Graj tylko od kursu</span> Over ${odd(f.min_odds.over)} · Under ${odd(f.min_odds.under)}</div>` : "";
     const bet = st.line !== "2.5" ? "" :
       (f.mbet ? `<div class="paper mk"><span>Kurs ponad rynek</span> ${f.mbet.side} 2.5 @ ${odd(f.mbet.odds)} ${esc(BOOKS[f.mbet.book] || f.mbet.book)} · ${pct1(f.mbet.edge)}</div>` : "") +
       (f.bet ? `<div class="paper"><span>Typ modelu</span> ${f.bet.side} 2.5 @ ${odd(f.bet.odds)} ${esc(BOOKS[f.bet.book] || f.bet.book)} · ${pct1(f.bet.edge)}</div>` : "");
@@ -283,7 +289,7 @@ td small.pos, td small.neg { font-weight: 600; }
         <div class="meta num">${withDate ? esc(shortFmt.format(d(f.date))) + " · " : ""}${esc(f.time || "")}${lg} · xG ${(f.xg[0] + f.xg[1]).toFixed(2)}${mkt}${oddsTxt}</div></div>
       <div class="pick"><span class="side ${k.cls}">${k.side} ${st.line}</span><span class="pct num ${k.cls}">${pct(k.p)}</span></div>
       <div class="bar" aria-hidden="true"><i style="width:${(o * 100).toFixed(1)}%"></i></div>
-      ${bet}
+      ${minTxt}${bet}
     </button>`;
   }
 
@@ -332,7 +338,7 @@ td small.pos, td small.neg { font-weight: 600; }
       const on = st.data.bookmakers && st.data.bookmakers.enabled;
       verdict = `<div class="card verdict-card ${best.roi > 0 ? "good" : "bad"}">
         <h3>Kurs ponad rynek</h3>
-        <p>Uczciwą szansę wyznacza rynek: Pinnacle albo mediana bukmacherów z UK, po odjęciu marży. Typ zapisuje się, gdy Ladbrokes albo BetVictor dają kurs wyższy o ponad ${pct(st.data.market_edge_min || 0.02)}.</p>
+        <p>Uczciwą szansę wyznacza rynek: Pinnacle albo mediana bukmacherów z UK, po odjęciu marży. Typ zapisuje się, gdy któryś bukmacher daje kurs wyższy o ponad ${pct(st.data.market_edge_min || 0.02)}. Ladbrokes i BetVictor nie publikują kursów na gole w źródle danych, więc przy meczu masz „minimalny kurs”: jeśli u nich jest wyższy, to jest taka okazja.</p>
         <p>Test na dwóch ostatnich sezonach${best.bets ? `: przy najlepszym kursie na rynku ${best.bets} zakładów, wynik <b class="num">${pct1(best.roi)}</b>` : ""}${one.bets ? `; przy jednym bukmacherze (Bet365) ${one.bets} zakładów, <b class="num">${pct1(one.roi)}</b>` : ""}. Na pięciu sezonach ta metoda dała ok. +3%, ale wyniki mocno się wahają między sezonami.</p>
         ${on ? "" : `<p><b>Wyłączone:</b> brakuje klucza do kursów Ladbrokes i BetVictor. Instrukcja jest w README repozytorium.</p>`}</div>`;
     } else {
@@ -431,12 +437,13 @@ td small.pos, td small.neg { font-weight: 600; }
     const srcTxt = f.fair_src === "Pinnacle" ? "Pinnacle bez marży" : f.fair_src === "UK" ? `mediana ${f.fair_n} bukmacherów` : "";
     return `<div class="card"><h3>Kursy over / under 2.5</h3>
       <div class="x12 num" style="grid-template-columns:1fr 1fr"><div><b>${pct(po)}</b><span>Over wg modelu</span></div><div><b>${q != null ? pct(q) : "—"}</b><span>Over wg rynku${srcTxt ? `<br>${esc(srcTxt)}` : ""}</span></div></div>
+      ${f.min_odds ? `<div class="minodds big num"><span>Graj w Ladbrokes / BetVictor tylko od kursu</span><b>Over ${odd(f.min_odds.over)}</b><b>Under ${odd(f.min_odds.under)}</b></div>` : ""}
       ${best.over ? `<p class="note" style="margin:0">Najlepszy kurs: Over ${odd(best.over[0])} (${esc(best.over[1])})${best.under ? `, Under ${odd(best.under[0])} (${esc(best.under[1])})` : ""}.</p>` : ""}
       <div class="scroll" style="padding:2px 8px"><table class="lines num"><thead><tr><th>Bukmacher</th><th>Over</th><th>Under</th></tr></thead><tbody>
       ${rows.map(([t, o, u, mine]) => { const eo = edge(ref, o), eu = edge(1 - ref, u);
         return `<tr class="${mine ? "hl" : ""}"><td>${esc(t)}${mine ? " ★" : ""}</td><td>${odd(o)}<small class="${ec(eo)}">${eo == null ? "" : pct1(eo)}</small></td><td>${odd(u)}<small class="${ec(eu)}">${eu == null ? "" : pct1(eu)}</small></td></tr>`; }).join("")}
       </tbody></table></div>
-      <p class="note" style="margin:0">★ Twoi bukmacherzy. Pod kursem: o ile kurs jest wyższy od uczciwego ${q != null ? "kursu rynku" : "kursu wg modelu"} (szansa × kurs − 1). Zielone powyżej ${pct(st.data.market_edge_min || 0.02)}.</p>
+      <p class="note" style="margin:0">★ Twoi bukmacherzy, jeśli są w źródle danych. Pod kursem: o ile kurs jest wyższy od uczciwego ${q != null ? "kursu rynku" : "kursu wg modelu"} (szansa × kurs − 1). Zielone powyżej ${pct(st.data.market_edge_min || 0.02)}.</p>
     </div>`;
   }
 

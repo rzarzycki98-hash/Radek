@@ -30,7 +30,7 @@ P = {
 }
 EDGE_MIN = 0.05           # model strategy: paper bet when model_prob * odds - 1 > 5%
 MARKET_EDGE_MIN = 0.02    # market strategy: a bookmaker's price beats the fair market price by > 2%
-MIN_BOOKS_FAIR = 4        # need this many UK bookmakers to build a fair price without Pinnacle
+MIN_BOOKS_FAIR = 3        # need this many UK bookmakers to build a fair price without Pinnacle
 MAXG = 10
 
 
@@ -541,8 +541,9 @@ def fair_price(odds, books):
     return None, None, 0
 
 
-def market_bet(q, odds):
-    """A price at the user's bookmakers that beats the fair market price."""
+def market_bet(q, odds, books=None):
+    """A bookmaker price that beats the fair market price: the user's bookmakers first,
+    otherwise any UK bookmaker in the feed (Ladbrokes/BetVictor do not publish totals there)."""
     if not q:
         return None
     cands = []
@@ -551,6 +552,11 @@ def market_bet(q, odds):
             bb = best_bet(q, odds[b])
             if bb:
                 cands.append((bb, b))
+    if not cands:
+        for b in (books or {}).values():
+            bb = best_bet(q, [b["o"], b["u"]])
+            if bb:
+                cands.append((bb, b["t"]))
     if not cands:
         return None
     bb, b = max(cands, key=lambda c: c[0][3])
@@ -618,7 +624,8 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
             bet = choose_bet(po, odds)
             books = m.get("books") or {}
             q, qsrc, qn = fair_price(odds, books)
-            mbet = market_bet(q, odds)
+            mbet = market_bet(q, odds, books)
+            min_odds = {"over": round((1 + MARKET_EDGE_MIN) / q, 2), "under": round((1 + MARKET_EDGE_MIN) / (1 - q), 2)} if q else None
             best = {}
             for i, side in ((0, "over"), (1, "under")):
                 pr = [((b["o"], b["u"])[i], b["t"]) for b in books.values() if (b["o"], b["u"])[i]]
@@ -630,6 +637,7 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
                            "home": m["h"], "away": m["a"], "xg": [round(lh, 2), round(la, 2)],
                            "odds": odds, "market_over": round(mp, 4) if mp else None, "bet": bet,
                            "fair_over": round(q, 4) if q else None, "fair_src": qsrc, "fair_n": qn, "mbet": mbet,
+                           "min_odds": min_odds,
                            "best": best, "books": {k: [b["t"], b["o"], b["u"]] for k, b in sorted(books.items())}, **mk})
         update_journal(journal, code, name, priced, cur, now_iso, today)
         bt = backtest(seasons[:-1], 2) if len(seasons) >= 4 else None  # completed seasons only
@@ -658,6 +666,8 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
     journal["updated"] = now_iso
     out["journal_summary"] = journal["summary"]
     out["errors"] = src.errors
+    if not out["leagues"]:  # source down: keep the last good data instead of publishing an empty page
+        raise SystemExit("no leagues built: " + "; ".join(src.errors[:3]))
     os.makedirs(outdir, exist_ok=True)
     dpath = os.path.join(outdir, "data.json")
     # keep old timestamps when nothing else changed, so unchanged runs make no commit
