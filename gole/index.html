@@ -325,6 +325,10 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 .del { border: 0; background: none; color: var(--muted); font-size: 20px; line-height: 1; padding: 2px 6px; }
 .jrow:has(.del) { grid-template-columns: 24px 1fr auto auto; }
 .note.err { color: var(--loss); }
+.jrow.tap { cursor: pointer; }
+.jrow.tap:active { background: var(--raised); }
+.kt { font-size: 13px; font-weight: 700; color: var(--ink); }
+.chev { font-style: normal; color: var(--muted); font-size: 20px; margin-left: 8px; vertical-align: -2px; }
 </style>
 </head>
 <body>
@@ -488,6 +492,8 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     </button>`;
   }
 
+  const kickoff = (ko, date) => { try { const k = new Date(ko); return `${new Intl.DateTimeFormat("pl-PL", { weekday: "short", day: "numeric", month: "short" }).format(k)}, ${timeFmt.format(k)}`; } catch (e) { return date || ""; } };
+  const fixtureById = (id) => { const L = st.data && L_(String(id).split("|")[0]); return L && L.fixtures.find((x) => x.id === id) ? id : null; };
   const when = (f, withDay) => withDay ? `${dayLabel(localDate(f), isoDay(new Date()), isoDay(new Date(Date.now() + 864e5)))} ${localTime(f)}` : localTime(f);
   function worthRow(f, L, withDay) {
     const v = verdict(f), p = v.p != null ? v.p : probs(f)[v.side], bp = bestPrice(f, v.side);
@@ -612,12 +618,12 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     const won = done.filter((r) => r.s.status === "won").length;
     const withStats = done.filter((r) => r.b.agree === true), against = done.filter((r) => r.b.agree === false);
     const rate = (xs) => xs.length ? `${xs.filter((r) => r.s.status === "won").length} z ${xs.length}` : "—";
-    const row = ({ b, s }) => `<div class="jrow num">
+    const row = ({ b, s }) => { const open = fixtureById(b.match); return `<div class="jrow num ${open ? "tap" : ""}" ${open ? `data-id="${esc(open)}" role="button" tabindex="0"` : ""}>
         <span class="jst ${s.status}">${s.status === "won" ? "✓" : s.status === "lost" ? "✗" : "•"}</span>
-        <span class="jm"><b>${esc(b.home)} – ${esc(b.away)}</b><span class="meta">${esc(shortFmt.format(new Date(b.ko || b.date)))}, ${esc(betSide(b))} @ ${odd(b.odds)}, stawka ${money(b.stake)}${b.book ? `, ${esc(b.book)}` : ""}${s.score ? `, wynik ${esc(s.score)}` : ""}<br>${b.agree === true ? "zgodny z oceną statystyk" : b.agree === false ? "wbrew ocenie statystyk" : "statystyki bez zdania"}</span></span>
+        <span class="jm"><b>${esc(b.home)} – ${esc(b.away)}</b><span class="kt">${esc(kickoff(b.ko, b.date))}</span><span class="meta">${esc(betSide(b))} @ ${odd(b.odds)}, stawka ${money(b.stake)}${b.book ? `, ${esc(b.book)}` : ""}${s.score ? `, wynik ${esc(s.score)}` : ""}<br>${b.agree === true ? "zgodny z oceną statystyk" : b.agree === false ? "wbrew ocenie statystyk" : "statystyki bez zdania"}</span></span>
         <span class="jp ${s.status === "won" ? "pos" : s.status === "lost" ? "neg" : ""}">${s.status === "open" ? "czeka" : s.status === "void" ? "brak wyniku" : (s.profit >= 0 ? "+" : "−") + "£" + Math.abs(s.profit).toFixed(2)}</span>
         <button class="del" data-delbet="${esc(b.id)}" aria-label="Usuń zakład">×</button>
-      </div>`;
+      </div>`; };
     let out = `<div class="stats num">
       <div><b>${done.length}</b><span>rozliczone</span></div>
       <div><b>${done.length ? pct(won / done.length) : "—"}</b><span>trafione</span></div>
@@ -655,11 +661,11 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       <div><b class="${clv == null ? "" : clv >= 0 ? "pos" : "neg"}">${pct1(clv)}</b><span>vs zamknięcie</span></div></div>
       <p class="note">Typy, które aplikacja sama zapisuje na sucho, gdy kurs u bukmachera jest wyższy, niż wynika z szansy. Stawka 1 jednostka na typ.</p>`;
     const sideTxt = (e) => (e.mkt || "ou") === "x" ? e.side : `${e.side} 2.5`;
-    const row = (e) => `<div class="jrow num">
+    const row = (e) => { const open = fixtureById(e.match); const L = L_(e.league); return `<div class="jrow num ${open ? "tap" : ""}" ${open ? `data-id="${esc(open)}" role="button" tabindex="0"` : ""}>
         <span class="jst ${e.status}">${e.status === "won" ? "✓" : e.status === "lost" ? "✗" : "•"}</span>
-        <span class="jm"><b>${esc(e.home)} – ${esc(e.away)}</b><span class="meta">${esc(shortFmt.format(d(e.date)))}, ${esc(sideTxt(e))} @ ${odd(e.odds)} ${esc(e.book || "")}${e.score ? `, wynik ${esc(e.score)}` : ""}${codes.length > 1 ? `<br>${esc(e.league_name)}` : ""}</span></span>
-        <span class="jp ${e.status === "won" ? "pos" : e.status === "lost" ? "neg" : ""}">${e.status === "open" ? pct1(e.edge) : (e.profit >= 0 ? "+" : "") + e.profit.toFixed(2)}</span>
-      </div>`;
+        <span class="jm"><b>${esc(nm(L, e.home))} – ${esc(nm(L, e.away))}</b><span class="kt">${esc(kickoff(e.ko, e.date))}</span><span class="meta">${esc(sideTxt(e))} @ ${odd(e.odds)} ${esc(e.book || "")}${e.score ? `, wynik ${esc(e.score)}` : ""}${codes.length > 1 ? `<br>${esc(e.league_name.replace(" · ", ", "))}` : ""}</span></span>
+        <span class="jp ${e.status === "won" ? "pos" : e.status === "lost" ? "neg" : ""}">${e.status === "open" ? pct1(e.edge) : (e.profit >= 0 ? "+" : "") + e.profit.toFixed(2)}${open ? `<i class="chev">›</i>` : ""}</span>
+      </div>`; };
     return seg0 + seg + stats +
       `<div class="day">Czekają na mecz (${open.length})</div>` +
       (open.length ? `<div class="jlist">${open.slice(0, 150).map(row).join("")}</div>` : `<div class="empty">Brak otwartych typów na rynku ${isX() ? "1X2" : "goli"}.</div>`) +
@@ -1014,7 +1020,10 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   document.addEventListener("change", (e) => {
     if (e.target.id === "lsel") { st.league = e.target.value || "ALL"; save(); render(); }
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("sheet").hidden) closeSheet(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !$("sheet").hidden) closeSheet();
+    if (e.key === "Enter" && e.target.matches && e.target.matches(".jrow.tap")) e.target.click();
+  });
 
   const get = (u) => fetch(u, { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
   const DET = {}, DETV = {};  // league details (prices, factors, team tables) load on demand
