@@ -239,6 +239,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 .lgh { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 12px 7px; background: var(--raised); font-size: 13px; color: var(--muted); }
 .lgh .ln { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lgh .ln b { color: var(--ink); font-weight: 700; }
+.ok-l { color: var(--gold); font-weight: 800; }
 .cols { display: grid; gap: 4px; text-align: center; font-size: 11px; font-weight: 700; flex: none; }
 .cols.n3, .rpx.n3 { grid-template-columns: repeat(3, 52px); }
 .cols.n2, .rpx.n2 { grid-template-columns: repeat(2, 66px); }
@@ -254,6 +255,23 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 .px.fav { color: var(--ink); }
 .px.val { border-color: var(--gold); background: var(--gold-soft); color: var(--gold); }
 @media (max-width: 360px) { .cols.n3, .rpx.n3 { grid-template-columns: repeat(3, 46px); } .row { grid-template-columns: 34px 1fr auto; } }
+
+/* worth-attention marking */
+.wt { display: inline-block; justify-self: start; font-style: normal; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 6px; margin-top: 2px; }
+.wt.w2 { background: var(--gold); color: var(--gold-ink); }
+.wt.w1 { background: var(--raised); color: var(--muted); border: 1px dashed var(--line); }
+.wt.w0 { background: none; color: var(--muted); border: 1px solid var(--line); }
+.row.w2 { background: var(--gold-soft); box-shadow: inset 4px 0 0 var(--gold); }
+.row.w1 { box-shadow: inset 4px 0 0 var(--line); }
+.row.w0 .rnames b { font-weight: 500; color: var(--muted); }
+.row.w0 .px.fav { color: var(--muted); }
+.row.w0 .rtime { opacity: .8; }
+.trow.w1 .odds { color: var(--muted); }
+.tl .wt { margin: 0 0 3px; }
+.seg2.show { display: grid; grid-template-columns: 1fr 1fr; justify-self: stretch; }
+.legend-w { gap: 8px; }
+.legend-w div { display: grid; grid-template-columns: 112px 1fr; gap: 8px; align-items: start; }
+.legend-w .wt { margin-top: 1px; }
 </style>
 </head>
 <body>
@@ -301,15 +319,16 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     few: "Za mało zakładów w teście, żeby coś ocenić.",
     off: "Bezpiecznik: w dzienniku typy przegrywały z kursem zamknięcia, więc liga jest wyłączona.",
   };
-  const st = { data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "matches", jstrat: "model", sortKey: "pts", sortDir: -1, day: null };
+  const st = { data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "matches", jstrat: "model", sortKey: "pts", sortDir: -1, day: null, only: false };
   try {
     const s = JSON.parse(localStorage.getItem("linia-goli-3") || "{}");
     if (MARKETS.includes(s.line)) st.line = s.line;
     if (s.league) st.league = s.league;
     if (["matches", "journal", "report", "leagues", "teams"].includes(s.tab)) st.tab = s.tab;
     if (s.jstrat === "model" || s.jstrat === "market") st.jstrat = s.jstrat;
+    st.only = !!s.only;
   } catch (e) {}
-  const save = () => { try { localStorage.setItem("linia-goli-3", JSON.stringify({ line: st.line, league: st.league, tab: st.tab, jstrat: st.jstrat })); } catch (e) {} };
+  const save = () => { try { localStorage.setItem("linia-goli-3", JSON.stringify({ line: st.line, league: st.league, tab: st.tab, jstrat: st.jstrat, only: st.only })); } catch (e) {} };
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -392,15 +411,24 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     return (isX() || st.line === "2.5") ? bestTip(f, mkKey()) : null;
   }
 
+  // 2 = worth attention (model tip in a league that passed the test), 1 = only to watch (dry or market tip), 0 = nothing
+  function worth(f, L) {
+    const tip = tipOf(f);
+    if (!tip) return 0;
+    return tip.strat === "model" && good(gradeOf(L)) ? 2 : 1;
+  }
+  const WORTH = { 2: "Warte uwagi", 1: "Do obserwacji" };
+
   // one match = one row: time, teams, price tiles on the right (like a bookmaker list)
-  function matchRow(f) {
+  function matchRow(f, L) {
+    const w = worth(f, L);
     const p = probs(f);
     const mx = p.indexOf(Math.max(...p));
     const tip = tipOf(f);
     const labels = isX() ? ["1", "X", "2"] : ["O", "U"];
-    return `<button class="row" data-id="${esc(f.id)}">
+    return `<button class="row w${w}" data-id="${esc(f.id)}">
       <span class="rtime num">${esc(localTime(f))}</span>
-      <span class="rnames"><b>${esc(f.home)}</b><b>${esc(f.away)}</b></span>
+      <span class="rnames"><b>${esc(f.home)}</b><b>${esc(f.away)}</b>${w ? `<em class="wt w${w}">${WORTH[w]}</em>` : ""}</span>
       <span class="rpx ${isX() ? "n3" : "n2"}">${p.map((v, i) => `<span class="px num ${i === mx ? "fav" : ""} ${tip && tip.t.side === i ? "val" : ""}"><i>${labels[i]}</i>${fairOdd(v)}<small>${pct(v)}</small></span>`).join("")}</span>
     </button>`;
   }
@@ -409,8 +437,9 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     const tip = tipOf(f), t = tip.t, mk = mkKey();
     const side = mk === "x" ? ["1", "X", "2"][t.side] : ["Over 2.5", "Under 2.5"][t.side];
     const trusted = tip.strat === "model" && good(gradeOf(L, mk));
-    return `<button class="trow" data-id="${esc(f.id)}">
-      <span class="tl"><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(localTime(f))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}${trusted ? "" : ", na sucho"}</span></span>
+    const w = trusted ? 2 : 1;
+    return `<button class="trow w${w}" data-id="${esc(f.id)}">
+      <span class="tl"><em class="wt w${w}">${WORTH[w]}</em><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(localTime(f))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}</span></span>
       <span class="tr num"><span class="side">${side}</span><span class="odds">${odd(t.odds)}</span><span class="edge ${trusted ? "" : "dry"}">${pct1(t.edge)}</span></span>
     </button>`;
   }
@@ -437,14 +466,17 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     const now = new Date(), tm = new Date(Date.now() + 864e5);
     const iso = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
     const today = iso(now), tomorrow = iso(tm);
-    const fx = all.filter(([f]) => localDate(f) === st.day);
+    const dayFx = all.filter(([f]) => localDate(f) === st.day);
+    const nWorth = dayFx.filter(([f, L]) => worth(f, L) === 2).length;
+    const fx = st.only ? dayFx.filter(([f, L]) => worth(f, L) > 0) : dayFx;
     const trust = ([f, L]) => tipOf(f).strat === "model" && good(gradeOf(L)) ? 1 : 0;
     const tips = fx.filter(([f]) => tipOf(f)).sort((a, b) => (trust(b) - trust(a)) || (tipOf(b[0]).t.edge - tipOf(a[0]).t.edge));
     let out = errorsNote() + `<div class="days" role="group" aria-label="Dzień">${days.slice(0, 10).map((x) => {
       const n = all.filter(([f]) => localDate(f) === x).length;
       return `<button class="dchip" data-day="${x}" aria-pressed="${x === st.day}">${esc(dayLabel(x, today, tomorrow))}<small class="num">${n}</small></button>`;
     }).join("")}</div>`;
-    if (tips.length) out += `<div class="tips"><div class="tips-h"><b>Typy ${st.day === today ? "na dziś" : "tego dnia"}</b><span class="meta">${tips.length}</span></div>${tips.slice(0, 5).map(([f, L]) => tipRow(f, L)).join("")}${tips.length > 5 ? `<button class="trow more" data-tab="journal">Wszystkie typy (${tips.length}) w zakładce Typy</button>` : ""}</div>`;
+    out += `<div class="seg2 show" role="group" aria-label="Pokaż"><button data-only="0" aria-pressed="${!st.only}">Wszystkie mecze ${dayFx.length}</button><button data-only="1" aria-pressed="${!!st.only}">Tylko z typem ${dayFx.filter(([f]) => tipOf(f)).length}</button></div>`;
+    if (tips.length) out += `<div class="tips"><div class="tips-h"><b>Typy ${st.day === today ? "na dziś" : "tego dnia"}</b><span class="meta">${nWorth ? `${nWorth} wartych uwagi` : "brak wartych uwagi"}</span></div>${tips.slice(0, 5).map(([f, L]) => tipRow(f, L)).join("")}${tips.length > 5 ? `<button class="trow more" data-tab="journal">Wszystkie typy (${tips.length}) w zakładce Typy</button>` : ""}</div>`;
     // group by league, leagues in kick-off order
     const groups = [];
     for (const [f, L] of fx) {
@@ -454,9 +486,12 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     }
     const head = isX() ? ["1", "X", "2"] : [`Over ${st.line}`, `Under ${st.line}`];
     out += groups.map(({ L, rows }) => `<section class="lgrp">
-      <div class="lgh"><span class="ln">${esc(flag(L))} ${esc(L.country)} <b>${esc(L.name)}</b>${good(gradeOf(L)) ? ` <span class="g ${gradeOf(L)}">${GRADE[gradeOf(L)]}</span>` : ""}</span><span class="cols ${isX() ? "n3" : "n2"}">${head.map((h) => `<span>${h}</span>`).join("")}</span></div>
-      ${rows.map(matchRow).join("")}</section>`).join("");
-    return out + `<p class="note">Liczby to uczciwy kurs, pod spodem szansa wg modelu połączonego z rynkiem. Złote pole oznacza typ. Dotknij meczu, żeby zobaczyć kursy bukmacherów i statystyki.</p>`;
+      <div class="lgh"><span class="ln">${esc(flag(L))} ${esc(L.country)} <b>${esc(L.name)}</b>${good(gradeOf(L)) ? ` <span class="ok-l" title="${GRADE[gradeOf(L)]}">✓</span>` : ""}</span><span class="cols ${isX() ? "n3" : "n2"}">${head.map((h) => `<span>${h}</span>`).join("")}</span></div>
+      ${rows.map((f) => matchRow(f, L)).join("")}</section>`).join("");
+    if (!groups.length) out += `<div class="empty">Tego dnia nie ma meczów z typem. Wybierz inny dzień albo pokaż wszystkie mecze.</div>`;
+    return out + `<div class="card legend-w"><div><em class="wt w2">Warte uwagi</em><span class="note">Typ modelu w lidze, która przeszła test na historii. Na tym warto się skupić.</span></div>
+      <div><em class="wt w1">Do obserwacji</em><span class="note">Kurs wygląda na zawyżony, ale liga nie przeszła testu albo typ wynika tylko z porównania bukmacherów. Zapisywany na sucho.</span></div>
+      <div><span class="wt w0">Bez oznaczenia</span><span class="note">Model nie widzi przewagi. Kafelki pokazują uczciwy kurs i szansę.</span></div></div>`;
   }
 
   // ---------------------------------------------------------------- journal
@@ -680,10 +715,11 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   function closeSheet() { $("sheet").hidden = true; $("scrim").hidden = true; document.body.style.overflow = ""; }
 
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],#close,#scrim");
+    const t = e.target.closest("[data-only],[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],#close,#scrim");
     if (!t) return;
     if (t.id === "close" || t.id === "scrim") return closeSheet();
-    if (t.dataset.day) { st.day = t.dataset.day; render(); }
+    if (t.dataset.only) { st.only = t.dataset.only === "1"; save(); render(); }
+    else if (t.dataset.day) { st.day = t.dataset.day; render(); }
     else if (t.dataset.league) { st.league = t.dataset.league; save(); render(); }
     else if (t.dataset.line) { st.line = t.dataset.line; save(); render(); }
     else if (t.dataset.tab) { st.tab = t.dataset.tab; save(); render(); window.scrollTo({ top: 0 }); }
