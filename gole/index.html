@@ -820,7 +820,9 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     const other = { h: "a", a: "h", o: "u", u: "o" }[lean];
     const sideTxt = mk === "x" ? `${["1", "X", "2"][v.side]} (${v.side === 0 ? esc(f.home) : esc(f.away)})` : `${v.side === 0 ? "Over" : "Under"} 2.5`;
     const leanTxt = (l) => mk === "x" ? (l === "h" ? "1" : "2") : (l === "o" ? "over" : "under");
-    const head = v.level ? `<em class="wt s${v.level}">${LEVEL[v.level]}</em> <b>${sideTxt}</b>` : `<span class="note">Statystyki nie wskazują wyraźnie jednej strony. Najbliżej: ${sideTxt}.</span>`;
+    const cnt = (l) => v.f.filter((x) => x.l === l).length;
+    const split = mk === "x" ? `${cnt("h")} za 1, ${cnt("a")} za 2` : `${cnt("o")} za over, ${cnt("u")} za under`;
+    const head = v.level ? `<em class="wt s${v.level}">${LEVEL[v.level]}</em> <b>${sideTxt}</b>` : `<span class="note">Statystyki nie wskazują wyraźnie jednej strony (${split}).</span>`;
     return `<div class="card"><h3>Analiza statystyk: ${mk === "x" ? "wynik 1X2" : "gole 2.5"}</h3>
       <div>${head}</div>
       <div class="factors">${v.f.map((x) => {
@@ -829,7 +831,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
         const icon = cls === "y" ? "✓" : cls === "n" ? "✗" : "–";
         return `<div class="fac ${cls}"><span class="fi">${icon}</span><span><b>${label}</b><span class="meta">${val}</span></span><span class="fl">${x.l ? "za " + leanTxt(x.l) : "obojętne"}</span></div>`;
       }).join("")}</div>
-      <p class="note">${v.agree} z ${v.n} statystyk wskazuje ${sideTxt}, ${v.against} przeciw. ${mk === "x" ? "W tabeli, formie i bilansie najpierw gospodarze, potem goście." : "Najpierw gospodarze, potem goście."}</p>
+      <p class="note">${v.level ? `${v.agree} z ${v.n} statystyk wskazuje ${sideTxt}, ${v.against} przeciw. ` : ""}W każdym wierszu najpierw ${esc(f.home)}, potem ${esc(f.away)}.</p>
     </div>`;
   }
 

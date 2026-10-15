@@ -742,10 +742,16 @@ def stats_verdict(h, a, S, meetings, px, pover):
         level = 2 if p >= hi and agree >= 4 and against == 0 else (1 if p >= lo and agree >= 3 and against <= 1 else 0)
         return {"side": side, "level": level, "agree": agree, "against": against, "n": len(F), "f": F}
 
-    hx = px[0] >= px[2]
-    vx = verdict(fx, 0 if hx else 2, "h" if hx else "a", "a" if hx else "h", px[0] if hx else px[2], 0.55, 0.45)
-    ov = pover >= 0.5
-    vo = verdict(fo, 0 if ov else 1, "o" if ov else "u", "u" if ov else "o", pover if ov else 1 - pover, 0.60, 0.53)
+    def best(a, b):  # the side the statistics back more strongly
+        return max((a, b), key=lambda v: (v["level"], v["agree"] - v["against"], v["p"]))
+
+    vh = verdict(fx, 0, "h", "a", px[0], 0.55, 0.45); vh["p"] = px[0]
+    va = verdict(fx, 2, "a", "h", px[2], 0.55, 0.45); va["p"] = px[2]
+    vov = verdict(fo, 0, "o", "u", pover, 0.60, 0.53); vov["p"] = pover
+    vun = verdict(fo, 1, "u", "o", 1 - pover, 0.60, 0.53); vun["p"] = 1 - pover
+    vx, vo = best(vh, va), best(vov, vun)
+    for v in (vx, vo):
+        del v["p"]
     return {"x": vx, "ou": vo}
 
 
