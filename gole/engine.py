@@ -546,11 +546,13 @@ def grade(a, extra):
     n, roi, clv = a["bets"], a["roi"], a["clv"]
     if n < 30:
         return "few"
+    roi_pos, clv_pos = roi is not None and roi > 0, clv is not None and clv > 0
     if extra:  # bets at closing prices only: no closing-line check possible
-        return "watch" if roi is not None and roi > 0 and n >= 150 else "no"
-    if n >= 80 and roi is not None and roi > 0 and clv is not None and clv > 0:
+        return "watch" if roi_pos and n >= 150 else "no"
+    if n >= 80 and roi_pos and clv_pos:
         return "ok"
-    if (roi is not None and roi > 0) or (clv is not None and clv > 0):
+    # beating the fair closing price is the reliable signal; profit alone needs a big sample
+    if clv_pos or (roi_pos and n >= 150):
         return "watch"
     return "no"
 
@@ -1278,7 +1280,9 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         for m in sorted(fx, key=lambda m: (m["d"], m.get("t") or "")):
             if m["h"] == m["a"]:
                 continue
-            priced.append(price_fixture(m, r, prev, prm, extra, code, now))
+            f = price_fixture(m, r, prev, prm, extra, code, now)
+            if dt.datetime.fromisoformat(f["ko"]) > now - dt.timedelta(hours=2):  # hide matches already played
+                priced.append(f)
         update_journal(journal, code, f"{country} · {name}", priced, played, now, grades)
         update_predictions(preds_log, code, priced, played, now)
         last = max((m["d"] for m in played), default=None)

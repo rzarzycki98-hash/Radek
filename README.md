@@ -43,32 +43,37 @@ Potem otwórz http://localhost:8000 w przeglądarce.
 
 Radek ([@rzarzycki98-hash](https://github.com/rzarzycki98-hash))
 
-## Linia Goli – over/under goli
+## Linia Goli – analiza meczów piłkarskich
 
-Aplikacja do analizy over/under goli w 5 czołowych ligach (Premier League, LaLiga, Serie A, Bundesliga, Ligue 1).
+Aplikacja do analizy meczów w 38 ligach: gole over/under i wynik 1X2.
 
 Adres: https://rzarzycki98-hash.github.io/Radek/gole/
 
-Działa sama: co 4 godziny GitHub Actions (`.github/workflows/linia-goli.yml`) pobiera wyniki i kursy
-z [football-data.co.uk](https://www.football-data.co.uk), przelicza model i zapisuje dane w folderze `gole/`.
+Działa sama. Co 4 godziny GitHub Actions (`.github/workflows/linia-goli.yml`) uruchamia `gole/engine.py`:
 
-- **Mecze**: prawdopodobieństwo over/under 1.5 / 2.5 / 3.5, oczekiwane gole, kursy bukmacherów i przewaga modelu.
-- **Ladbrokes i BetVictor**: kursy over/under 2.5 z [The Odds API](https://the-odds-api.com). Wymaga darmowego klucza
-  zapisanego jako sekret repozytorium `ODDS_API_KEY` (Settings → Secrets and variables → Actions). Bez klucza aplikacja
-  używa kursów Bet365. Kursy pobierane są co ok. 11 godzin, żeby zmieścić się w darmowym limicie.
-- **Rynek (porównanie bukmacherów)**: uczciwa szansa z rynku (Pinnacle albo mediana bukmacherów z UK, bez marży).
-  Gdy Ladbrokes albo BetVictor dają kurs wyższy o ponad 2%, typ zapisuje się sam w dzienniku „Rynek”.
-  Test na 5 sezonach (najlepszy kurs na rynku, przewaga > 2%): 449 zakładów, ok. +3%, z dużymi wahaniami między sezonami.
-- **Dziennik**: typy „na sucho”. Gdy model widzi przewagę powyżej 5% przy kursie Bet365, typ zapisuje się sam,
-  a po meczu sam się rozlicza (stawka 1 jednostka): zysk, ROI, porównanie z kursem zamknięcia.
-- **Model**: test na dwóch ostatnich pełnych sezonach, każdy mecz przewidziany tylko z wcześniejszych danych.
+1. **Dane:** wyniki i kursy z [football-data.co.uk](https://www.football-data.co.uk) (22 ligi z Europy z kilkoma poziomami
+   rozgrywek i 16 lig ze świata, w tym Ekstraklasa, Brazylia, MLS), terminarz i kursy bukmacherów z UK z
+   [The Odds API](https://the-odds-api.com) (sekret `ODDS_API_KEY`). Zakończone sezony pobierane są raz i trzymane w pamięci
+   podręcznej GitHuba. Płatne zapytania o kursy są dzielone tak, żeby zmieścić się w darmowym limicie (500 na miesiąc).
+2. **Nauka:** przy każdej aktualizacji model (Poisson z poprawką Dixona-Colesa, gole i strzały celne, starsze mecze ważą mniej)
+   sam dobiera ustawienia każdej ligi na jej najnowszych wynikach, a potem łączy swoje szanse z kursami rynku
+   w proporcji, która w danej lidze najlepiej się sprawdzała.
+3. **Uczciwy test:** każda liga jest sprawdzana na ostatnich sezonach w trybie „krok po kroku”: ustawienia dobierane są tylko
+   na danych sprzed sprawdzanego sezonu. Liczy się wynik zakładów i to, czy kurs był lepszy niż uczciwy kurs zamknięcia
+   (Pinnacle bez marży).
+4. **Bezpiecznik:** liga dostaje ocenę „Sprawdzona”, „Obiecująca”, „Nie bije rynku” albo „Za mało danych”. Gdy w dzienniku typy
+   przegrywają z kursem zamknięcia, liga sama się wyłącza.
+5. **Po meczu:** każdy wyceniony mecz rozlicza się sam (zakładka Wyniki), a typy na sucho w dzienniku (zakładka Typy).
 
-Uczciwie: w teście historycznym (sezony 2023/24–2025/26, ok. 4 300 meczów) model był mniej trafny niż kursy
-bukmacherów, a zakłady z „przewagą” traciły ok. 5–10% stawek. Dlatego typy są tylko na sucho.
-Pomoc przy problemach z hazardem: [BeGambleAware](https://www.begambleaware.org), GamCare 0808 8020 133.
+Uczciwie: w dużych ligach kursy bukmacherów są bardzo trafne i model zwykle ich nie pokonuje. Wszystkie typy są tylko na sucho,
+a aplikacja pokazuje wprost, gdzie działa, a gdzie nie. Pomoc przy problemach z hazardem:
+[BeGambleAware](https://www.begambleaware.org), GamCare 0808 8020 133.
 
 | Plik | Do czego służy |
 | --- | --- |
 | `gole/index.html` | aplikacja |
-| `gole/engine.py` | pobieranie danych, model, dziennik, test |
-| `gole/data.json`, `gole/journal.json` | dane tworzone automatycznie |
+| `gole/engine.py` | pobieranie danych, model, nauka, test lig, dziennik |
+| `gole/data.json` | mecze, typy i oceny lig (tworzone automatycznie) |
+| `gole/journal.json` | dziennik typów na sucho |
+| `gole/predictions.json` | wszystkie prognozy i ich rozliczenie po meczu |
+| `gole/odds_cache.json` | ostatnie kursy bukmacherów (żeby oszczędzać limit) |
