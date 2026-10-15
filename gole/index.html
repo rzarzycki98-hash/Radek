@@ -272,6 +272,24 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 .legend-w { gap: 8px; }
 .legend-w div { display: grid; grid-template-columns: 112px 1fr; gap: 8px; align-items: start; }
 .legend-w .wt { margin-top: 1px; }
+
+/* strong picks (high chance) */
+.wt.s { background: var(--win); color: #062716; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.tags .wt { margin: 0; }
+.row.s { box-shadow: inset 4px 0 0 var(--win); background: rgb(63 208 138 / .08); }
+.row.s.t2 { box-shadow: inset 4px 0 0 var(--win), inset 8px 0 0 var(--gold); }
+.row.t2:not(.s) { box-shadow: inset 4px 0 0 var(--gold); background: var(--gold-soft); }
+.px.sx { border-color: var(--win); color: var(--win); }
+.px.sx small { color: var(--win); }
+.sbox { border-color: var(--win); }
+.sbox .tips-h b { color: var(--win); }
+.tr .odds.sg { color: var(--win); }
+.tr .edge.mute { color: var(--muted); font-weight: 600; }
+.seg2.show { grid-template-columns: repeat(3, 1fr); }
+.seg2.show small { display: block; font-size: 11px; color: var(--muted); font-weight: 600; }
+.sbox .trow.more { color: var(--win); }
+.seg2 button[aria-pressed="true"] small { color: inherit; opacity: .7; }
 </style>
 </head>
 <body>
@@ -319,16 +337,16 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     few: "Za mało zakładów w teście, żeby coś ocenić.",
     off: "Bezpiecznik: w dzienniku typy przegrywały z kursem zamknięcia, więc liga jest wyłączona.",
   };
-  const st = { data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "matches", jstrat: "model", sortKey: "pts", sortDir: -1, day: null, only: false };
+  const st = { data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "matches", jstrat: "model", sortKey: "pts", sortDir: -1, day: null, show: "all" };
   try {
     const s = JSON.parse(localStorage.getItem("linia-goli-3") || "{}");
     if (MARKETS.includes(s.line)) st.line = s.line;
     if (s.league) st.league = s.league;
     if (["matches", "journal", "report", "leagues", "teams"].includes(s.tab)) st.tab = s.tab;
     if (s.jstrat === "model" || s.jstrat === "market") st.jstrat = s.jstrat;
-    st.only = !!s.only;
+    if (["all", "strong", "tips"].includes(s.show)) st.show = s.show;
   } catch (e) {}
-  const save = () => { try { localStorage.setItem("linia-goli-3", JSON.stringify({ line: st.line, league: st.league, tab: st.tab, jstrat: st.jstrat, only: st.only })); } catch (e) {} };
+  const save = () => { try { localStorage.setItem("linia-goli-3", JSON.stringify({ line: st.line, league: st.league, tab: st.tab, jstrat: st.jstrat, show: st.show })); } catch (e) {} };
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -411,36 +429,53 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     return (isX() || st.line === "2.5") ? bestTip(f, mkKey()) : null;
   }
 
-  // 2 = worth attention (model tip in a league that passed the test), 1 = only to watch (dry or market tip), 0 = nothing
-  function worth(f, L) {
+  // a strong pick: the most likely side is well above the usual level for this market
+  const STRONG = { "1X2": 0.65, "1.5": 0.82, "2.5": 0.65, "3.5": 0.80 };
+  function strong(f) {
+    const p = probs(f), i = p.indexOf(Math.max(...p));
+    return p[i] >= STRONG[st.line] ? i : -1;
+  }
+  function tipLevel(f, L) {  // 2 = tip in a league that passed the test, 1 = dry tip, 0 = none
     const tip = tipOf(f);
     if (!tip) return 0;
     return tip.strat === "model" && good(gradeOf(L)) ? 2 : 1;
   }
-  const WORTH = { 2: "Warte uwagi", 1: "Do obserwacji" };
+  const sideName = (i) => isX() ? ["1", "X", "2"][i] : [`Over ${st.line}`, `Under ${st.line}`][i];
+  function bestPrice(f, i) {
+    const mk = isX() ? "x" : st.line === "2.5" ? "ou" : null;
+    const b = mk && f.best && f.best[mk] && f.best[mk][i];
+    return b ? { odds: b[0], book: b[1] } : null;
+  }
 
   // one match = one row: time, teams, price tiles on the right (like a bookmaker list)
   function matchRow(f, L) {
-    const w = worth(f, L);
+    const sIdx = strong(f), tl = tipLevel(f, L), tip = tipOf(f);
     const p = probs(f);
     const mx = p.indexOf(Math.max(...p));
-    const tip = tipOf(f);
     const labels = isX() ? ["1", "X", "2"] : ["O", "U"];
-    return `<button class="row w${w}" data-id="${esc(f.id)}">
+    const tags = (sIdx >= 0 ? `<em class="wt s">Duża szansa: ${esc(sideName(sIdx))}</em>` : "") +
+      (tl ? `<em class="wt w${tl}">${tl === 2 ? "Typ" : "Typ na sucho"}</em>` : "");
+    return `<button class="row ${sIdx >= 0 ? "s" : ""} ${tl === 2 ? "t2" : ""} ${sIdx < 0 && !tl ? "w0" : ""}" data-id="${esc(f.id)}">
       <span class="rtime num">${esc(localTime(f))}</span>
-      <span class="rnames"><b>${esc(f.home)}</b><b>${esc(f.away)}</b>${w ? `<em class="wt w${w}">${WORTH[w]}</em>` : ""}</span>
-      <span class="rpx ${isX() ? "n3" : "n2"}">${p.map((v, i) => `<span class="px num ${i === mx ? "fav" : ""} ${tip && tip.t.side === i ? "val" : ""}"><i>${labels[i]}</i>${fairOdd(v)}<small>${pct(v)}</small></span>`).join("")}</span>
+      <span class="rnames"><b>${esc(f.home)}</b><b>${esc(f.away)}</b>${tags ? `<span class="tags">${tags}</span>` : ""}</span>
+      <span class="rpx ${isX() ? "n3" : "n2"}">${p.map((v, i) => `<span class="px num ${i === mx ? "fav" : ""} ${i === sIdx ? "sx" : ""} ${tip && tip.t.side === i ? "val" : ""}"><i>${labels[i]}</i>${fairOdd(v)}<small>${pct(v)}</small></span>`).join("")}</span>
+    </button>`;
+  }
+
+  function strongRow(f, L) {
+    const i = strong(f), p = probs(f)[i], bp = bestPrice(f, i);
+    return `<button class="trow" data-id="${esc(f.id)}">
+      <span class="tl"><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(localTime(f))}, ${esc(flag(L) + " " + L.name)}${bp ? `, najlepiej ${odd(bp.odds)} w ${esc(bp.book)}` : ""}</span></span>
+      <span class="tr num"><span class="side">${esc(sideName(i))}</span><span class="odds sg">${pct(p)}</span><span class="edge mute">kurs fair ${fairOdd(p)}</span></span>
     </button>`;
   }
 
   function tipRow(f, L) {
-    const tip = tipOf(f), t = tip.t, mk = mkKey();
-    const side = mk === "x" ? ["1", "X", "2"][t.side] : ["Over 2.5", "Under 2.5"][t.side];
-    const trusted = tip.strat === "model" && good(gradeOf(L, mk));
-    const w = trusted ? 2 : 1;
-    return `<button class="trow w${w}" data-id="${esc(f.id)}">
-      <span class="tl"><em class="wt w${w}">${WORTH[w]}</em><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(localTime(f))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}</span></span>
-      <span class="tr num"><span class="side">${side}</span><span class="odds">${odd(t.odds)}</span><span class="edge ${trusted ? "" : "dry"}">${pct1(t.edge)}</span></span>
+    const tip = tipOf(f), t = tip.t;
+    const tl = tipLevel(f, L);
+    return `<button class="trow w${tl}" data-id="${esc(f.id)}">
+      <span class="tl"><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(localTime(f))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}${tl === 2 ? "" : ", na sucho"}</span></span>
+      <span class="tr num"><span class="side">${esc(sideName(t.side).replace(st.line, "2.5"))}</span><span class="odds">${odd(t.odds)}</span><span class="edge ${tl === 2 ? "" : "dry"}">${pct1(t.edge)}</span></span>
     </button>`;
   }
 
@@ -463,21 +498,24 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     if (!all.length) return errorsNote() + `<div class="empty">Brak nadchodzących meczów. Terminarz pojawia się kilka dni przed kolejką, aplikacja pobierze go sama.</div>`;
     const days = [...new Set(all.map(([f]) => localDate(f)))];
     if (!days.includes(st.day)) st.day = days[0];
-    const now = new Date(), tm = new Date(Date.now() + 864e5);
     const iso = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
-    const today = iso(now), tomorrow = iso(tm);
+    const today = iso(new Date()), tomorrow = iso(new Date(Date.now() + 864e5));
     const dayFx = all.filter(([f]) => localDate(f) === st.day);
-    const nWorth = dayFx.filter(([f, L]) => worth(f, L) === 2).length;
-    const fx = st.only ? dayFx.filter(([f, L]) => worth(f, L) > 0) : dayFx;
-    const trust = ([f, L]) => tipOf(f).strat === "model" && good(gradeOf(L)) ? 1 : 0;
-    const tips = fx.filter(([f]) => tipOf(f)).sort((a, b) => (trust(b) - trust(a)) || (tipOf(b[0]).t.edge - tipOf(a[0]).t.edge));
+    const strongFx = dayFx.filter(([f]) => strong(f) >= 0).sort((a, b) => probs(b[0])[strong(b[0])] - probs(a[0])[strong(a[0])]);
+    const tipFx = dayFx.filter(([f]) => tipOf(f)).sort((a, b) => (tipLevel(b[0], b[1]) - tipLevel(a[0], a[1])) || (tipOf(b[0]).t.edge - tipOf(a[0]).t.edge));
+    const show = ["all", "strong", "tips"].includes(st.show) ? st.show : "all";
+    const fx = show === "strong" ? dayFx.filter(([f]) => strong(f) >= 0) : show === "tips" ? dayFx.filter(([f]) => tipOf(f)) : dayFx;
+    const dayName = st.day === today ? "dziś" : st.day === tomorrow ? "jutro" : "tego dnia";
     let out = errorsNote() + `<div class="days" role="group" aria-label="Dzień">${days.slice(0, 10).map((x) => {
       const n = all.filter(([f]) => localDate(f) === x).length;
       return `<button class="dchip" data-day="${x}" aria-pressed="${x === st.day}">${esc(dayLabel(x, today, tomorrow))}<small class="num">${n}</small></button>`;
     }).join("")}</div>`;
-    out += `<div class="seg2 show" role="group" aria-label="Pokaż"><button data-only="0" aria-pressed="${!st.only}">Wszystkie mecze ${dayFx.length}</button><button data-only="1" aria-pressed="${!!st.only}">Tylko z typem ${dayFx.filter(([f]) => tipOf(f)).length}</button></div>`;
-    if (tips.length) out += `<div class="tips"><div class="tips-h"><b>Typy ${st.day === today ? "na dziś" : "tego dnia"}</b><span class="meta">${nWorth ? `${nWorth} wartych uwagi` : "brak wartych uwagi"}</span></div>${tips.slice(0, 5).map(([f, L]) => tipRow(f, L)).join("")}${tips.length > 5 ? `<button class="trow more" data-tab="journal">Wszystkie typy (${tips.length}) w zakładce Typy</button>` : ""}</div>`;
-    // group by league, leagues in kick-off order
+    out += `<div class="seg2 show" role="group" aria-label="Pokaż">
+      <button data-show="all" aria-pressed="${show === "all"}">Wszystkie <small>${dayFx.length}</small></button>
+      <button data-show="strong" aria-pressed="${show === "strong"}">Duża szansa <small>${strongFx.length}</small></button>
+      <button data-show="tips" aria-pressed="${show === "tips"}">Typy <small>${tipFx.length}</small></button></div>`;
+    if (strongFx.length && show !== "tips") out += `<div class="tips sbox"><div class="tips-h"><b>Najpewniejsze ${dayName}</b><span class="meta">szansa wg modelu</span></div>${strongFx.slice(0, 5).map(([f, L]) => strongRow(f, L)).join("")}${strongFx.length > 5 && show !== "strong" ? `<button class="trow more" data-show="strong">Pokaż wszystkie (${strongFx.length})</button>` : ""}</div>`;
+    if (tipFx.length && show !== "strong") out += `<div class="tips"><div class="tips-h"><b>Kursy z przewagą</b><span class="meta">kurs wyższy niż szansa</span></div>${tipFx.slice(0, 3).map(([f, L]) => tipRow(f, L)).join("")}${tipFx.length > 3 && show !== "tips" ? `<button class="trow more" data-show="tips">Pokaż wszystkie (${tipFx.length})</button>` : ""}</div>`;
     const groups = [];
     for (const [f, L] of fx) {
       let g = groups.find((x) => x.L === L);
@@ -488,10 +526,11 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     out += groups.map(({ L, rows }) => `<section class="lgrp">
       <div class="lgh"><span class="ln">${esc(flag(L))} ${esc(L.country)} <b>${esc(L.name)}</b>${good(gradeOf(L)) ? ` <span class="ok-l" title="${GRADE[gradeOf(L)]}">✓</span>` : ""}</span><span class="cols ${isX() ? "n3" : "n2"}">${head.map((h) => `<span>${h}</span>`).join("")}</span></div>
       ${rows.map((f) => matchRow(f, L)).join("")}</section>`).join("");
-    if (!groups.length) out += `<div class="empty">Tego dnia nie ma meczów z typem. Wybierz inny dzień albo pokaż wszystkie mecze.</div>`;
-    return out + `<div class="card legend-w"><div><em class="wt w2">Warte uwagi</em><span class="note">Typ modelu w lidze, która przeszła test na historii. Na tym warto się skupić.</span></div>
-      <div><em class="wt w1">Do obserwacji</em><span class="note">Kurs wygląda na zawyżony, ale liga nie przeszła testu albo typ wynika tylko z porównania bukmacherów. Zapisywany na sucho.</span></div>
-      <div><span class="wt w0">Bez oznaczenia</span><span class="note">Model nie widzi przewagi. Kafelki pokazują uczciwy kurs i szansę.</span></div></div>`;
+    if (!groups.length) out += `<div class="empty">Tego dnia nie ma takich meczów. Wybierz inny dzień albo „Wszystkie”.</div>`;
+    return out + `<div class="card legend-w">
+      <div><em class="wt s">Duża szansa</em><span class="note">Najbardziej prawdopodobny wynik ma co najmniej ${pct(STRONG[st.line])} szans (próg zależy od rynku). Kurs u bukmachera będzie wtedy niski.</span></div>
+      <div><em class="wt w2">Typ</em><span class="note">Kurs u bukmachera jest wyższy, niż wynika z szansy, w lidze, która przeszła test na historii.</span></div>
+      <div><em class="wt w1">Typ na sucho</em><span class="note">To samo, ale w lidze, która testu nie przeszła. Tylko do obserwacji.</span></div></div>`;
   }
 
   // ---------------------------------------------------------------- journal
@@ -715,10 +754,10 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   function closeSheet() { $("sheet").hidden = true; $("scrim").hidden = true; document.body.style.overflow = ""; }
 
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-only],[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],#close,#scrim");
+    const t = e.target.closest("[data-show],[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],#close,#scrim");
     if (!t) return;
     if (t.id === "close" || t.id === "scrim") return closeSheet();
-    if (t.dataset.only) { st.only = t.dataset.only === "1"; save(); render(); }
+    if (t.dataset.show) { st.show = t.dataset.show; save(); render(); }
     else if (t.dataset.day) { st.day = t.dataset.day; render(); }
     else if (t.dataset.league) { st.league = t.dataset.league; save(); render(); }
     else if (t.dataset.line) { st.line = t.dataset.line; save(); render(); }
