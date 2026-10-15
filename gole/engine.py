@@ -412,6 +412,15 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
             "teams": {t: team_stats(played, t, mod) for t in sorted(teams_of(cur) | teams_of(fx))},
             "fixtures": priced, "backtest": bt,
         })
+    if fixtures_all is not None:  # diagnostics: what the upcoming-fixtures file contained
+        diag = {}
+        for m in fixtures_all:
+            x = diag.setdefault(m["div"] or "?", {"rows": 0, "first": None, "last": None})
+            x["rows"] += 1
+            ds = m["d"].isoformat()
+            x["first"] = min(x["first"] or ds, ds); x["last"] = max(x["last"] or ds, ds)
+        out["fixtures_file"] = {k: diag[k] for k in sorted(diag) if k in {c for c, *_ in LEAGUES}}
+        out["fixtures_file_rows"] = len(fixtures_all)
     journal["summary"] = journal_summary(journal)
     journal["updated"] = now_iso
     out["journal_summary"] = journal["summary"]
