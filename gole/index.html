@@ -305,6 +305,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 .fi { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-weight: 800; font-size: 12px; }
 .fac.y .fi { background: var(--win); color: #062716; } .fac.n .fi { background: var(--loss); color: #fff; } .fac.z .fi { background: var(--raised); color: var(--muted); }
 .fl { font-size: 12px; font-weight: 700; color: var(--muted); text-align: right; white-space: nowrap; }
+.fl small { display: block; font-weight: 500; font-size: 11px; color: var(--muted); }
 .fac.y .fl { color: var(--win); } .fac.n .fl { color: var(--loss); }
 .btn { border: 0; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 11px 14px; font-size: 15px; font-weight: 700; }
 .btn.ghost { background: var(--raised); color: var(--ink); border: 1px solid var(--line); }
@@ -341,7 +342,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 <main><div class="wrap" id="view"></div></main>
 
 <footer><div class="wrap">
-  <div>Ocena statystyk: model goli i strzałów celnych, tabela, forma, wyniki u siebie i na wyjeździe, bilans bramek i mecze bezpośrednie. Przy każdej aktualizacji model sam dobiera ustawienia każdej ligi na najnowszych wynikach.</div>
+  <div>Ocena statystyk: model goli i strzałów celnych, tabela, forma, wyniki u siebie i na wyjeździe, bilans bramek i mecze bezpośrednie. Przy każdej aktualizacji aplikacja sama na nowo wylicza, ile każda statystyka waży w danej lidze.</div>
   <div>Dane: football-data.co.uk (38 lig) i The Odds API (bukmacherzy z UK), co 4 godziny.</div>
   <div>To narzędzie do analizy, nie porada. Typy są zapisywane na sucho. Graj tylko za pieniądze, które możesz stracić. Pomoc: BeGambleAware.org, GamCare 0808 8020 133.</div>
 </div></footer>
@@ -399,6 +400,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   const L_ = (code) => st.data.leagues.find((L) => L.code === code);
   const flag = (L) => FLAG[L.country] || "";
   const lname = (L) => `${L.country}, ${L.name}`;
+  const nm = (L, n) => (L && L.names && L.names[n]) || n;
   const gradeOf = (L, mk) => L.grade && L.grade[mk || mkKey()];
   const good = (g) => g === "ok" || g === "watch";
   const badge = (g) => g ? `<span class="g ${g}">${GRADE[g]}</span>` : `<span class="g none">Bez testu</span>`;
@@ -427,7 +429,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     </select></label>`;
     $("filters").innerHTML =
       `<button class="chip" data-league="ALL" aria-pressed="${st.league === "ALL"}">Wszystkie</button>` +
-      `<button class="chip" data-league="BEST" aria-pressed="${st.league === "BEST"}">Polecane <span class="n">${nBest}</span></button>` + sel;
+      sel;
     $("lines").innerHTML = MARKETS.map((l) => `<button data-line="${l}" aria-pressed="${l === st.line}">${l === "1X2" ? "1X2" : "Gole " + l}</button>`).join("");
     document.querySelectorAll(".nav [data-tab]").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === st.tab)));
   }
@@ -440,8 +442,8 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 
   // tiles show the statistics model alone (goals, shots on target, recent form), no bookmaker input
   function probs(f) {
-    if (isX()) return f.x12;
-    const o = f.over[st.line];
+    if (isX()) return (f.stats && f.stats.px) || f.x12;
+    const o = st.line === "2.5" && f.stats && f.stats.po != null ? f.stats.po : f.over[st.line];
     return [o, 1 - o];
   }
   function tipOf(f) {
@@ -481,17 +483,17 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       (mine ? `<em class="wt mine">Obstawiony</em>` : "");
     return `<button class="row ${lv ? "s" + lv : "w0"}" data-id="${esc(f.id)}">
       <span class="rtime num">${esc(localTime(f))}</span>
-      <span class="rnames"><b>${esc(f.home)}</b><b>${esc(f.away)}</b>${tags ? `<span class="tags">${tags}</span>` : ""}</span>
+      <span class="rnames"><b>${esc(nm(L, f.home))}</b><b>${esc(nm(L, f.away))}</b>${tags ? `<span class="tags">${tags}</span>` : ""}</span>
       <span class="rpx ${isX() ? "n3" : "n2"}">${p.map((x, i) => `<span class="px num ${i === mx ? "fav" : ""} ${lv && i === v.side ? "sx" : ""} ${st.show === "tips" && tip && tip.t.side === i ? "val" : ""}"><i>${labels[i]}</i>${fairOdd(x)}<small>${pct(x)}</small></span>`).join("")}</span>
     </button>`;
   }
 
   const when = (f, withDay) => withDay ? `${dayLabel(localDate(f), isoDay(new Date()), isoDay(new Date(Date.now() + 864e5)))} ${localTime(f)}` : localTime(f);
   function worthRow(f, L, withDay) {
-    const v = verdict(f), p = probs(f)[v.side], bp = bestPrice(f, v.side);
+    const v = verdict(f), p = v.p != null ? v.p : probs(f)[v.side], bp = bestPrice(f, v.side);
     const why = v.simple ? `model ${pct(p)}` : `${v.agree} z ${v.n} statystyk za${v.against ? `, ${v.against} przeciw` : ""}`;
     return `<button class="trow" data-id="${esc(f.id)}">
-      <span class="tl"><em class="wt s${v.level}">${LEVEL[v.level]}</em><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(when(f, withDay))}, ${esc(flag(L) + " " + L.name)}, ${esc(why)}${bp ? `, kurs ${odd(bp.odds)} (${esc(bp.book)})` : ""}</span></span>
+      <span class="tl"><em class="wt s${v.level}">${LEVEL[v.level]}</em><b>${esc(nm(L, f.home))} – ${esc(nm(L, f.away))}</b><span class="meta">${esc(when(f, withDay))}, ${esc(flag(L) + " " + L.name)}, ${esc(why)}${bp ? `, kurs ${odd(bp.odds)} (${esc(bp.book)})` : ""}</span></span>
       <span class="tr num"><span class="side">${esc(sideName(v.side))}</span><span class="odds sg">${pct(p)}</span></span>
     </button>`;
   }
@@ -499,7 +501,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   function tipRow(f, L, withDay) {
     const tip = tipOf(f), t = tip.t, tl = tipLevel(f, L);
     return `<button class="trow w${tl}" data-id="${esc(f.id)}">
-      <span class="tl"><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(when(f, withDay))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}${tl === 2 ? "" : ", na sucho"}</span></span>
+      <span class="tl"><b>${esc(nm(L, f.home))} – ${esc(nm(L, f.away))}</b><span class="meta">${esc(when(f, withDay))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}${tl === 2 ? "" : ", na sucho"}</span></span>
       <span class="tr num"><span class="side">${esc(sideName(t.side, "2.5"))}</span><span class="odds">${odd(t.odds)}</span><span class="edge ${tl === 2 ? "" : "dry"}">${pct1(t.edge)}</span></span>
     </button>`;
   }
@@ -560,8 +562,8 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     }).join("");
     if (!groups.length) out += `<div class="empty">${allDays ? "Nie ma takich meczów" : "Tego dnia nie ma takich meczów"}. Wybierz „Wszystkie”${allDays ? "" : " albo inny dzień"}.</div>`;
     return out + `<div class="card legend-w">
-      <div><em class="wt s2">Warte uwagi</em><span class="note">Model daje wyraźną przewagę i co najmniej 4 statystyki wskazują to samo (tabela, forma, u siebie i na wyjeździe, bramki, mecze bezpośrednie), żadna przeciw.</span></div>
-      <div><em class="wt s1">Możliwe</em><span class="note">Przewaga mniejsza albo statystyki mniej zgodne.</span></div>
+      <div><em class="wt s2">Warte uwagi</em><span class="note">Statystyki dają temu wynikowi co najmniej 62% szans. Liczą się model goli i strzałów, tabela, forma, wyniki u siebie i na wyjeździe, bilans bramek oraz mecze bezpośrednie, a każda z wagą, którą aplikacja sama wyliczyła na historii tej ligi.</span></div>
+      <div><em class="wt s1">Możliwe</em><span class="note">Szansa mniejsza: 1X2 od 52%, gole od 56%.</span></div>
       <div><span class="wt w0">Bez oznaczenia</span><span class="note">Statystyki nie wskazują wyraźnie jednej strony.</span></div>
       <p class="note">Liczby w kafelkach to szansa wg samych statystyk i odpowiadający jej kurs fair. Dotknij meczu, żeby zobaczyć pełną analizę.</p></div>`;
   }
@@ -713,7 +715,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       const os = sv && sv[3] ? `gole ${LEVEL[sv[3]].toLowerCase()}: ${sv[2] === 0 ? "over" : "under"} 2.5 <span class="hit ${(sv[2] === 0) === over ? "y" : "n"}">${(sv[2] === 0) === over ? "✓" : "✗"}</span>` : "";
       const fx = p.m_x, top = fx.indexOf(Math.max(...fx));
       const plain = `model: ${["1", "X", "2"][top]} ${pct(fx[top])} <span class="hit ${top === res ? "y" : "n"}">${top === res ? "✓" : "✗"}</span>`;
-      return `<div class="rrow num"><span><b>${esc(p.home)} – ${esc(p.away)}</b></span><span class="sc">${hg}:${ag}</span>
+      return `<div class="rrow num"><span><b>${esc(nm(L, p.home))} – ${esc(nm(L, p.away))}</b></span><span class="sc">${hg}:${ag}</span>
         <span class="meta">${esc(shortFmt.format(d(p.date)))}${codes.length > 1 && L ? ", " + esc(flag(L) + " " + L.name) : ""}<br>${[xs, os].filter(Boolean).join(", ") || plain}</span></div>`;
     }).join("")}</div>`;
     return out;
@@ -743,6 +745,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       <h3>${esc(flag(L) + " " + lname(L))}</h3>
       <dl class="kv num"><dt>Gole na mecz w sezonie</dt><dd>${L.goals_pg ?? "—"}</dd><dt>Over 2.5 / wygrane gospodarzy</dt><dd>${pct(L.o25_rate)} / ${pct(L.home_rate)}</dd>
       ${st2("x", "„Warte uwagi” 1X2 trafione")}${L.extra ? "" : st2("ou", "„Warte uwagi” gole trafione")}
+      ${L.learn_ll && L.learn_ll.x_learn != null ? `<dt>Błąd prognoz 1X2: model / z wagami / bukmacherzy</dt><dd>${L.learn_ll.x_model} / ${L.learn_ll.x_learn} / ${L.learn_ll.x_close}</dd>` : ""}
       <dt>Test: sezony / mecze</dt><dd>${t.tested_seasons || 0} / ${t.matches || 0}</dd>
       <dt>Pamięć modelu</dt><dd>${p.half_life ? Math.round(p.half_life) + " dni" : "—"}</dd></dl>
       ${mkRows("x", "Wynik 1X2")}${L.extra ? "" : mkRows("ou", "Gole over/under 2.5")}
@@ -768,7 +771,9 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     if (ls.length > 1) return `<div class="empty">Wybierz jedną ligę u góry, żeby zobaczyć tabelę drużyn.</div>`;
     const L = ls[0];
     if (!L) return `<div class="empty">Brak ligi.</div>`;
-    const rows = Object.entries(L.teams).map(([name, t]) => ({ name, ...t, o25p: t.gp ? t.o25 / t.gp : 0, bttsp: t.gp ? t.btts / t.gp : 0, gd: t.gf - t.ga }));
+    const det = DETV[L.code];
+    if (!det) { detail(L.code).then(() => { if (st.tab === "teams") render(); }).catch(() => {}); return `<div class="empty">Wczytuję tabelę…</div>`; }
+    const rows = Object.entries(det.teams).map(([name, t]) => ({ name: nm(L, name), ...t, o25p: t.gp ? t.o25 / t.gp : 0, bttsp: t.gp ? t.btts / t.gp : 0, gd: t.gf - t.ga }));
     const k = st.sortKey;
     rows.sort((a, b) => st.sortDir * ((a[k] > b[k]) - (a[k] < b[k])) || (b.gd - a.gd) || a.name.localeCompare(b.name));
     const th = (key, label) => `<th class="sortable" data-sort="${key}"${k === key ? ` aria-sort="${st.sortDir < 0 ? "descending" : "ascending"}"` : ""}>${label}${k === key ? (st.sortDir < 0 ? " ↓" : " ↑") : ""}</th>`;
@@ -785,16 +790,16 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   }
 
   // ---------------------------------------------------------------- match detail
-  function formBlock(L, key) {
-    const t = L.teams[key];
+  function formBlock(L, det, key) {
+    const t = det && det.teams && det.teams[key];
     if (!t) return "";
-    return `<div class="card"><h3>${esc(key)}</h3>
+    return `<div class="card"><h3>${esc(nm(L, key))}</h3>
       <dl class="kv num"><dt>Bilans (W-R-P), punkty</dt><dd>${t.w ?? "—"}-${t.dr ?? "—"}-${t.gp - (t.w || 0) - (t.dr || 0)}, ${t.pts ?? "—"} pkt</dd>
       <dt>Bramki zdobyte / stracone</dt><dd>${t.gf} / ${t.ga} w ${t.gp} m.</dd>
       <dt>Over 2.5 u siebie / na wyjeździe</dt><dd>${t.o25h[0]}/${t.o25h[1]}, ${t.o25a[0]}/${t.o25a[1]}</dd>
       <dt>Atak / obrona</dt><dd>${t.att.toFixed(2)} / ${t.def.toFixed(2)}</dd></dl>
       <div class="form">${t.form.slice().reverse().map((m) => `<div class="form-row num"><span class="res ${m.res}">${m.res === "W" ? "W" : m.res === "D" ? "R" : "P"}</span>
-        <span class="opp">${m.home ? "" : "@ "}${esc(m.opp)} <span class="meta">${esc(shortFmt.format(d(m.date)))}</span></span>
+        <span class="opp">${m.home ? "" : "@ "}${esc(nm(L, m.opp))} <span class="meta">${esc(shortFmt.format(d(m.date)))}</span></span>
         <span>${m.gf}:${m.ga}</span><span class="tot ${m.gf + m.ga > 2 ? "o" : "u"}">${m.gf + m.ga > 2 ? "O" : "U"}</span></div>`).join("") || `<div class="meta">Brak meczów w tym sezonie.</div>`}</div></div>`;
   }
 
@@ -821,25 +826,27 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     return fn ? fn() : [f.k, ""];
   }
 
-  function analysisCard(f, mk) {
+  function analysisCard(f, mk, L) {
     const v = f.stats && f.stats[mk];
-    if (!v) return "";
+    if (!v || !v.f) return "";
     const lean = mk === "x" ? (v.side === 0 ? "h" : "a") : (v.side === 0 ? "o" : "u");
     const other = { h: "a", a: "h", o: "u", u: "o" }[lean];
-    const sideTxt = mk === "x" ? `${["1", "X", "2"][v.side]} (${v.side === 0 ? esc(f.home) : esc(f.away)})` : `${v.side === 0 ? "Over" : "Under"} 2.5`;
+    const sideTxt = mk === "x" ? `${["1", "X", "2"][v.side]} (${v.side === 0 ? esc(nm(L, f.home)) : esc(nm(L, f.away))})` : `${v.side === 0 ? "Over" : "Under"} 2.5`;
     const leanTxt = (l) => mk === "x" ? (l === "h" ? "1" : "2") : (l === "o" ? "over" : "under");
     const cnt = (l) => v.f.filter((x) => x.l === l).length;
     const split = mk === "x" ? `${cnt("h")} za 1, ${cnt("a")} za 2` : `${cnt("o")} za over, ${cnt("u")} za under`;
-    const head = v.level ? `<em class="wt s${v.level}">${LEVEL[v.level]}</em> <b>${sideTxt}</b>` : `<span class="note">Statystyki nie wskazują wyraźnie jednej strony (${split}).</span>`;
+    const pTxt = v.p != null ? `, szansa wg statystyk ${pct(v.p)}` : "";
+    const head = v.level ? `<em class="wt s${v.level}">${LEVEL[v.level]}</em> <b>${sideTxt}</b><span class="note">${pTxt}</span>` : `<span class="note">Statystyki nie wskazują wyraźnie jednej strony (${split}${pTxt ? `; najwyżej ${sideTxt}${pTxt}` : ""}).</span>`;
+    const infl = (c) => c == null ? "" : Math.abs(c) >= 0.25 ? "duży wpływ" : Math.abs(c) >= 0.08 ? "średni wpływ" : "mały wpływ";
     return `<div class="card"><h3>Analiza statystyk: ${mk === "x" ? "wynik 1X2" : "gole 2.5"}</h3>
       <div>${head}</div>
       <div class="factors">${v.f.map((x) => {
         const [label, val] = factorText(mk, x) || [x.k, ""];
         const cls = x.l === lean ? "y" : x.l === other ? "n" : "z";
         const icon = cls === "y" ? "✓" : cls === "n" ? "✗" : "–";
-        return `<div class="fac ${cls}"><span class="fi">${icon}</span><span><b>${label}</b><span class="meta">${val}</span></span><span class="fl">${x.l ? "za " + leanTxt(x.l) : "obojętne"}</span></div>`;
+        return `<div class="fac ${cls}"><span class="fi">${icon}</span><span><b>${label}</b><span class="meta">${val}</span></span><span class="fl">${x.l ? "za " + leanTxt(x.l) : "obojętne"}${x.c != null && x.l ? `<small>${infl(x.c)}</small>` : ""}</span></div>`;
       }).join("")}</div>
-      <p class="note">${v.level ? `${v.agree} z ${v.n} statystyk wskazuje ${sideTxt}, ${v.against} przeciw. ` : ""}W każdym wierszu najpierw ${esc(f.home)}, potem ${esc(f.away)}.</p>
+      <p class="note">${v.agree} z ${v.n} statystyk wskazuje ${sideTxt}, ${v.against} przeciw. W każdym wierszu najpierw ${esc(nm(L, f.home))}, potem ${esc(nm(L, f.away))}. „Wpływ” to waga, którą aplikacja sama wyliczyła na historii tej ligi.</p>
     </div>`;
   }
 
@@ -890,22 +897,23 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     </div>`;
   }
 
-  function openSheet(f, L, keepScroll) {
-    st.sheet = { f, L };
+  function openSheet(f, L, keepScroll, det) {
+    det = det || (st.sheet && st.sheet.det);
+    st.sheet = { f, L, det };
     const lineNum = isX() ? 2.5 : parseFloat(st.line);
-    const mx = Math.max(...f.dist);
+    const mx = f.dist ? Math.max(...f.dist) : 1;
     const scrollTop = $("sheet").scrollTop;
     const first = isX() ? "x" : "ou";
     $("sheet").innerHTML = `<div class="sheet-head"><div class="wrap">
       <div class="grab" aria-hidden="true"></div>
       <div class="sheet-top"><span>${esc(flag(L) + " " + lname(L))}, ${esc(dayFmt.format(d(localDate(f))))} ${esc(localTime(f))}</span><button class="close" id="close">Zamknij</button></div>
-      <div class="scoreline num"><div class="t" id="sheet-title">${esc(f.home)}<small>xG ${f.xg[0].toFixed(2)}</small></div><div class="x">${(f.xg[0] + f.xg[1]).toFixed(2)}<small>xG razem</small></div><div class="t">${esc(f.away)}<small>xG ${f.xg[1].toFixed(2)}</small></div></div>
+      <div class="scoreline num"><div class="t" id="sheet-title">${esc(nm(L, f.home))}<small>xG ${f.xg[0].toFixed(2)}</small></div><div class="x">${(f.xg[0] + f.xg[1]).toFixed(2)}<small>xG razem</small></div><div class="t">${esc(nm(L, f.away))}<small>xG ${f.xg[1].toFixed(2)}</small></div></div>
     </div></div>
     <main><div class="wrap">
-      ${analysisCard(f, first)}${analysisCard(f, first === "x" ? "ou" : "x")}
+      ${analysisCard(f, first, L)}${analysisCard(f, first === "x" ? "ou" : "x", L)}
       ${betForm(f)}
-      <div class="two">${formBlock(L, f.home)}${formBlock(L, f.away)}</div>
-      <div class="card"><h3>Rozkład liczby goli</h3>
+      <div class="two">${formBlock(L, det, f.home)}${formBlock(L, det, f.away)}</div>
+      ${f.dist ? `<div class="card"><h3>Rozkład liczby goli</h3>
         <div class="dist num">${f.dist.map((p, g) => `<div><b>${Math.round(p * 100)}%</b><span class="col ${g > lineNum ? "o" : ""}" style="height:${(p / mx * 100).toFixed(1)}%"></span><span>${g === 7 ? "7+" : g}</span></div>`).join("")}</div>
         <div class="legend"><span style="--c:var(--under)">Under ${lineNum}</span><span style="--c:var(--over)">Over ${lineNum}</span></div>
       </div>
@@ -919,7 +927,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       <div class="card"><h3>Najbardziej prawdopodobne wyniki</h3>
         <div class="scores num">${f.scores.map(([s, p]) => `<span>${s}<small>${(p * 100).toFixed(1)}%</small></span>`).join("")}</div>
       </div>
-      ${priceBlock(f, first)}${priceBlock(f, first === "x" ? "ou" : "x")}
+      ${priceBlock(f, first)}${priceBlock(f, first === "x" ? "ou" : "x")}` : `<div class="empty">Szczegóły tego meczu pojawią się po następnej aktualizacji.</div>`}
     </div></main>`;
     $("sheet").hidden = false; $("scrim").hidden = false;
     document.body.style.overflow = "hidden";
@@ -941,7 +949,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     const agree = v && v.level ? v.side === fm.side : null;
     const code = id.split("|")[0];
     BETS.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), match: id, league: code, date: f.date, ko: f.ko,
-      home: f.home, away: f.away, mkt: fm.mkt, line: fm.mkt === "x" ? null : fm.line, side: fm.side, odds: oddsV, stake, book, agree, added: new Date().toISOString() });
+      home: nm(st.sheet.L, f.home), away: nm(st.sheet.L, f.away), mkt: fm.mkt, line: fm.mkt === "x" ? null : fm.line, side: fm.side, odds: oddsV, stake, book, agree, added: new Date().toISOString() });
     st.lastBook = book;
     if (!saveBets(BETS)) { BETS.pop(); return msg("Nie udało się zapisać w pamięci telefonu. Sprawdź, czy przeglądarka nie jest w trybie incognito."); }
     st.form = { mkt: fm.mkt, line: fm.line, side: null };
@@ -996,7 +1004,11 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     else if (ds.id) {
       const L = L_(ds.id.split("|")[0]);
       const f = L && L.fixtures.find((x) => x.id === ds.id);
-      if (f) { st.form = null; openSheet(f, L); }
+      if (f) {
+        st.form = null;
+        detail(L.code).then((det) => openSheet(Object.assign({}, f, det.fixtures[f.id] || {}), L, false, det))
+          .catch(() => alert("Nie udało się wczytać szczegółów meczu. Sprawdź internet i spróbuj jeszcze raz."));
+      }
     }
   });
   document.addEventListener("change", (e) => {
@@ -1005,6 +1017,11 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("sheet").hidden) closeSheet(); });
 
   const get = (u) => fetch(u, { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  const DET = {}, DETV = {};  // league details (prices, factors, team tables) load on demand
+  function detail(code) {
+    if (!DET[code]) DET[code] = get(`liga/${code}.json?v=${encodeURIComponent(st.data.generated)}`).then((d) => (DETV[code] = d)).catch((e) => { delete DET[code]; throw e; });
+    return DET[code];
+  }
   Promise.all([get("data.json"), get("journal.json").catch(() => null)]).then(([data, journal]) => {
     st.data = data; st.journal = journal;
     if (!["ALL", "BEST"].includes(st.league) && !data.leagues.some((L) => L.code === st.league)) st.league = "ALL";

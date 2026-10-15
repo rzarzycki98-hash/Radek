@@ -628,7 +628,7 @@ def evaluate_league(seasons, extra, use_sot):
                 "ll": {k: r4(ll["x_" + k] / ll["n_x"]) for k in ("model", "blend", "close")} if ll["n_x"] else None}
     out["grade"] = {"ou": None if extra else grade(res_["ou_one"], False), "x": grade(res_["x_one"], extra)}
     combo = live["combo"] if live else GRID.index((DEFAULT["half_life"], DEFAULT["prior"]))
-    out["stats_test"] = stats_test(seasons, preds_by_combo[combo], extra)
+    out["_preds"] = preds_by_combo[combo]
     return out
 
 
@@ -755,38 +755,195 @@ def stats_verdict(h, a, S, meetings, px, pover):
     return {"x": vx, "ou": vo}
 
 
-def stats_test(seasons, preds, extra):
-    """How often the statistics verdicts came true in the last seasons (walk-forward, no peeking)."""
-    out = {mk: {lv: [0, 0, 0.0, 0] for lv in ("2", "1")} for mk in ("x", "ou")}  # n, hits, market prob sum, market n
-    meetings = {}
-    first_test = max(1, len(seasons) - 3)
-    for si, rows in enumerate(seasons):
+# ---------------------------------------------------------------- learned weights for the statistics
+#
+# Not every statistic matters equally. On the history of all leagues the app learns how much each
+# one really predicts (logistic regression), then adjusts the weights to each league. The test is
+# walk-forward: a season is always judged by weights learned only on the seasons before it.
+
+import numpy as np
+
+LEARN_T = {"x": (0.62, 0.52), "ou": (0.62, 0.56)}   # probability for "worth attention" / "possible"
+X_KEYS = ["model", "table", "gd", "form", "venue", "h2h"]
+O_KEYS = ["model", "venue", "gpg", "last5", "btts", "h2h"]
+
+
+def feat_x(h, a, S, meet, px):
+    th, ta = S.t.get(h), S.t.get(a)
+    x = [math.log(max(px[0], 1e-4) / max(px[2], 1e-4)), 0.0, 0.0, 0.0, 0.0, 0.0]
+    if th and ta and th.gp >= 4 and ta.gp >= 4:
+        rk, n = S.ranks((h, a))
+        x[1] = (rk[a] - rk[h]) / max(n, 2)
+        x[2] = max(-3.0, min(3.0, (th.gf - th.ga) / th.gp - (ta.gf - ta.ga) / ta.gp))
+    if th and ta and len(th.last) >= 3 and len(ta.last) >= 3:
+        x[3] = (sum(p for p, _ in th.last) / len(th.last) - sum(p for p, _ in ta.last) / len(ta.last)) / 3
+    if th and ta and th.h_gp >= 2 and ta.a_gp >= 2:
+        x[4] = (th.h_pts / th.h_gp - ta.a_pts / ta.a_gp) / 3
+    if len(meet) >= 3:
+        wh = sum(1 for m in meet if (m["h"] == h and m["hg"] > m["ag"]) or (m["a"] == h and m["ag"] > m["hg"]))
+        wa = sum(1 for m in meet if (m["h"] == a and m["hg"] > m["ag"]) or (m["a"] == a and m["ag"] > m["hg"]))
+        x[5] = (wh - wa) / len(meet)
+    return x
+
+
+def feat_ou(h, a, S, meet, pover):
+    th, ta = S.t.get(h), S.t.get(a)
+    x = [logit(pover), 0.0, 0.0, 0.0, 0.0, 0.0]
+    if th and ta and th.h_gp >= 2 and ta.a_gp >= 2:
+        x[1] = (th.h_o25 / th.h_gp + ta.a_o25 / ta.a_gp) / 2 - 0.5
+    if th and ta and th.gp >= 4 and ta.gp >= 4:
+        x[2] = ((th.gf + th.ga) / th.gp + (ta.gf + ta.ga) / ta.gp) / 2 - 2.7
+        x[4] = (th.btts / th.gp + ta.btts / ta.gp) / 2 - 0.5
+    if th and ta and len(th.last) + len(ta.last) >= 6:
+        x[3] = (sum(o for _, o in th.last) + sum(o for _, o in ta.last)) / (len(th.last) + len(ta.last)) - 0.5
+    if len(meet) >= 3:
+        x[5] = (sum(m["hg"] + m["ag"] for m in meet) / len(meet) - 2.7) / 1.5
+    return x
+
+
+def build_rows(seasons, preds):
+    """Feature rows for every finished match that had a model prediction, seen as of its kick-off."""
+    rows, meetings = [], {}
+    S_ = len(seasons)
+    for si, srows in enumerate(seasons):
         S = SeasonState()
-        played = [m for m in rows if m["hg"] is not None]
+        played = [m for m in srows if m["hg"] is not None]
         i = 0
         while i < len(played):
             day = [m for m in played[i:] if m["d"] == played[i]["d"]]
             for m in day:
                 p = preds.get(id(m))
-                if si < first_test or p is None:
+                if p is None:
                     continue
-                v = stats_verdict(m["h"], m["a"], S, meetings.get(h2h_key(m["h"], m["a"]), []), p[1], p[0])
-                res, over = result_idx(m), m["hg"] + m["ag"] > 2
-                for mk, hit, q in (("x", v["x"]["side"] == res, demargin(m["xc"].get("P") or m["xc"].get("Avg"))),
-                                   ("ou", (v["ou"]["side"] == 0) == over, None if extra else demargin(m["ouc"].get("P") or m["ouc"].get("Avg")))):
-                    lv = v[mk]["level"]
-                    if not lv or (mk == "ou" and extra):
-                        continue
-                    a = out[mk][str(lv)]
-                    a[0] += 1; a[1] += hit
-                    if q:
-                        a[2] += q[v[mk]["side"]]; a[3] += 1
+                meet = meetings.get(h2h_key(m["h"], m["a"]), [])[-6:]
+                res = result_idx(m)
+                rows.append({"off": S_ - 1 - si, "fx": feat_x(m["h"], m["a"], S, meet, p[1]), "fo": feat_ou(m["h"], m["a"], S, meet, p[0]),
+                             "res": res, "over": m["hg"] + m["ag"] > 2, "px": p[1], "po": p[0],
+                             "qx": demargin(m["xc"].get("P") or m["xc"].get("Avg")),
+                             "qo": demargin(m["ouc"].get("P") or m["ouc"].get("Avg"))})
             for m in day:
                 S.add(m)
                 meetings.setdefault(h2h_key(m["h"], m["a"]), []).append(m)
             i += len(day)
-    return {mk: {lv: {"n": a[0], "hit": r4(a[1] / a[0]) if a[0] else None, "mkt": r4(a[2] / a[3]) if a[3] else None}
-                 for lv, a in d.items()} for mk, d in out.items()}
+    return rows
+
+
+def fit_logit(X, y, prior=None, lam=1.0, iters=30):
+    X = np.column_stack([np.ones(len(X)), np.asarray(X, float)])
+    y = np.asarray(y, float)
+    d = X.shape[1]
+    w0 = np.zeros(d) if prior is None else np.asarray(prior, float)
+    w = w0.copy()
+    P = lam * np.eye(d)
+    if prior is None:
+        P[0, 0] = 1e-6
+    for _ in range(iters):
+        z = np.clip(X @ w, -30, 30)
+        p = 1 / (1 + np.exp(-z))
+        g = X.T @ (p - y) + P @ (w - w0)
+        H = (X.T * (p * (1 - p))) @ X + P
+        step = np.linalg.solve(H, g)
+        w -= step
+        if np.max(np.abs(step)) < 1e-7:
+            break
+    return w
+
+
+def sig(w, x):
+    z = w[0] + sum(wi * xi for wi, xi in zip(w[1:], x))
+    return 1 / (1 + math.exp(-max(-30, min(30, z))))
+
+
+def learned_probs(W, fx, fo):
+    ph, pa, po = sig(W["xh"], fx), sig(W["xa"], fx), sig(W["ou"], fo)
+    tot = ph + pa
+    if tot > 0.97:
+        ph, pa = ph * 0.97 / tot, pa * 0.97 / tot
+    return [ph, 1 - ph - pa, pa], po
+
+
+def fit_set(rows, prior=None, lam=1.0):
+    if len(rows) < 150:
+        return prior
+    X = [r["fx"] for r in rows]
+    return {"xh": fit_logit(X, [r["res"] == 0 for r in rows], prior and prior["xh"], lam),
+            "xa": fit_logit(X, [r["res"] == 2 for r in rows], prior and prior["xa"], lam),
+            "ou": fit_logit([r["fo"] for r in rows], [r["over"] for r in rows], prior and prior["ou"], lam)}
+
+
+def learned_verdict(px3, po):
+    """side and level for 1X2 and over/under 2.5 from the learned probabilities."""
+    side_x = 0 if px3[0] >= px3[2] else 2
+    p = px3[side_x]
+    lx = 2 if p >= LEARN_T["x"][0] else (1 if p >= LEARN_T["x"][1] else 0)
+    side_o = 0 if po >= 0.5 else 1
+    q = po if side_o == 0 else 1 - po
+    lo = 2 if q >= LEARN_T["ou"][0] else (1 if q >= LEARN_T["ou"][1] else 0)
+    return (side_x, lx, p), (side_o, lo, q)
+
+
+def learn_all(ctx):
+    """Pooled weights per test season and for live use, then league-tuned weights and the honest test."""
+    all_rows = {code: c["rows"] for code, c in ctx.items()}
+    offs = (2, 1, 0)
+    pooled = {t: fit_set([r for rs in all_rows.values() for r in rs if r["off"] > t]) for t in offs}
+    pooled["live"] = fit_set([r for rs in all_rows.values() for r in rs])
+    out = {}
+    for code, rows in all_rows.items():
+        acc = {mk: {lv: [0, 0, 0.0, 0] for lv in ("2", "1")} for mk in ("x", "ou")}
+        ll = {k: [0.0, 0] for k in ("x_model", "x_learn", "x_close", "ou_model", "ou_learn", "ou_close")}
+        for t in offs:
+            if not pooled[t]:
+                continue
+            W = fit_set([r for r in rows if r["off"] > t], pooled[t], lam=40.0) or pooled[t]
+            for r in rows:
+                if r["off"] != t:
+                    continue
+                px3, po = learned_probs(W, r["fx"], r["fo"])
+                (sx, lx, _), (so, lo, _) = learned_verdict(px3, po)
+                for mk, side, lv, hit, q in (("x", sx, lx, sx == r["res"], r["qx"]), ("ou", so, lo, (so == 0) == r["over"], r["qo"])):
+                    if lv:
+                        a = acc[mk][str(lv)]
+                        a[0] += 1; a[1] += hit
+                        if q:
+                            a[2] += q[side]; a[3] += 1
+                if r["qx"]:
+                    ll["x_model"][0] += ll_x(r["px"], r["res"]); ll["x_learn"][0] += ll_x(px3, r["res"]); ll["x_close"][0] += ll_x(r["qx"], r["res"])
+                    for k in ("x_model", "x_learn", "x_close"):
+                        ll[k][1] += 1
+                if r["qo"]:
+                    ll["ou_model"][0] += ll_ou(r["po"], r["over"]); ll["ou_learn"][0] += ll_ou(po, r["over"]); ll["ou_close"][0] += ll_ou(r["qo"][0], r["over"])
+                    for k in ("ou_model", "ou_learn", "ou_close"):
+                        ll[k][1] += 1
+        live = fit_set(rows, pooled["live"], lam=40.0) or pooled["live"]
+        out[code] = {
+            "w": live,
+            "test": {mk: {lv: {"n": a[0], "hit": r4(a[1] / a[0]) if a[0] else None, "mkt": r4(a[2] / a[3]) if a[3] else None}
+                          for lv, a in d.items()} for mk, d in acc.items()},
+            "ll": {k: r4(v[0] / v[1]) if v[1] else None for k, v in ll.items()},
+        }
+    return out, pooled["live"]
+
+
+def apply_learned(stats, W, fx, fo):
+    """Replace the vote-based verdict with the learned one; keep the factor list as the explanation."""
+    px3, po = learned_probs(W, fx, fo)
+    (sx, lx, p_x), (so, lo, p_o) = learned_verdict(px3, po)
+    keys = {"x": X_KEYS, "ou": O_KEYS}
+    for mk, side, lv, p, feats in (("x", sx, lx, p_x, fx), ("ou", so, lo, p_o, fo)):
+        v = stats[mk]
+        w = W["xh"] if (mk == "x" and side == 0) else W["xa"] if mk == "x" else W["ou"]
+        sign = -1 if (mk == "ou" and side == 1) else 1
+        contrib = {k: sign * float(w[i + 1]) * feats[i] for i, k in enumerate(keys[mk])}
+        lean = ("h" if side == 0 else "a") if mk == "x" else ("o" if side == 0 else "u")
+        other = {"h": "a", "a": "h", "o": "u", "u": "o"}[lean]
+        for f in v["f"]:
+            f["c"] = round(contrib.get(f["k"], 0.0), 3)
+        v.update({"side": side, "level": lv, "p": r4(p),
+                  "agree": sum(1 for f in v["f"] if f["l"] == lean), "against": sum(1 for f in v["f"] if f["l"] == other)})
+    stats["px"] = [r4(x) for x in px3]
+    stats["po"] = r4(po)
+    return stats
 
 
 # ---------------------------------------------------------------- team stats for the UI
@@ -1056,7 +1213,16 @@ def compact_event(ev):
     return {"id": ev.get("id"), "ko": ko, "home": home, "away": away, "books": books}
 
 
-def merge_events(fx, events, known, unmatched):
+def light_fixture(f):
+    """What the match list needs; prices, factors and score grids stay in the league detail file."""
+    st = f.get("stats") or {}
+    lite = {mk: {k: st[mk][k] for k in ("side", "level", "p", "agree", "against", "n") if k in st[mk]} for mk in ("x", "ou") if mk in st}
+    if "px" in st:
+        lite["px"], lite["po"] = st["px"], st["po"]
+    return {k: f[k] for k in ("id", "date", "time", "ko", "home", "away", "xg", "x12", "over", "final", "tips", "best")} | {"stats": lite}
+
+
+def merge_events(fx, events, known, unmatched, names=None):
     """Attach bookmaker prices to fixtures (matching by date and both teams); add missing fixtures."""
     for ev in events:
         cands = [m for m in fx if abs((m["d"] - ev["d"]).days) <= 1]
@@ -1077,11 +1243,15 @@ def merge_events(fx, events, known, unmatched):
             m["odds_at"] = ev.get("odds_at")
             if not m.get("t") and ev["t"]:
                 m["t"] = ev["t"]
+            if names is not None:
+                names[m["h"]], names[m["a"]] = ev["home"], ev["away"]
             continue
         h, a = best_team(ev["home"], known), best_team(ev["away"], known)
         if not h or not a or h == a:
             unmatched.extend(n for n, x in ((ev["home"], h), (ev["away"], a)) if not x)
             continue
+        if names is not None:
+            names[h], names[a] = ev["home"], ev["away"]
         fx.append({"div": None, "d": ev["d"], "t": ev["t"], "h": h, "a": a, "hg": None, "ag": None,
                    "hst": None, "ast": None, "ou": {}, "ouc": {}, "x": {}, "xc": {},
                    "books": ev["books"], "odds_at": ev.get("odds_at")})
@@ -1430,6 +1600,9 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
     out = {"version": VERSION, "generated": now_iso, "today": today.isoformat(), "edge_min": EDGE_MIN,
            "market_edge_min": MARKET_EDGE_MIN, "leagues": []}
     unmatched = []
+    names = load_json(os.path.join(outdir, "names.json"), {})
+    # 3) per league: merge bookmaker events, walk-forward test, current table and form, rows for learning
+    ctx = {}
     for code, name, country, sport, extra, cname in leagues:
         if code not in data:
             continue
@@ -1439,16 +1612,10 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         use_sot = not extra and sum(1 for m in played[-60:] if m["hst"] is not None) > 20
         known = set().union(*(teams_of(s) for s in seasons[-2:] if s)) | teams_of(fx)
         if sport and not fixtures_from_results:
-            fx = merge_events(fx, oa.events(code), known, unmatched)
-        # 3) learn: walk-forward test and fresh parameters
+            fx = merge_events(fx, oa.events(code), known, unmatched, names.setdefault(code, {}))
         ev = evaluate_league(seasons, extra, use_sot)
         prm = ev["params"]
-        prev = teams_of(seasons[-2]) if len(seasons) > 1 else None
-        hist_seasons = seasons
-        _, r = run_rater(hist_seasons, prm["half_life"], prm["prior"], SOT_W if use_sot else 0.0, upto=today)
-        live = live_grade(journal, code)
-        grades = {"ou": final_grade(ev["grade"]["ou"], live["ou"]), "x": final_grade(ev["grade"]["x"], live["x"])}
-        # 4) price the fixtures; table, form and head-to-head for the statistics verdict
+        _, r = run_rater(seasons, prm["half_life"], prm["prior"], SOT_W if use_sot else 0.0, upto=today)
         S = SeasonState()
         for m in sorted(played, key=lambda m: m["d"]):
             S.add(m)
@@ -1457,18 +1624,41 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
             for m in srows:
                 if m["hg"] is not None:
                     meetings.setdefault(h2h_key(m["h"], m["a"]), []).append(m)
+        ctx[code] = {"seasons": seasons, "fx": fx, "played": played, "use_sot": use_sot, "ev": ev, "r": r, "S": S,
+                     "meetings": meetings, "rows": build_rows(seasons, ev.pop("_preds"))}
+    # 4) learn how much each statistic matters, on all leagues together and then per league
+    learned, pooled_w = learn_all(ctx) if ctx else ({}, None)
+    details = {}
+    for code, name, country, sport, extra, cname in leagues:
+        if code not in ctx:
+            continue
+        c = ctx[code]
+        seasons, fx, played, ev, r, S, meetings = c["seasons"], c["fx"], c["played"], c["ev"], c["r"], c["S"], c["meetings"]
+        cur = seasons[-1]
+        prm = ev["params"]
+        prev = teams_of(seasons[-2]) if len(seasons) > 1 else None
+        live = live_grade(journal, code)
+        grades = {"ou": final_grade(ev["grade"]["ou"], live["ou"]), "x": final_grade(ev["grade"]["x"], live["x"])}
+        W = (learned.get(code) or {}).get("w") or pooled_w
+        # 5) price the fixtures and judge them with the learned statistics
         priced = []
         for m in sorted(fx, key=lambda m: (m["d"], m.get("t") or "")):
             if m["h"] == m["a"]:
                 continue
             f = price_fixture(m, r, prev, prm, extra, code, now)
             if dt.datetime.fromisoformat(f["ko"]) > now - dt.timedelta(hours=2):  # hide matches already played
-                f["stats"] = stats_verdict(m["h"], m["a"], S, meetings.get(h2h_key(m["h"], m["a"]), []), f["x12"], f["over"]["2.5"])
+                meet = meetings.get(h2h_key(m["h"], m["a"]), [])
+                f["stats"] = stats_verdict(m["h"], m["a"], S, meet, f["x12"], f["over"]["2.5"])
+                if W:
+                    apply_learned(f["stats"], W, feat_x(m["h"], m["a"], S, meet[-6:], f["x12"]), feat_ou(m["h"], m["a"], S, meet[-6:], f["over"]["2.5"]))
                 priced.append(f)
         update_journal(journal, code, f"{country} · {name}", priced, played, now, grades)
         update_predictions(preds_log, code, priced, played, now)
         last = max((m["d"] for m in played), default=None)
         H, A, _ = r.base()
+        lt = learned.get(code) or {}
+        details[code] = {"teams": {t: team_stats(played, t, r, today, prev) for t in sorted(teams_of(cur) | teams_of(fx))},
+                         "fixtures": {f["id"]: f for f in priced}}
         out["leagues"].append({
             "code": code, "name": name, "country": country, "extra": extra, "odds_feed": bool(sport),
             "played": len(played), "last_result": last.isoformat() if last else None,
@@ -1476,10 +1666,12 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
             "o25_rate": round(sum(1 for m in played if m["hg"] + m["ag"] > 2) / len(played), 3) if played else None,
             "home_rate": round(sum(1 for m in played if m["hg"] > m["ag"]) / len(played), 3) if played else None,
             "avg": [round(H, 2), round(A, 2)], "shots": use_sot,
-            "params": prm, "test": {k: ev[k] for k in ("tested_seasons", "matches", "ou", "x")}, "stats_test": ev["stats_test"],
+            "params": prm, "test": {k: ev[k] for k in ("tested_seasons", "matches", "ou", "x")},
+            "stats_test": lt.get("test"), "learn_ll": lt.get("ll"),
+            "weights": {k: [round(float(x), 3) for x in v] for k, v in W.items()} if W else None,
             "grade_test": ev["grade"], "grade": grades, "live": live,
-            "teams": {t: team_stats(played, t, r, today, prev) for t in sorted(teams_of(cur) | teams_of(fx))},
-            "fixtures": priced,
+            "names": {k: v for k, v in names.get(code, {}).items() if k in details[code]["teams"]},
+            "fixtures": [light_fixture(f) for f in priced],
         })
     oa.save()
     out["bookmakers"] = dict(oa.status, remaining=oa.c.get("remaining"),
@@ -1504,6 +1696,10 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
     if oldj.get("entries") == journal.get("entries"):
         journal["updated"] = oldj.get("updated", journal["updated"])
     json.dump(out, open(dpath, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    os.makedirs(os.path.join(outdir, "liga"), exist_ok=True)
+    for code, det in details.items():  # details load only when a match or a league is opened
+        json.dump(det, open(os.path.join(outdir, "liga", f"{code}.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    json.dump(names, open(os.path.join(outdir, "names.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=0, sort_keys=True)
     json.dump(journal, open(os.path.join(outdir, "journal.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(preds_log, open(os.path.join(outdir, "predictions.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     return out
