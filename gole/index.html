@@ -336,6 +336,32 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 .jrow.tap:active { background: var(--raised); }
 .kt { font-size: 13px; font-weight: 700; color: var(--ink); }
 .chev { font-style: normal; color: var(--muted); font-size: 20px; margin-left: 8px; vertical-align: -2px; }
+.wt.live { background: var(--loss); color: #fff; }
+.wt.live::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-right: 5px; vertical-align: 1px; }
+details.live > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+details.live > summary::-webkit-details-marker { display: none; }
+details.live > summary::after { content: "›"; font-size: 22px; line-height: 1; color: var(--muted); transform: rotate(90deg); transition: transform .15s; }
+details.live[open] > summary::after { transform: rotate(-90deg); }
+details.live > summary .note { flex: 1; }
+details.live[open] { gap: 12px; }
+.lv-min { display: grid; gap: 6px; }
+.lv-head { display: flex; justify-content: space-between; align-items: center; }
+.lbl { font-size: 12px; color: var(--muted); font-weight: 600; }
+.lv-step { display: inline-grid; grid-template-columns: 38px minmax(34px, auto) 38px; align-items: center; justify-items: center; background: var(--raised); border: 1px solid var(--line); border-radius: 10px; }
+.lv-step button { border: 0; background: none; color: var(--ink); font: 700 18px var(--font); height: 36px; width: 38px; }
+.lv-step b { font-size: 17px; font-variant-numeric: tabular-nums; }
+.lv-min input[type=range] { width: 100%; accent-color: var(--gold); }
+.lv-tbl { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px 8px; align-items: center; }
+.lv-tbl .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.lv-tbl .lbl { text-align: center; }
+.lv-sec { display: grid; gap: 6px; }
+.lv-sec h4 { margin: 2px 0 0; font-size: 14px; font-weight: 700; }
+.lv-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.lv-tile { background: var(--raised); border-radius: 10px; padding: 7px 8px; display: grid; gap: 1px; min-width: 0; }
+.lv-tile span { font-size: 12px; color: var(--muted); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lv-tile b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.lv-tile small { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lv-tile.fav b { color: var(--gold); }
 </style>
 </head>
 <body>
@@ -490,7 +516,8 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     const mx = p.indexOf(Math.max(...p));
     const labels = isX() ? ["1", "X", "2"] : ["O", "U"];
     const mine = myBetsFor(f.id).length;
-    const tags = (lv ? `<em class="wt s${lv}">${LEVEL[lv]}: ${esc(sideName(v.side))}</em>` : "") +
+    const tags = (new Date(f.ko).getTime() <= Date.now() ? `<em class="wt live">Trwa</em>` : "") +
+      (lv ? `<em class="wt s${lv}">${LEVEL[lv]}: ${esc(sideName(v.side))}</em>` : "") +
       (tl && st.show === "tips" ? `<em class="wt w${tl}">${tl === 2 ? "Kurs z przewagą" : "Przewaga na sucho"}</em>` : "") +
       (mine ? `<em class="wt mine">Obstawiony</em>` : "") +
       (f.abs && (f.abs[0] || f.abs[1]) ? `<em class="wt inj">Braki kluczowych: ${f.abs[0]} – ${f.abs[1]}</em>` : "");
@@ -955,6 +982,109 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     </div>`;
   }
 
+  // ---------------------------------------------------------------- live calculator
+  // Goal rates before kick-off are fitted to the probabilities on the tiles (over 2.5, 1 minus 2, and the
+  // draw, which plain Poisson underrates, through a draw weight), then scaled to the time left. Goals come a
+  // little more often late in a match (about 55% after the break), the draw weight fades as time runs out,
+  // and a red card cuts that team's rate and lifts the opponent's.
+  const LV_END = 95;  // 90 minutes plus usual stoppage time
+  const LV_RED = [0.67, 1.25];
+  const pois = (mu, n = 14) => { const p = [Math.exp(-mu)]; for (let k = 1; k < n; k++) p.push(p[k - 1] * mu / k); return p; };
+  function lvLeft(m) {
+    m = Math.min(LV_END, Math.max(0, m));
+    return ((LV_END - m) + 0.25 * (LV_END * LV_END - m * m) / LV_END) / (1.25 * LV_END);
+  }
+  // remaining goals i (home) and j (away) on top of the current score; draws weighted by kappa
+  function lvMatrix(mh, ma, hg, ag, kappa) {
+    const H = pois(mh), A = pois(ma), M = [];
+    let tot = 0;
+    for (let i = 0; i < H.length; i++) {
+      M.push([]);
+      for (let j = 0; j < A.length; j++) { const p = H[i] * A[j] * (hg + i === ag + j ? kappa : 1); M[i].push(p); tot += p; }
+    }
+    return M.map((r) => r.map((p) => p / tot));
+  }
+  function lvSum(M, hg, ag) {
+    const x = [0, 0, 0], rem = new Array(2 * M.length).fill(0);
+    M.forEach((r, i) => r.forEach((p, j) => { const dh = hg + i, da = ag + j; x[dh > da ? 0 : dh === da ? 1 : 2] += p; rem[i + j] += p; }));
+    return { x, rem };
+  }
+  function preRates(f) {
+    if (f._rates) return f._rates;
+    const px = (f.stats && f.stats.px) || f.x12;
+    const po = f.stats && f.stats.po != null ? f.stats.po : f.over["2.5"];
+    const at = (mu, s, k) => { const r = lvSum(lvMatrix(mu * s, mu * (1 - s), 0, 0, k), 0, 0); return { x: r.x, over: 1 - r.rem[0] - r.rem[1] - r.rem[2] }; };
+    const bis = (fn, lo, hi, want) => { for (let i = 0; i < 36; i++) { const m = (lo + hi) / 2; if (fn(m) < want) lo = m; else hi = m; } return (lo + hi) / 2; };
+    let mu = 2.6, s = 0.5, k = 1;
+    for (let it = 0; it < 10; it++) {
+      mu = bis((m) => at(m, s, k).over, 0.2, 7, po);
+      s = bis((v) => { const r = at(mu, v, k).x; return r[0] - r[2]; }, 0.03, 0.97, px[0] - px[2]);
+      k = bis((v) => at(mu, s, v).x[1], 0.5, 2.5, px[1]);
+    }
+    return (f._rates = [mu * s, mu * (1 - s), k]);
+  }
+  function liveCalc(f, s) {
+    const [lh, la, k0] = preRates(f), r = lvLeft(s.m);
+    const red = (own, opp) => Math.pow(LV_RED[0], own) * Math.pow(LV_RED[1], opp);
+    const mh = lh * r * red(s.rh, s.ra), ma = la * r * red(s.ra, s.rh);
+    const M = lvMatrix(mh, ma, s.hg, s.ag, 1 + (k0 - 1) * r);
+    const { x, rem } = lvSum(M, s.hg, s.ag);
+    const g = s.hg + s.ag;
+    const lines = [0.5, 1.5, 2.5].map((k) => { let u = 0; for (let n = 0; n <= Math.floor(k); n++) u += rem[n]; return [g + k, Math.max(0, 1 - u), Math.min(1, u)]; });
+    const none = M[0][0], any = 1 - none;
+    const next = mh + ma > 0 ? [mh / (mh + ma) * any, none, ma / (mh + ma) * any] : [0, 1, 0];
+    return { x, lines, next, rem: mh + ma };
+  }
+  function liveMinuteGuess(f) {
+    const el = (Date.now() - new Date(f.ko).getTime()) / 60000;  // minutes since kick-off by the clock
+    if (!(el > 0)) return 0;
+    if (el <= 47) return Math.min(45, Math.round(el));
+    if (el <= 62) return 45;  // half-time
+    return Math.min(LV_END, Math.round(el - 17));
+  }
+  function liveOut(f, L) {
+    const s = st.live, c = liveCalc(f, s);
+    const tile = (label, p, fav) => `<div class="lv-tile ${fav ? "fav" : ""}"><span>${esc(label)}</span><b>${pct(p)}</b><small>od kursu ${fairOdd(p)}</small></div>`;
+    const top = c.x.indexOf(Math.max(...c.x)), nTop = c.next.indexOf(Math.max(...c.next));
+    const done = s.m >= LV_END;
+    return `<div class="lv-sec"><h4>Wynik końcowy</h4><div class="lv-tiles">
+        ${tile("1 " + nm(L, f.home), c.x[0], top === 0)}${tile("X remis", c.x[1], top === 1)}${tile("2 " + nm(L, f.away), c.x[2], top === 2)}</div></div>
+      <div class="lv-sec"><h4>Gole w całym meczu</h4>
+        <div class="scroll"><table class="lines num"><thead><tr><th>Linia</th><th>Over</th><th>Under</th></tr></thead><tbody>
+        ${c.lines.map(([l, o, u]) => `<tr><td>${l}</td><td class="${o >= .5 ? "o" : ""}">${pct(o)}<small>od kursu ${fairOdd(o)}</small></td><td class="${u > .5 ? "u" : ""}">${pct(u)}<small>od kursu ${fairOdd(u)}</small></td></tr>`).join("")}
+        </tbody></table></div></div>
+      <div class="lv-sec"><h4>Następny gol</h4><div class="lv-tiles">
+        ${tile(nm(L, f.home), c.next[0], nTop === 0)}${tile("Już bez goli", c.next[1], nTop === 1)}${tile(nm(L, f.away), c.next[2], nTop === 2)}</div></div>
+      <p class="note">${done ? "Mecz się skończył, wynik jest już pewny." : `Do końca spodziewane jeszcze ${c.rem.toFixed(2).replace(".", ",")} gola.`}</p>`;
+  }
+  function liveCard(f, L) {
+    if (!st.live || st.live.id !== f.id) {
+      const m = liveMinuteGuess(f);
+      st.live = { id: f.id, m, hg: 0, ag: 0, rh: 0, ra: 0, open: m > 0 };
+    }
+    const s = st.live;
+    const step = (key, label, by = 1, txt = s[key]) => `<div class="lv-step"><button data-lv="${key}|${-by}" aria-label="${label}: mniej">−${by > 1 ? by : ""}</button><b id="lv-${key}">${txt}</b><button data-lv="${key}|${by}" aria-label="${label}: więcej">+${by > 1 ? by : ""}</button></div>`;
+    return `<details class="card live" id="live" ${s.open ? "open" : ""}>
+      <summary><h3>Na żywo</h3><span class="note">Policz szanse w trakcie meczu</span></summary>
+      <div class="lv-min"><div class="lv-head"><span class="lbl">Minuta meczu${liveMinuteGuess(f) > 0 ? " (wg zegara, popraw jeśli trzeba)" : ""}</span>${step("m", "Minuta", 5, s.m + "'")}</div>
+        <input type="range" id="lv-range" min="0" max="${LV_END}" step="1" value="${s.m}" aria-label="Minuta meczu"></div>
+      <div class="lv-tbl"><span></span><span class="lbl">Gole</span><span class="lbl">Czerwone</span>
+        <b class="nm">${esc(nm(L, f.home))}</b>${step("hg", "Gole gospodarzy")}${step("rh", "Czerwone kartki gospodarzy")}
+        <b class="nm">${esc(nm(L, f.away))}</b>${step("ag", "Gole gości")}${step("ra", "Czerwone kartki gości")}</div>
+      <div id="lv-out">${liveOut(f, L)}</div>
+      <p class="note">„Od kursu” to kurs, od którego zakład zaczyna się opłacać; na żywo szukaj wyraźnie wyższego. Kalkulator zna siłę drużyn, minutę, wynik i kartki, ale nie widzi, kto naciska ani kto ma uraz. To przybliżenie.</p>
+    </details>`;
+  }
+  const LV_MAX = { m: LV_END, hg: 15, ag: 15, rh: 3, ra: 3 };
+  function liveSet(key, val) {
+    const s = st.live, { f, L } = st.sheet || {};
+    if (!s || !f) return;
+    s[key] = Math.max(0, Math.min(LV_MAX[key], val));
+    $(`lv-${key}`).textContent = key === "m" ? s.m + "'" : s[key];
+    if (key === "m") $("lv-range").value = s.m;
+    $("lv-out").innerHTML = liveOut(f, L);
+  }
+
   function openSheet(f, L, keepScroll, det) {
     det = det || (st.sheet && st.sheet.det);
     st.sheet = { f, L, det };
@@ -968,7 +1098,9 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       <div class="scoreline num"><div class="t" id="sheet-title">${esc(nm(L, f.home))}<small>xG ${f.xg[0].toFixed(2)}</small></div><div class="x">${(f.xg[0] + f.xg[1]).toFixed(2)}<small>xG razem</small></div><div class="t">${esc(nm(L, f.away))}<small>xG ${f.xg[1].toFixed(2)}</small></div></div>
     </div></div>
     <main><div class="wrap">
+      ${f.dist && liveMinuteGuess(f) > 0 ? liveCard(f, L) : ""}
       ${analysisCard(f, first, L)}${absencesCard(f, L)}${analysisCard(f, first === "x" ? "ou" : "x", L)}
+      ${f.dist && !(liveMinuteGuess(f) > 0) ? liveCard(f, L) : ""}
       ${betForm(f)}
       <div class="two">${formBlock(L, det, f.home)}${formBlock(L, det, f.away)}</div>
       ${f.dist ? `<div class="card"><h3>Rozkład liczby goli</h3>
@@ -992,7 +1124,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     if (keepScroll) $("sheet").scrollTop = scrollTop;
     else { $("sheet").scrollTop = 0; $("close").focus(); }
   }
-  function closeSheet() { $("sheet").hidden = true; $("scrim").hidden = true; document.body.style.overflow = ""; st.sheet = null; st.form = null; render(); }
+  function closeSheet() { $("sheet").hidden = true; $("scrim").hidden = true; document.body.style.overflow = ""; st.sheet = null; st.form = null; st.live = null; render(); }
 
   function saveBet(id) {
     const { f } = st.sheet;
@@ -1038,7 +1170,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   }
 
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-delbet],[data-savebet],[data-fm],[data-fside],[data-backup],[data-jview],[data-show],[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],#close,#scrim");
+    const t = e.target.closest("[data-delbet],[data-savebet],[data-fm],[data-fside],[data-backup],[data-jview],[data-show],[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],[data-lv],#close,#scrim");
     if (!t) return;
     if (t.id === "close" || t.id === "scrim") return closeSheet();
     const ds = t.dataset;
@@ -1048,6 +1180,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       if (st.sheet) openSheet(st.sheet.f, st.sheet.L, true); else render();
     }
     else if (ds.savebet) saveBet(ds.savebet);
+    else if (ds.lv) { const [k, by] = ds.lv.split("|"); if (st.live) liveSet(k, st.live[k] + +by); }
     else if (ds.fm) { const [m, l] = ds.fm.split("|"); st.form = { mkt: m, line: l, side: null }; openSheet(st.sheet.f, st.sheet.L, true); }
     else if (ds.fside) { st.form.side = +ds.fside; const keep = { s: $("b-stake").value, b: $("b-book").value }; openSheet(st.sheet.f, st.sheet.L, true); $("b-stake").value = keep.s; $("b-book").value = keep.b; }
     else if (ds.backup) backup(ds.backup);
@@ -1069,6 +1202,8 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       }
     }
   });
+  document.addEventListener("input", (e) => { if (e.target.id === "lv-range") liveSet("m", +e.target.value); });
+  document.addEventListener("toggle", (e) => { if (e.target.id === "live" && st.live) st.live.open = e.target.open; }, true);
   document.addEventListener("change", (e) => {
     if (e.target.id === "lsel") { st.league = e.target.value || "ALL"; save(); render(); }
   });
