@@ -9,7 +9,8 @@ Every run (GitHub Actions, every 4 hours):
   4. settles bets and every prediction after the match, and grades each league
      (a league only counts as "checked" when it beat the closing line in the test).
 
-Writes gole/data.json, gole/journal.json, gole/predictions.json, gole/odds_cache.json.
+Writes gole/data.json, gole/journal.json, gole/predictions.json (last 120 days),
+gole/archiwum/<YYYY-MM>.json (older settled predictions, kept for good), gole/odds_cache.json.
 Usage:
   python engine.py --out gole                     # live run
   python engine.py --local DIR --today YYYY-MM-DD --out OUT --fixtures-from-results
@@ -1558,50 +1559,70 @@ def update_predictions(preds, code, priced, results, now):
         if m:
             p["score"] = [m["hg"], m["ag"]]
         elif dt.date.fromisoformat(p["date"]) < today - dt.timedelta(days=21):
-            del P[mid]
-    cutoff = (today - dt.timedelta(days=120)).isoformat()
+            del P[mid]  # never settled (postponed or result missing): nothing to score
+
+
+RECENT_DAYS = 120  # predictions.json keeps this many days; older settled ones go to the archive
+ARCHIVE_DIR = "archiwum"
+
+
+def load_archive(outdir):
+    """All archived predictions (gole/archiwum/<YYYY-MM>.json), one dict keyed by match id."""
+    allp, adir = {}, os.path.join(outdir, ARCHIVE_DIR)
+    if os.path.isdir(adir):
+        for fn in sorted(os.listdir(adir)):
+            if re.fullmatch(r"\d{4}-\d{2}\.json", fn):
+                allp.update(load_json(os.path.join(adir, fn), {}).get("matches", {}))
+    return allp
+
+
+def archive_predictions(preds, outdir, today):
+    """Settled predictions older than RECENT_DAYS move to the month's archive file, which is kept for good.
+    The page loads only the light recent file; the archive feeds the season-by-season report."""
+    cutoff = (today - dt.timedelta(days=RECENT_DAYS)).isoformat()
+    P = preds.get("matches", {})
+    by_month = {}
     for mid in [k for k, p in P.items() if p["date"] < cutoff]:
-        del P[mid]
+        p = P.pop(mid)
+        if "score" in p:
+            by_month.setdefault(p["date"][:7], {})[mid] = p
+    if not by_month:
+        return 0
+    adir = os.path.join(outdir, ARCHIVE_DIR)
+    os.makedirs(adir, exist_ok=True)
+    for month, rows in by_month.items():
+        path = os.path.join(adir, f"{month}.json")
+        A = load_json(path, {})
+        A.setdefault("matches", {}).update(rows)
+        A["matches"] = dict(sorted(A["matches"].items()))
+        json.dump(A, open(path, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    return sum(len(r) for r in by_month.values())
 
 
-def prediction_report(preds, codes):
-    """Rolling scores of finished predictions: model vs market vs final, calibration of over 2.5."""
+def season_label(day):
+    """'2026/27' for July 2026 to June 2027 (European calendar, also used for summer leagues)."""
+    y, m = int(day[:4]), int(day[5:7])
+    s = y if m >= 7 else y - 1
+    return f"{s}/{(s + 1) % 100:02d}"
+
+
+def prediction_report(matches, codes):
+    """Scores of every finished prediction since logging began (recent + archive): model vs market vs final,
+    how the statistics' ratings hit, calibration of over 2.5, and the same split season by season."""
     out = {}
+    done = [p for p in matches.values() if "score" in p]
     for code in codes + ["ALL"]:
-        rows = [p for p in preds.get("matches", {}).values() if "score" in p and (code == "ALL" or p["l"] == code)]
-        acc = {"n": len(rows)}
-        for mk in ("ou", "x"):
-            sc = {"m": 0.0, "k": 0.0, "f": 0.0, "n": 0, "hit": 0}
+        rows = [p for p in done if code == "ALL" or p["l"] == code]
+        acc = score_predictions(rows)
+        if rows:
+            acc["since"] = min(p["date"] for p in rows)
+            seasons = {}
             for p in rows:
-                hg, ag = p["score"]
-                if mk == "ou":
-                    if p["k_ou"] is None:
-                        continue
-                    y = hg + ag > 2
-                    sc["m"] += ll_ou(p["m_ou"], y); sc["k"] += ll_ou(p["k_ou"], y); sc["f"] += ll_ou(p["f_ou"] or p["m_ou"], y)
-                    sc["hit"] += ((p["f_ou"] or p["m_ou"]) >= 0.5) == y
-                else:
-                    if p["k_x"] is None:
-                        continue
-                    res = 0 if hg > ag else (1 if hg == ag else 2)
-                    fx = p["f_x"] or p["m_x"]
-                    sc["m"] += ll_x(p["m_x"], res); sc["k"] += ll_x(p["k_x"], res); sc["f"] += ll_x(fx, res)
-                    sc["hit"] += max(range(3), key=lambda i: fx[i]) == res
-                sc["n"] += 1
-            n = sc["n"]
-            acc[mk] = {"n": n, "ll_model": r4(sc["m"] / n) if n else None, "ll_market": r4(sc["k"] / n) if n else None,
-                       "ll_final": r4(sc["f"] / n) if n else None, "hit": r4(sc["hit"] / n) if n else None}
-        sv = {mk: {"2": [0, 0], "1": [0, 0]} for mk in ("x", "ou")}
-        for p in rows:
-            if not p.get("sv"):
-                continue
-            hg, ag = p["score"]
-            xs, xl, os_, ol = p["sv"]
-            if xl:
-                sv["x"][str(xl)][0] += 1; sv["x"][str(xl)][1] += xs == (0 if hg > ag else (1 if hg == ag else 2))
-            if ol:
-                sv["ou"][str(ol)][0] += 1; sv["ou"][str(ol)][1] += (os_ == 0) == (hg + ag > 2)
-        acc["sv"] = sv
+                seasons.setdefault(season_label(p["date"]), []).append(p)
+            acc["seasons"] = {}
+            for lab, rs in sorted(seasons.items(), reverse=True):
+                a = score_predictions(rs)
+                acc["seasons"][lab] = {"n": a["n"], "x": [a["x"]["n"], a["x"]["won"]], "ou": [a["ou"]["n"], a["ou"]["won"]], "sv": a["sv"]}
         if code == "ALL":
             bins = [[0, 0] for _ in range(10)]
             for p in rows:
@@ -1611,6 +1632,44 @@ def prediction_report(preds, codes):
             acc["calib_ou"] = bins
         out[code] = acc
     return out
+
+
+def score_predictions(rows):
+    """Log-loss and hit rate of model, market and final blend, plus hits of the statistics' ratings."""
+    acc = {"n": len(rows)}
+    for mk in ("ou", "x"):
+        sc = {"m": 0.0, "k": 0.0, "f": 0.0, "n": 0, "hit": 0}
+        for p in rows:
+            hg, ag = p["score"]
+            if mk == "ou":
+                if p["k_ou"] is None:
+                    continue
+                y = hg + ag > 2
+                sc["m"] += ll_ou(p["m_ou"], y); sc["k"] += ll_ou(p["k_ou"], y); sc["f"] += ll_ou(p["f_ou"] or p["m_ou"], y)
+                sc["hit"] += ((p["f_ou"] or p["m_ou"]) >= 0.5) == y
+            else:
+                if p["k_x"] is None:
+                    continue
+                res = 0 if hg > ag else (1 if hg == ag else 2)
+                fx = p["f_x"] or p["m_x"]
+                sc["m"] += ll_x(p["m_x"], res); sc["k"] += ll_x(p["k_x"], res); sc["f"] += ll_x(fx, res)
+                sc["hit"] += max(range(3), key=lambda i: fx[i]) == res
+            sc["n"] += 1
+        n = sc["n"]
+        acc[mk] = {"n": n, "ll_model": r4(sc["m"] / n) if n else None, "ll_market": r4(sc["k"] / n) if n else None,
+                   "ll_final": r4(sc["f"] / n) if n else None, "hit": r4(sc["hit"] / n) if n else None, "won": sc["hit"]}
+    sv = {mk: {"2": [0, 0], "1": [0, 0]} for mk in ("x", "ou")}
+    for p in rows:
+        if not p.get("sv"):
+            continue
+        hg, ag = p["score"]
+        xs, xl, os_, ol = p["sv"]
+        if xl:
+            sv["x"][str(xl)][0] += 1; sv["x"][str(xl)][1] += xs == (0 if hg > ag else (1 if hg == ag else 2))
+        if ol:
+            sv["ou"][str(ol)][0] += 1; sv["ou"][str(ol)][1] += (os_ == 0) == (hg + ag > 2)
+    acc["sv"] = sv
+    return acc
 
 
 # ---------------------------------------------------------------- main
@@ -1761,7 +1820,8 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
     journal["summary"] = journal_summary(journal)
     journal["updated"] = now_iso
     out["journal_summary"] = journal["summary"]
-    out["report"] = prediction_report(preds_log, [L["code"] for L in out["leagues"]])
+    archived = load_archive(outdir)
+    out["report"] = prediction_report({**archived, **preds_log.get("matches", {})}, [L["code"] for L in out["leagues"]])
     out["errors"] = src.errors
     out["runtime_s"] = round(time.time() - t0, 1)
     out["downloads"] = src.downloads
@@ -1782,6 +1842,7 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         json.dump(det, open(os.path.join(outdir, "liga", f"{code}.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     json.dump(names, open(os.path.join(outdir, "names.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=0, sort_keys=True)
     json.dump(journal, open(os.path.join(outdir, "journal.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    archive_predictions(preds_log, outdir, today)  # older settled predictions are kept for good in gole/archiwum
     json.dump(preds_log, open(os.path.join(outdir, "predictions.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     return out
 

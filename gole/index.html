@@ -403,6 +403,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   const odd = (o) => o ? Number(o).toFixed(2) : "—";
   const dayFmt = new Intl.DateTimeFormat("pl-PL", { weekday: "long", day: "numeric", month: "long" });
   const shortFmt = new Intl.DateTimeFormat("pl-PL", { day: "numeric", month: "short" });
+  const longFmt = new Intl.DateTimeFormat("pl-PL", { day: "numeric", month: "long", year: "numeric" });
   const stampFmt = new Intl.DateTimeFormat("pl-PL", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   const timeFmt = new Intl.DateTimeFormat("pl-PL", { hour: "2-digit", minute: "2-digit" });
   const d = (iso) => new Date(iso + "T12:00:00");
@@ -591,15 +592,38 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   function lastStake() { const b = BETS[BETS.length - 1]; return b ? b.stake : 10; }
   const money = (x) => (x < 0 ? "−" : "") + "£" + Math.abs(x).toFixed(2);
 
+  // results come from predictions.json (last 120 days); older ones from archiwum/<YYYY-MM>.json, loaded only when needed
+  const ARCH = {}, ARCHM = {};
+  const lookup = (id) => (st.preds && st.preds.matches && st.preds.matches[id]) || ARCH[id];
   function scoreOf(b) {
-    const p = st.preds && st.preds.matches && st.preds.matches[b.match];
+    if (b.score) return b.score;
+    const p = lookup(b.match);
     return p && p.score ? p.score : null;
+  }
+  function keepScores() {  // a settled bet keeps its score on the phone, so it stays settled for good
+    let changed = false;
+    for (const b of BETS) {
+      const p = b.score ? null : lookup(b.match);
+      if (p && p.score) { b.score = p.score; changed = true; }
+    }
+    if (changed) saveBets(BETS);
+  }
+  function ensureArchive() {
+    const cut = Date.now() - 100 * 864e5;
+    for (const b of BETS) {
+      if (b.score || lookup(b.match) || !b.date || d(b.date).getTime() > cut) continue;
+      const m = b.date.slice(0, 7);
+      if (ARCHM[m]) continue;
+      ARCHM[m] = "loading";
+      get(`archiwum/${m}.json`).then((a) => { Object.assign(ARCH, a.matches || {}); ARCHM[m] = "ok"; keepScores(); render(); })
+        .catch(() => { ARCHM[m] = "none"; render(); });
+    }
   }
   function settle(b) {
     const sc = scoreOf(b);
     if (!sc) {
       const old = new Date(b.ko || b.date).getTime() < Date.now() - 21 * 864e5;
-      return { status: old ? "void" : "open" };
+      return { status: old && ARCHM[(b.date || "").slice(0, 7)] !== "loading" ? "void" : "open" };
     }
     const [hg, ag] = sc;
     let won;
@@ -618,6 +642,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 
   function viewMyBets() {
     ensurePreds();
+    if (st.preds) { keepScores(); ensureArchive(); }
     const rows = BETS.map((b) => ({ b, s: st.preds ? settle(b) : { status: "open" } }));
     const done = rows.filter((r) => r.s.status === "won" || r.s.status === "lost");
     const open = rows.filter((r) => r.s.status === "open");
@@ -710,11 +735,17 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
       <div class="scroll"><table class="num"><thead><tr><th>Ocena</th><th>Mecze</th><th>Trafione</th><th>Rynek dawał</th><th>Na żywo</th></tr></thead><tbody>
       ${line("1X2: warte uwagi", T.x[2], sv.x[2])}${line("1X2: możliwe", T.x[1], sv.x[1])}${line("Gole 2.5: warte uwagi", T.ou[2], sv.ou[2])}${line("Gole 2.5: możliwe", T.ou[1], sv.ou[1])}
       </tbody></table></div>
-      <p class="note">„Mecze” i „Trafione” to test na poprzednich sezonach: dla każdego meczu statystyki liczone tylko z wcześniejszych spotkań. „Rynek dawał” to średnia szansa tego samego wyniku wg bukmacherów. Jeśli trafione jest wyraźnie wyżej niż rynek, statystyki widzą coś więcej niż bukmacher. „Na żywo” to mecze rozliczone od uruchomienia tej funkcji.</p></div>`;
+      <p class="note">„Mecze” i „Trafione” to test na poprzednich sezonach: dla każdego meczu statystyki liczone tylko z wcześniejszych spotkań. „Rynek dawał” to średnia szansa tego samego wyniku wg bukmacherów. Jeśli trafione jest wyraźnie wyżej niż rynek, statystyki widzą coś więcej niż bukmacher. ${R.since ? `„Na żywo” to wszystkie mecze rozliczone od ${esc(longFmt.format(d(R.since)))}. Są zapisywane na stałe.` : "„Na żywo” to mecze rozliczane na bieżąco. Pierwsze pojawią się po najbliższej kolejce."}</p></div>`;
     out += `<div class="card"><h3>Trafność wszystkich prognoz</h3>
       <div class="scroll"><table class="num"><thead><tr><th>Rynek</th><th>Trafione</th><th>Model + rynek</th><th>Sam rynek</th></tr></thead><tbody>
       ${scoreLine("1X2", R.x)}${scoreLine("Gole 2.5", R.ou)}</tbody></table></div>
       <p class="note">Każdy wyceniony mecz rozlicza się sam. Dwie ostatnie kolumny to błąd prognoz: im niżej, tym trafniej.</p></div>`;
+    const SS = Object.entries(R.seasons || {});
+    const frac = (a) => a && a[0] ? `${pct(a[1] / a[0])}<div class="meta">${a[1]} z ${a[0]}</div>` : "—";
+    out += `<div class="card" id="seasons"><h3>Sezon po sezonie</h3>${SS.length ? `<div class="scroll"><table class="num"><thead><tr><th>Sezon</th><th>Mecze</th><th>Warte uwagi<br>1X2</th><th>Warte uwagi<br>gole 2.5</th></tr></thead><tbody>
+      ${SS.map(([lab, s]) => `<tr><td>${esc(lab)}</td><td>${s.n}</td><td>${frac(s.sv && s.sv.x[2])}</td><td>${frac(s.sv && s.sv.ou[2])}</td></tr>`).join("")}</tbody></table></div>`
+      : `<div class="empty">Jeszcze nic się nie rozliczyło. Bilans zacznie się po najbliższej kolejce.</div>`}
+      <p class="note">Wszystkie rozliczone mecze są zapisywane na stałe, więc po każdym sezonie zostaje jego pełny bilans. Sezon liczony od lipca do czerwca. „Warte uwagi” pokazuje, ile meczów z tą oceną statystyk się sprawdziło.</p></div>`;
     if (!st.preds) return out + `<div class="empty">Wczytuję ostatnie mecze…</div>`;
     const codes = leaguesInView().map((L) => L.code);
     const rows = Object.entries(st.preds.matches || {}).filter(([, p]) => p.score && codes.includes(p.l)).sort((a, b) => b[1].date.localeCompare(a[1].date)).slice(0, 80);

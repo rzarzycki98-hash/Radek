@@ -64,6 +64,7 @@ Działa sama. Co 4 godziny GitHub Actions (`.github/workflows/linia-goli.yml`) u
 4. **Bezpiecznik:** liga dostaje ocenę „Sprawdzona”, „Obiecująca”, „Nie bije rynku” albo „Za mało danych”. Gdy w dzienniku typy
    przegrywają z kursem zamknięcia, liga sama się wyłącza.
 5. **Po meczu:** każdy wyceniony mecz rozlicza się sam (zakładka Wyniki), a typy na sucho w dzienniku (zakładka Typy).
+   Rozliczone mecze są zapisywane na stałe, więc w Wynikach widać bilans każdego sezonu.
 
 Uczciwie: w dużych ligach kursy bukmacherów są bardzo trafne i model zwykle ich nie pokonuje. Wszystkie typy są tylko na sucho,
 a aplikacja pokazuje wprost, gdzie działa, a gdzie nie. Pomoc przy problemach z hazardem:
@@ -75,5 +76,6 @@ a aplikacja pokazuje wprost, gdzie działa, a gdzie nie. Pomoc przy problemach z
 | `gole/engine.py` | pobieranie danych, model, nauka, test lig, dziennik |
 | `gole/data.json` | mecze, typy i oceny lig (tworzone automatycznie) |
 | `gole/journal.json` | dziennik typów na sucho |
-| `gole/predictions.json` | wszystkie prognozy i ich rozliczenie po meczu |
+| `gole/predictions.json` | prognozy z ostatnich 120 dni i ich rozliczenie po meczu |
+| `gole/archiwum/` | starsze rozliczone prognozy, po jednym pliku na miesiąc (zapisane na stałe) |
 | `gole/odds_cache.json` | ostatnie kursy bukmacherów (żeby oszczędzać limit) |

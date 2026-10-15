@@ -48,6 +48,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add gole/data.json gole/journal.json gole/predictions.json gole/names.json gole/liga
           if [ -f gole/odds_cache.json ]; then git add gole/odds_cache.json; fi
+          if [ -d gole/archiwum ]; then git add gole/archiwum; fi   # rozliczone typy starsze niż 120 dni, na stałe
           if git diff --cached --quiet; then
             echo "Bez zmian w danych"
           else
