@@ -27,6 +27,8 @@ jobs:
           python-version: "3.12"
 
       - name: Pobierz wyniki i kursy, przelicz model
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}   # darmowy klucz z the-odds-api.com (Ladbrokes, BetVictor)
         run: python gole/engine.py --out gole
 
       - name: Zapisz zmiany (dane i dziennik)
@@ -34,6 +36,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add gole/data.json gole/journal.json
+          if [ -f gole/odds_cache.json ]; then git add gole/odds_cache.json; fi
           if git diff --cached --quiet; then
             echo "Bez zmian w danych"
           else

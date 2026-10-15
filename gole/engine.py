@@ -8,7 +8,8 @@ Usage:
   python engine.py --local DIR --today YYYY-MM-DD [--fixtures-from-results]
       # offline test against a mirror laid out as DIR/data/<league>/season-XXYY.csv
 """
-import argparse, csv, io, json, math, os, sys, urllib.request, datetime as dt
+import argparse, csv, difflib, io, json, math, os, re, sys, unicodedata, urllib.request, datetime as dt
+from zoneinfo import ZoneInfo
 
 LEAGUES = [  # code, mirror folder, display name, country
     ("E0", "premier-league", "Premier League", "Anglia"),
@@ -357,6 +358,167 @@ def journal_summary(journal):
             "clv": round(sum(clv) / len(clv), 4) if clv else None}
 
 
+# ---------------------------------------------------------------- The Odds API (Ladbrokes, BetVictor)
+
+ODDS_API = "https://api.the-odds-api.com/v4/sports/{sport}/odds"
+ODDS_SPORTS = {"E0": "soccer_epl", "SP1": "soccer_spain_la_liga", "I1": "soccer_italy_serie_a",
+               "D1": "soccer_germany_bundesliga", "F1": "soccer_france_ligue_one"}
+USER_BOOKS = {"ladbrokes_uk": "LB", "betvictor": "BV"}   # the user's bookmakers
+ODDS_REFRESH_H = 11      # free plan budget: ~5 calls x 2-3 times a day
+LONDON = ZoneInfo("Europe/London")
+
+STOP = {"fc", "cf", "afc", "sc", "ac", "as", "ssc", "us", "rc", "cd", "ud", "sd", "vfb", "vfl", "tsg", "fsv", "sv",
+        "1", "05", "04", "club", "de", "calcio", "and", "the", "hotspur", "albion", "wanderers", "town", "city", "united"}
+ALIASES = {  # normalised Odds-API name -> football-data name
+    "manchester united": "Man United", "manchester city": "Man City", "man utd": "Man United",
+    "brighton hove": "Brighton", "wolverhampton": "Wolves", "nottingham forest": "Nott'm Forest",
+    "atletico madrid": "Ath Madrid", "atletico": "Ath Madrid", "athletic bilbao": "Ath Bilbao", "athletic": "Ath Bilbao",
+    "real betis": "Betis", "celta vigo": "Celta", "rayo vallecano": "Vallecano", "real sociedad": "Sociedad",
+    "espanyol": "Espanol", "deportivo la coruna": "La Coruna", "racing santander": "Santander",
+    "real oviedo": "Oviedo", "real valladolid": "Valladolid", "sporting gijon": "Sp Gijon", "deportivo alaves": "Alaves",
+    "inter milan": "Inter", "internazionale": "Inter", "milan": "Milan", "roma": "Roma", "hellas verona": "Verona",
+    "bayern munchen": "Bayern Munich", "borussia dortmund": "Dortmund", "borussia monchengladbach": "M'gladbach",
+    "monchengladbach": "M'gladbach", "bayer leverkusen": "Leverkusen", "eintracht frankfurt": "Ein Frankfurt",
+    "koln": "FC Koln", "cologne": "FC Koln", "mainz": "Mainz", "hamburger": "Hamburg", "schalke": "Schalke 04",
+    "st pauli": "St Pauli", "sankt pauli": "St Pauli", "heidenheim": "Heidenheim", "sv elversberg": "Elversberg",
+    "paris saint germain": "Paris SG", "psg": "Paris SG", "olympique marseille": "Marseille", "olympique lyonnais": "Lyon",
+    "stade rennais": "Rennes", "stade brestois 29": "Brest", "stade brestois": "Brest", "saint etienne": "St Etienne",
+    "as saint etienne": "St Etienne", "le havre": "Le Havre", "le mans": "Le Mans", "estac troyes": "Troyes",
+}
+
+
+def norm_name(s):
+    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower().replace("'", "")
+    s = re.sub(r"[^a-z0-9 ]", " ", s)
+    return " ".join(t for t in s.split() if t not in STOP)
+
+
+def match_team(raw, known):
+    """Map a bookmaker-feed team name onto the football-data name used by the model."""
+    if raw in known:
+        return raw
+    n = norm_name(raw)
+    full = re.sub(r"[^a-z0-9 ]", " ", unicodedata.normalize("NFKD", raw).encode("ascii", "ignore").decode().lower())
+    full = " ".join(full.split())
+    for key in (full, n):
+        if key in ALIASES and ALIASES[key] in known:
+            return ALIASES[key]
+    by_norm = {norm_name(k): k for k in known}
+    if n in by_norm:
+        return by_norm[n]
+    nt = set(n.split())
+    subs = [k for kn, k in by_norm.items() if kn and (set(kn.split()) <= nt or (nt and nt <= set(kn.split())))]
+    if len(subs) == 1:
+        return subs[0]
+    close = difflib.get_close_matches(n, list(by_norm), n=1, cutoff=0.75)
+    return by_norm[close[0]] if close else None
+
+
+class OddsAPI:
+    """Fetches over/under 2.5 prices from the user's bookmakers, cached to stay inside the free plan."""
+
+    def __init__(self, key, outdir, now):
+        self.key, self.now = key, now
+        self.path = os.path.join(outdir, "odds_cache.json")
+        self.status = {"enabled": bool(key)}
+
+    def load(self):
+        try:
+            cache = json.load(open(self.path, encoding="utf-8"))
+        except Exception:
+            cache = {}
+        fetched = cache.get("fetched_at")
+        fresh = fetched and (self.now - dt.datetime.fromisoformat(fetched)).total_seconds() < ODDS_REFRESH_H * 3600
+        if self.key and not fresh:
+            new, errors, remaining = {}, [], None
+            for div, sport in ODDS_SPORTS.items():
+                url = ODDS_API.format(sport=sport) + "?" + "&".join([
+                    "apiKey=" + self.key, "markets=totals", "oddsFormat=decimal", "dateFormat=iso",
+                    "bookmakers=" + ",".join(USER_BOOKS)])
+                try:
+                    req = urllib.request.Request(url, headers={"User-Agent": "linia-goli/2"})
+                    with urllib.request.urlopen(req, timeout=60) as r:
+                        remaining = r.headers.get("x-requests-remaining", remaining)
+                        new[div] = json.loads(r.read().decode("utf-8"))
+                except Exception as e:
+                    msg = str(e).replace(self.key, "***")
+                    errors.append(f"{div}: {msg}")
+            if new:
+                cache = {"fetched_at": self.now.isoformat(timespec="minutes"), "remaining": remaining, "events": new}
+                json.dump(cache, open(self.path, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+            self.status["errors"] = errors
+        self.status.update({"fetched_at": cache.get("fetched_at"), "remaining": cache.get("remaining")})
+        return self.parse(cache.get("events") or {})
+
+    @staticmethod
+    def parse(events_by_div):
+        out = {}
+        for div, events in events_by_div.items():
+            rows = []
+            for ev in events if isinstance(events, list) else []:
+                try:
+                    ko = dt.datetime.fromisoformat(ev["commence_time"].replace("Z", "+00:00")).astimezone(LONDON)
+                except Exception:
+                    continue
+                odds = {}
+                for bm in ev.get("bookmakers", []):
+                    code = USER_BOOKS.get(bm.get("key"))
+                    for mk in bm.get("markets", []):
+                        if not code or mk.get("key") != "totals":
+                            continue
+                        o = u = None
+                        for oc in mk.get("outcomes", []):
+                            if abs(float(oc.get("point", 0)) - 2.5) > 1e-9:
+                                continue
+                            if oc.get("name") == "Over":
+                                o = fnum(oc.get("price"))
+                            elif oc.get("name") == "Under":
+                                u = fnum(oc.get("price"))
+                        if o or u:
+                            odds[code] = [o, u]
+                rows.append({"d": ko.date(), "t": ko.strftime("%H:%M"), "home": ev.get("home_team", ""),
+                             "away": ev.get("away_team", ""), "odds": odds})
+            out[div] = rows
+        return out
+
+
+def merge_bookmaker_odds(fx, events, known, today, unmatched):
+    """Attach the user's bookmaker prices to fixtures; add matches missing from fixtures.csv."""
+    idx = {(m["h"], m["a"]): m for m in fx}
+    for ev in events:
+        if ev["d"] < today:
+            continue
+        h, a = match_team(ev["home"], known), match_team(ev["away"], known)
+        if not h or not a:
+            unmatched.extend(n for n, x in ((ev["home"], h), (ev["away"], a)) if not x)
+            continue
+        m = idx.get((h, a))
+        if m and abs((m["d"] - ev["d"]).days) <= 1:
+            m["odds"] = dict(m["odds"], **ev["odds"])
+        elif ev["odds"] or not m:
+            new = {"div": None, "d": ev["d"], "t": ev["t"], "h": h, "a": a, "hg": None, "ag": None,
+                   "hst": None, "ast": None, "odds": dict(ev["odds"]), "close": {}}
+            fx.append(new); idx[(h, a)] = new
+    return fx
+
+
+def choose_bet(po, odds):
+    """Paper bet at the user's bookmakers when they have a price, else Bet365, else market average."""
+    for books in (("LB", "BV"), ("B365",), ("Avg",)):
+        cands = []
+        for b in books:
+            if b in odds:
+                bb = best_bet(po, odds[b])
+                if bb:
+                    cands.append((bb, b))
+        if cands:
+            bb, b = max(cands, key=lambda c: c[0][3])
+            if bb[3] > EDGE_MIN:
+                return {"side": bb[0], "prob": round(bb[1], 4), "odds": bb[2], "edge": round(bb[3], 4), "book": b}
+            return None
+    return None
+
+
 # ---------------------------------------------------------------- main
 
 def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
@@ -367,7 +529,11 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
         journal = json.load(open(jpath, encoding="utf-8"))
     except Exception:
         journal = {"entries": []}
-    now_iso = dt.datetime.now(dt.timezone.utc).isoformat(timespec="minutes")
+    now = dt.datetime.now(dt.timezone.utc)
+    now_iso = now.isoformat(timespec="minutes")
+    oa = OddsAPI(os.environ.get("ODDS_API_KEY", "").strip() or None, outdir, now)
+    book_events = oa.load() if not fixtures_from_results else {}
+    unmatched = []
     out = {"generated": now_iso, "today": today.isoformat(), "source": "football-data.co.uk",
            "edge_min": EDGE_MIN, "params": {k: v for k, v in P.items() if k != "promoted"}, "leagues": []}
     for code, folder, name, country in LEAGUES:
@@ -380,6 +546,8 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
             seasons[-1] = cur = [m for m in cur if m["d"] < today]
         else:
             fx = [m for m in (fixtures_all or []) if m["div"] == code and m["d"] >= today]
+        known = set().union(*(teams_of(r) for r in seasons if r)) | teams_of(fx)
+        fx = merge_bookmaker_odds(fx, book_events.get(code, []), known, today, unmatched)
         hist = [m for rows in seasons for m in rows]
         prev_teams = teams_of(seasons[-2]) if len(seasons) > 1 and seasons[-2] else None
         mod = Model(hist, today + dt.timedelta(days=1), prev_teams)
@@ -390,12 +558,7 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
             mk = markets(lh, la, P["rho"])
             po = mk["over"]["2.5"]
             odds = {k: v for k, v in m["odds"].items() if v[0] or v[1]}
-            bet = None
-            book = "B365" if "B365" in odds else ("Avg" if "Avg" in odds else None)
-            if book:
-                bb = best_bet(po, odds[book])
-                if bb and bb[3] > EDGE_MIN:
-                    bet = {"side": bb[0], "prob": round(bb[1], 4), "odds": bb[2], "edge": round(bb[3], 4), "book": book}
+            bet = choose_bet(po, odds)
             mp = market_prob(odds.get("P", [None, None])) or market_prob(odds.get("Avg", [None, None]))
             priced.append({"id": match_id(code, m), "date": m["d"].isoformat(), "time": m["t"],
                            "home": m["h"], "away": m["a"], "xg": [round(lh, 2), round(la, 2)],
@@ -421,6 +584,8 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
             x["first"] = min(x["first"] or ds, ds); x["last"] = max(x["last"] or ds, ds)
         out["fixtures_file"] = {k: diag[k] for k in sorted(diag) if k in {c for c, *_ in LEAGUES}}
         out["fixtures_file_rows"] = len(fixtures_all)
+    oa.status["unmatched"] = sorted(set(unmatched))
+    out["bookmakers"] = oa.status
     journal["summary"] = journal_summary(journal)
     journal["updated"] = now_iso
     out["journal_summary"] = journal["summary"]

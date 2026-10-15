@@ -214,7 +214,7 @@ td small.pos, td small.neg { font-weight: 600; }
 
 <footer><div class="wrap">
   <div>Prawdopodobieństwa z modelu Poissona opartego na bramkach i strzałach celnych z ostatnich sezonów. Kursy bukmacherów służą tylko do porównania i do dziennika typów na sucho.</div>
-  <div>Dane: football-data.co.uk, sprawdzane automatycznie co 4 godziny. Wyniki pojawiają się w źródle zwykle w niedzielę i środę wieczorem, kursy na kolejne mecze we wtorek i w piątek.</div>
+  <div>Dane: football-data.co.uk (wyniki, Bet365, Pinnacle) i The Odds API (Ladbrokes, BetVictor), sprawdzane automatycznie co 4 godziny. Wyniki pojawiają się w źródle zwykle w niedzielę i środę wieczorem, kursy na kolejne mecze we wtorek i w piątek.</div>
   <div>To narzędzie do analizy, nie porada. Graj tylko za pieniądze, które możesz stracić. Pomoc: BeGambleAware.org, GamCare 0808 8020 133.</div>
 </div></footer>
 
@@ -224,7 +224,8 @@ td small.pos, td small.neg { font-weight: 600; }
 <script>
 (() => {
   const LINES = ["1.5", "2.5", "3.5"];
-  const BOOKS = { B365: "Bet365", P: "Pinnacle", Avg: "Średnia rynku", Max: "Najlepszy kurs" };
+  const BOOKS = { LB: "Ladbrokes", BV: "BetVictor", B365: "Bet365", P: "Pinnacle", Avg: "Średnia rynku", Max: "Najlepszy kurs" };
+  const cardBook = (odds) => ["LB", "BV", "B365"].find((k) => odds && odds[k]);
   const st = { data: null, journal: null, league: "ALL", line: "2.5", tab: "matches", sortKey: "o25p", sortDir: -1 };
   try {
     const saved = JSON.parse(localStorage.getItem("linia-goli") || "{}");
@@ -266,9 +267,9 @@ td small.pos, td small.neg { font-weight: 600; }
     const k = pick(f);
     const o = f.over[st.line];
     const lg = st.league === "ALL" ? ` · ${esc(f.L.name)}` : "";
-    const b365 = f.odds && f.odds.B365;
-    const oddsTxt = st.line === "2.5" && b365 ? ` · kurs O/U ${odd(b365[0])} / ${odd(b365[1])}` : "";
-    const bet = st.line === "2.5" && f.bet ? `<div class="paper"><span>Typ na sucho</span> ${f.bet.side} 2.5 @ ${odd(f.bet.odds)} · przewaga ${pct1(f.bet.edge)}</div>` : "";
+    const cb = cardBook(f.odds);
+    const oddsTxt = st.line === "2.5" && cb ? ` · ${BOOKS[cb]} O/U ${odd(f.odds[cb][0])} / ${odd(f.odds[cb][1])}` : "";
+    const bet = st.line === "2.5" && f.bet ? `<div class="paper"><span>Typ na sucho</span> ${f.bet.side} 2.5 @ ${odd(f.bet.odds)} (${esc(BOOKS[f.bet.book] || f.bet.book)}) · przewaga ${pct1(f.bet.edge)}</div>` : "";
     return `<button class="match" data-id="${esc(f.id)}">
       <div class="teams"><span>${esc(f.home)}</span><span>${esc(f.away)}</span>
         <div class="meta num">${withDate ? esc(shortFmt.format(d(f.date))) + " · " : ""}${esc(f.time || "")}${lg} · xG ${(f.xg[0] + f.xg[1]).toFixed(2)}${oddsTxt}</div></div>
@@ -325,10 +326,10 @@ td small.pos, td small.neg { font-weight: 600; }
       <div><b class="${profit >= 0 ? "pos" : "neg"}">${settled.length ? (profit >= 0 ? "+" : "") + profit.toFixed(2) : "—"}</b><span>zysk (jedn.)</span></div>
       <div><b class="${profit >= 0 ? "pos" : "neg"}">${settled.length ? pct1(profit / settled.length) : "—"}</b><span>ROI</span></div>
     </div>
-    <p class="note">Stawka 1 jednostka na każdy typ. ${clv != null ? `Kurs przy zapisie vs kurs zamknięcia: <b class="num">${pct1(clv)}</b> (dodatnio znaczy, że typy łapią kursy lepsze niż końcowe, to dobry znak).` : ""} Typ zapisuje się sam, gdy pojawi się kurs, przy którym model widzi przewagę.</p>`;
+    <p class="note">Stawka 1 jednostka na każdy typ. ${clv != null ? `Kurs przy zapisie vs kurs zamknięcia: <b class="num">${pct1(clv)}</b> (dodatnio znaczy, że typy łapią kursy lepsze niż końcowe, to dobry znak).` : ""} Typ zapisuje się sam, gdy pojawi się kurs, przy którym model widzi przewagę. Najpierw liczą się kursy Ladbrokes i BetVictor, a gdy ich brak, Bet365.</p>`;
     const row = (e) => `<div class="jrow num">
         <span class="jst ${e.status}">${e.status === "won" ? "✓" : e.status === "lost" ? "✗" : "•"}</span>
-        <span class="jm"><b>${esc(e.home)} – ${esc(e.away)}</b><span class="meta">${esc(shortFmt.format(d(e.date)))}${st.league === "ALL" ? " · " + esc(e.league_name) : ""} · ${e.side} 2.5 @ ${odd(e.odds)}${e.score ? " · wynik " + esc(e.score) : ""}</span></span>
+        <span class="jm"><b>${esc(e.home)} – ${esc(e.away)}</b><span class="meta">${esc(shortFmt.format(d(e.date)))}${st.league === "ALL" ? " · " + esc(e.league_name) : ""} · ${e.side} 2.5 @ ${odd(e.odds)} ${esc(BOOKS[e.book] || e.book || "")}${e.score ? " · wynik " + esc(e.score) : ""}</span></span>
         <span class="jp ${e.status === "won" ? "pos" : e.status === "lost" ? "neg" : ""}">${e.status === "open" ? pct1(e.edge) : (e.profit >= 0 ? "+" : "") + e.profit.toFixed(2)}</span>
       </div>`;
     return verdict + tiles +

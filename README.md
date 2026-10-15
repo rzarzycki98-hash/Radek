@@ -53,6 +53,9 @@ Działa sama: co 4 godziny GitHub Actions (`.github/workflows/linia-goli.yml`) p
 z [football-data.co.uk](https://www.football-data.co.uk), przelicza model i zapisuje dane w folderze `gole/`.
 
 - **Mecze**: prawdopodobieństwo over/under 1.5 / 2.5 / 3.5, oczekiwane gole, kursy bukmacherów i przewaga modelu.
+- **Ladbrokes i BetVictor**: kursy over/under 2.5 z [The Odds API](https://the-odds-api.com). Wymaga darmowego klucza
+  zapisanego jako sekret repozytorium `ODDS_API_KEY` (Settings → Secrets and variables → Actions). Bez klucza aplikacja
+  używa kursów Bet365. Kursy pobierane są co ok. 11 godzin, żeby zmieścić się w darmowym limicie.
 - **Dziennik**: typy „na sucho”. Gdy model widzi przewagę powyżej 5% przy kursie Bet365, typ zapisuje się sam,
   a po meczu sam się rozlicza (stawka 1 jednostka): zysk, ROI, porównanie z kursem zamknięcia.
 - **Model**: test na dwóch ostatnich pełnych sezonach, każdy mecz przewidziany tylko z wcześniejszych danych.
