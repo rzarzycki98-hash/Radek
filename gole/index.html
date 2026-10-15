@@ -76,8 +76,8 @@ button { cursor: pointer; }
 .lpick select { appearance: none; -webkit-appearance: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 30px 6px 12px; font-size: 14px; font-weight: 600; max-width: 62vw; text-overflow: ellipsis; }
 .lpick select.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .lpick::after { content: ""; position: absolute; right: 12px; top: 50%; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-70%) rotate(45deg); pointer-events: none; color: var(--muted); }
-.mkt { display: grid; grid-template-columns: 1.1fr 1fr 1fr 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3px; gap: 3px; }
-.mkt button { border: 0; background: none; border-radius: 9px; padding: 7px 4px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.mkt { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3px; gap: 3px; }
+.mkt button { border: 0; background: none; border-radius: 9px; padding: 6px 2px; font-size: 14px; font-weight: 600; color: var(--muted); }
 .mkt button[aria-pressed="true"] { background: var(--raised); color: var(--ink); box-shadow: var(--shadow); }
 .mkt button small { font-weight: 500; font-size: 11px; display: block; line-height: 1.1; }
 
@@ -218,6 +218,42 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 .two { display: grid; gap: 12px; }
 @media (min-width: 560px) { .two { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* compact list: day chips, tips of the day, league groups with one-line rows */
+.days { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-inline: -14px; padding: 0 14px 2px; }
+.days::-webkit-scrollbar { display: none; }
+.dchip { flex: none; display: grid; justify-items: center; min-width: 58px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 6px 10px 5px; font-size: 14px; font-weight: 700; }
+.dchip small { font-size: 11px; font-weight: 600; color: var(--muted); }
+.dchip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.dchip[aria-pressed="true"] small { color: inherit; opacity: .7; }
+.tips { background: var(--surface); border: 1px solid var(--gold); border-radius: 14px; overflow: hidden; }
+.tips-h { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 12px 6px; }
+.tips-h b { color: var(--gold); font-size: 15px; }
+.trow { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; width: 100%; text-align: left; border: 0; border-top: 1px solid var(--line); background: none; padding: 9px 12px; }
+.trow.more { display: block; text-align: center; font-size: 13px; font-weight: 700; color: var(--gold); padding: 10px; }
+.tl { min-width: 0; display: grid; } .tl b { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tr { display: grid; grid-template-columns: auto auto; gap: 0 8px; justify-items: end; align-items: baseline; }
+.tr .side { font-size: 13px; font-weight: 700; } .tr .odds { font-size: 18px; font-weight: 800; color: var(--gold); font-stretch: 88%; }
+.tr .edge { grid-column: 1 / -1; font-size: 12px; font-weight: 700; color: var(--gold); } .tr .edge.dry { color: var(--muted); }
+.lgrp { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.lgh { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 12px 7px; background: var(--raised); font-size: 13px; color: var(--muted); }
+.lgh .ln { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lgh .ln b { color: var(--ink); font-weight: 700; }
+.cols { display: grid; gap: 4px; text-align: center; font-size: 11px; font-weight: 700; flex: none; }
+.cols.n3, .rpx.n3 { grid-template-columns: repeat(3, 52px); }
+.cols.n2, .rpx.n2 { grid-template-columns: repeat(2, 66px); }
+.row { display: grid; grid-template-columns: 40px 1fr auto; gap: 8px; align-items: center; width: 100%; text-align: left; border: 0; border-top: 1px solid var(--line); background: none; padding: 8px 12px; }
+.lgh + .row { border-top: 0; }
+.rtime { font-size: 13px; font-weight: 700; color: var(--muted); }
+.rnames { min-width: 0; display: grid; gap: 1px; }
+.rnames b { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rpx { display: grid; gap: 4px; }
+.px { position: relative; display: grid; justify-items: center; background: var(--raised); border: 1px solid transparent; border-radius: 9px; padding: 5px 2px 4px; font-size: 15px; font-weight: 800; font-stretch: 88%; line-height: 1.1; color: var(--muted); }
+.px i { display: none; }
+.px small { font-size: 11px; font-weight: 600; font-stretch: 100%; color: var(--muted); }
+.px.fav { color: var(--ink); }
+.px.val { border-color: var(--gold); background: var(--gold-soft); color: var(--gold); }
+@media (max-width: 360px) { .cols.n3, .rpx.n3 { grid-template-columns: repeat(3, 46px); } .row { grid-template-columns: 34px 1fr auto; } }
 </style>
 </head>
 <body>
@@ -265,7 +301,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     few: "Za mało zakładów w teście, żeby coś ocenić.",
     off: "Bezpiecznik: w dzienniku typy przegrywały z kursem zamknięcia, więc liga jest wyłączona.",
   };
-  const st = { data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "matches", jstrat: "model", sortKey: "pts", sortDir: -1 };
+  const st = { data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "matches", jstrat: "model", sortKey: "pts", sortDir: -1, day: null };
   try {
     const s = JSON.parse(localStorage.getItem("linia-goli-3") || "{}");
     if (MARKETS.includes(s.line)) st.line = s.line;
@@ -320,7 +356,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     $("filters").innerHTML =
       `<button class="chip" data-league="ALL" aria-pressed="${st.league === "ALL"}">Wszystkie</button>` +
       `<button class="chip" data-league="BEST" aria-pressed="${st.league === "BEST"}">Polecane <span class="n">${nBest}</span></button>` + sel;
-    $("lines").innerHTML = MARKETS.map((l) => `<button data-line="${l}" aria-pressed="${l === st.line}">${l === "1X2" ? "1X2<small>wynik</small>" : l + "<small>gole</small>"}</button>`).join("");
+    $("lines").innerHTML = MARKETS.map((l) => `<button data-line="${l}" aria-pressed="${l === st.line}">${l === "1X2" ? "1X2" : "Gole " + l}</button>`).join("");
     document.querySelectorAll(".nav [data-tab]").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === st.tab)));
   }
 
@@ -346,22 +382,37 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     return `<span class="pt num ${isTop ? "fav" : ""} ${isVal ? "val" : ""}"><i>${label}</i><b>${fairOdd(p)}</b><small>${pct(p)}</small></span>`;
   }
 
-  function matchCard(f, L) {
-    const many = st.league === "ALL" || st.league === "BEST";
-    const top = `<div class="ev-top"><span class="lg">${many ? esc(flag(L) + " " + lname(L)) : esc(flag(L) + " " + L.name)}</span><span class="tm num">${esc(localTime(f))}</span></div>`;
-    const teams = `<div class="ev-teams"><div><span>${esc(f.home)}</span><small class="num">xG ${f.xg[0].toFixed(1)}</small></div><div><span>${esc(f.away)}</span><small class="num">xG ${f.xg[1].toFixed(1)}</small></div></div>`;
-    let tiles;
-    if (isX()) {
-      const p = (f.final && f.final.x) || f.x12;
-      const mx = p.indexOf(Math.max(...p));
-      const tip = bestTip(f, "x");
-      tiles = `<div class="tiles t3">${p.map((v, i) => tile(["1", "X", "2"][i], v, i === mx, tip && tip.t.side === i)).join("")}</div>`;
-    } else {
-      const o = st.line === "2.5" && f.final && f.final.ou ? f.final.ou[0] : f.over[st.line];
-      const tip = st.line === "2.5" ? bestTip(f, "ou") : null;
-      tiles = `<div class="tiles t2">${tile("Over " + st.line, o, o >= 0.5, tip && tip.t.side === 0)}${tile("Under " + st.line, 1 - o, o < 0.5, tip && tip.t.side === 1)}</div>`;
-    }
-    return `<button class="ev" data-id="${esc(f.id)}">${top}${teams}${tiles}${slip(f, L)}</button>`;
+  function probs(f) {
+    if (isX()) return (f.final && f.final.x) || f.x12;
+    const o = st.line === "2.5" && f.final && f.final.ou ? f.final.ou[0] : f.over[st.line];
+    return [o, 1 - o];
+  }
+
+  function tipOf(f) {
+    return (isX() || st.line === "2.5") ? bestTip(f, mkKey()) : null;
+  }
+
+  // one match = one row: time, teams, price tiles on the right (like a bookmaker list)
+  function matchRow(f) {
+    const p = probs(f);
+    const mx = p.indexOf(Math.max(...p));
+    const tip = tipOf(f);
+    const labels = isX() ? ["1", "X", "2"] : ["O", "U"];
+    return `<button class="row" data-id="${esc(f.id)}">
+      <span class="rtime num">${esc(localTime(f))}</span>
+      <span class="rnames"><b>${esc(f.home)}</b><b>${esc(f.away)}</b></span>
+      <span class="rpx ${isX() ? "n3" : "n2"}">${p.map((v, i) => `<span class="px num ${i === mx ? "fav" : ""} ${tip && tip.t.side === i ? "val" : ""}"><i>${labels[i]}</i>${fairOdd(v)}<small>${pct(v)}</small></span>`).join("")}</span>
+    </button>`;
+  }
+
+  function tipRow(f, L) {
+    const tip = tipOf(f), t = tip.t, mk = mkKey();
+    const side = mk === "x" ? ["1", "X", "2"][t.side] : ["Over 2.5", "Under 2.5"][t.side];
+    const trusted = tip.strat === "model" && good(gradeOf(L, mk));
+    return `<button class="trow" data-id="${esc(f.id)}">
+      <span class="tl"><b>${esc(f.home)} – ${esc(f.away)}</b><span class="meta">${esc(localTime(f))}, ${esc(flag(L) + " " + L.name)}, ${esc(t.book)}${t.user_book ? " ★" : ""}${trusted ? "" : ", na sucho"}</span></span>
+      <span class="tr num"><span class="side">${side}</span><span class="odds">${odd(t.odds)}</span><span class="edge ${trusted ? "" : "dry"}">${pct1(t.edge)}</span></span>
+    </button>`;
   }
 
   function errorsNote() {
@@ -369,20 +420,43 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
     return e.length ? `<div class="warn">Część danych nie pobrała się przy ostatniej aktualizacji (${e.length}). Spróbuje ponownie przy następnej.</div>` : "";
   }
 
+  function dayLabel(iso, today, tomorrow) {
+    if (iso === today) return "Dziś";
+    if (iso === tomorrow) return "Jutro";
+    const x = d(iso);
+    return new Intl.DateTimeFormat("pl-PL", { weekday: "short" }).format(x).replace(".", "") + " " + x.getDate();
+  }
+
   function viewMatches() {
     const ls = leaguesInView();
-    if (st.league === "BEST" && !ls.length) return `<div class="empty">Żadna liga nie przeszła jeszcze testu na rynku ${isX() ? "1X2" : "goli"}. Model nie pokonał tu bukmacherów w historii. Szczegóły w zakładce Ligi.</div>`;
-    const fx = ls.flatMap((L) => L.fixtures.map((f) => [f, L])).sort((a, b) => a[0].ko.localeCompare(b[0].ko));
-    if (!fx.length) return errorsNote() + `<div class="empty">Brak nadchodzących meczów. Terminarz i kursy pojawiają się kilka dni przed kolejką, aplikacja pobierze je sama.</div>`;
-    const withTips = fx.filter(([f]) => bestTip(f, mkKey())).length;
-    let out = errorsNote() + `<p class="note">Kafelki pokazują uczciwy kurs i szansę wg modelu połączonego z rynkiem. ${withTips ? `Złote to typy (${withTips}).` : ""} Dotknij meczu po szczegóły.</p>`;
-    let cur = "";
-    for (const [f, L] of fx.slice(0, 400)) {
-      const day = localDate(f);
-      if (day !== cur) { if (cur) out += `</div>`; cur = day; out += `<div class="day">${esc(dayFmt.format(d(day)))}</div><div class="list">`; }
-      out += matchCard(f, L);
+    if (st.league === "BEST" && !ls.length) return `<div class="empty">Żadna liga nie przeszła jeszcze testu na rynku ${isX() ? "1X2" : "goli"}. Szczegóły w zakładce Ligi.</div>`;
+    const all = ls.flatMap((L) => L.fixtures.map((f) => [f, L])).sort((a, b) => a[0].ko.localeCompare(b[0].ko));
+    if (!all.length) return errorsNote() + `<div class="empty">Brak nadchodzących meczów. Terminarz pojawia się kilka dni przed kolejką, aplikacja pobierze go sama.</div>`;
+    const days = [...new Set(all.map(([f]) => localDate(f)))];
+    if (!days.includes(st.day)) st.day = days[0];
+    const now = new Date(), tm = new Date(Date.now() + 864e5);
+    const iso = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+    const today = iso(now), tomorrow = iso(tm);
+    const fx = all.filter(([f]) => localDate(f) === st.day);
+    const trust = ([f, L]) => tipOf(f).strat === "model" && good(gradeOf(L)) ? 1 : 0;
+    const tips = fx.filter(([f]) => tipOf(f)).sort((a, b) => (trust(b) - trust(a)) || (tipOf(b[0]).t.edge - tipOf(a[0]).t.edge));
+    let out = errorsNote() + `<div class="days" role="group" aria-label="Dzień">${days.slice(0, 10).map((x) => {
+      const n = all.filter(([f]) => localDate(f) === x).length;
+      return `<button class="dchip" data-day="${x}" aria-pressed="${x === st.day}">${esc(dayLabel(x, today, tomorrow))}<small class="num">${n}</small></button>`;
+    }).join("")}</div>`;
+    if (tips.length) out += `<div class="tips"><div class="tips-h"><b>Typy ${st.day === today ? "na dziś" : "tego dnia"}</b><span class="meta">${tips.length}</span></div>${tips.slice(0, 5).map(([f, L]) => tipRow(f, L)).join("")}${tips.length > 5 ? `<button class="trow more" data-tab="journal">Wszystkie typy (${tips.length}) w zakładce Typy</button>` : ""}</div>`;
+    // group by league, leagues in kick-off order
+    const groups = [];
+    for (const [f, L] of fx) {
+      let g = groups.find((x) => x.L === L);
+      if (!g) groups.push(g = { L, rows: [] });
+      g.rows.push(f);
     }
-    return out + `</div>`;
+    const head = isX() ? ["1", "X", "2"] : [`Over ${st.line}`, `Under ${st.line}`];
+    out += groups.map(({ L, rows }) => `<section class="lgrp">
+      <div class="lgh"><span class="ln">${esc(flag(L))} ${esc(L.country)} <b>${esc(L.name)}</b>${good(gradeOf(L)) ? ` <span class="g ${gradeOf(L)}">${GRADE[gradeOf(L)]}</span>` : ""}</span><span class="cols ${isX() ? "n3" : "n2"}">${head.map((h) => `<span>${h}</span>`).join("")}</span></div>
+      ${rows.map(matchRow).join("")}</section>`).join("");
+    return out + `<p class="note">Liczby to uczciwy kurs, pod spodem szansa wg modelu połączonego z rynkiem. Złote pole oznacza typ. Dotknij meczu, żeby zobaczyć kursy bukmacherów i statystyki.</p>`;
   }
 
   // ---------------------------------------------------------------- journal
@@ -606,10 +680,11 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
   function closeSheet() { $("sheet").hidden = true; $("scrim").hidden = true; document.body.style.overflow = ""; }
 
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],#close,#scrim");
+    const t = e.target.closest("[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],#close,#scrim");
     if (!t) return;
     if (t.id === "close" || t.id === "scrim") return closeSheet();
-    if (t.dataset.league) { st.league = t.dataset.league; save(); render(); }
+    if (t.dataset.day) { st.day = t.dataset.day; render(); }
+    else if (t.dataset.league) { st.league = t.dataset.league; save(); render(); }
     else if (t.dataset.line) { st.line = t.dataset.line; save(); render(); }
     else if (t.dataset.tab) { st.tab = t.dataset.tab; save(); render(); window.scrollTo({ top: 0 }); }
     else if (t.dataset.jstrat) { st.jstrat = t.dataset.jstrat; save(); render(); }
