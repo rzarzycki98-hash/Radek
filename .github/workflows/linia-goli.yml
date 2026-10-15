@@ -1,4 +1,5 @@
 name: Linia Goli – aktualizacja danych
+# Sekret ODDS_API_KEY (the-odds-api.com) włącza kursy Ladbrokes, BetVictor i innych bukmacherów z UK.
 
 on:
   schedule:
