@@ -56,6 +56,9 @@ z [football-data.co.uk](https://www.football-data.co.uk), przelicza model i zapi
 - **Ladbrokes i BetVictor**: kursy over/under 2.5 z [The Odds API](https://the-odds-api.com). Wymaga darmowego klucza
   zapisanego jako sekret repozytorium `ODDS_API_KEY` (Settings → Secrets and variables → Actions). Bez klucza aplikacja
   używa kursów Bet365. Kursy pobierane są co ok. 11 godzin, żeby zmieścić się w darmowym limicie.
+- **Rynek (porównanie bukmacherów)**: uczciwa szansa z rynku (Pinnacle albo mediana bukmacherów z UK, bez marży).
+  Gdy Ladbrokes albo BetVictor dają kurs wyższy o ponad 2%, typ zapisuje się sam w dzienniku „Rynek”.
+  Test na 5 sezonach (najlepszy kurs na rynku, przewaga > 2%): 449 zakładów, ok. +3%, z dużymi wahaniami między sezonami.
 - **Dziennik**: typy „na sucho”. Gdy model widzi przewagę powyżej 5% przy kursie Bet365, typ zapisuje się sam,
   a po meczu sam się rozlicza (stawka 1 jednostka): zysk, ROI, porównanie z kursem zamknięcia.
 - **Model**: test na dwóch ostatnich pełnych sezonach, każdy mecz przewidziany tylko z wcześniejszych danych.

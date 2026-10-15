@@ -28,7 +28,9 @@ P = {
     "rho": -0.08,         # Dixon-Coles low-score correction
     "promoted": (0.82, 1.18),
 }
-EDGE_MIN = 0.05           # paper bet when model_prob * odds - 1 > 5%
+EDGE_MIN = 0.05           # model strategy: paper bet when model_prob * odds - 1 > 5%
+MARKET_EDGE_MIN = 0.02    # market strategy: a bookmaker's price beats the fair market price by > 2%
+MIN_BOOKS_FAIR = 4        # need this many UK bookmakers to build a fair price without Pinnacle
 MAXG = 10
 
 
@@ -246,15 +248,27 @@ def backtest(seasons_rows, test_from_idx, p=P, books=("B365", "Max")):
     seasons[test_from_idx:] using only earlier data, bet when edge > EDGE_MIN."""
     allm = [m for rows in seasons_rows for m in rows if m["hg"] is not None]
     res = {b: {"n": 0, "profit": 0.0} for b in books}
+    mkt = {k: {"n": 0, "profit": 0.0} for k in ("best", "one")}
+    mkt_seasons = []
     ll_mod = ll_mkt = n_ll = 0
     cache = {}
     per_season = []
     for si in range(test_from_idx, len(seasons_rows)):
         prev = teams_of(seasons_rows[si - 1]) if si > 0 else None
         s = {b: {"n": 0, "profit": 0.0} for b in books}
+        ms = {k: {"n": 0, "profit": 0.0} for k in mkt}
         for m in seasons_rows[si]:
             if m["hg"] is None:
                 continue
+            q0 = market_prob(m["odds"]["P"])
+            if q0:
+                y0 = m["hg"] + m["ag"] > 2
+                for k, b in (("best", "Max"), ("one", "B365")):
+                    bb = best_bet(q0, m["odds"][b])
+                    if bb and bb[3] > MARKET_EDGE_MIN:
+                        pr = bb[2] - 1 if (bb[0] == "Over") == y0 else -1.0
+                        for acc in (mkt[k], ms[k]):
+                            acc["n"] += 1; acc["profit"] += pr
             if m["d"] not in cache:
                 cache[m["d"]] = Model(allm, m["d"], prev, p)
             mod = cache[m["d"]]
@@ -275,6 +289,7 @@ def backtest(seasons_rows, test_from_idx, p=P, books=("B365", "Max")):
                     for acc in (res[b], s[b]):
                         acc["n"] += 1; acc["profit"] += pr
         per_season.append(s)
+        mkt_seasons.append(ms)
     out = {"matches": n_ll,
            "logloss_model": round(ll_mod / n_ll, 4) if n_ll else None,
            "logloss_market": round(ll_mkt / n_ll, 4) if n_ll else None, "books": {}}
@@ -282,6 +297,9 @@ def backtest(seasons_rows, test_from_idx, p=P, books=("B365", "Max")):
         r = res[b]
         out["books"][b] = {"bets": r["n"], "roi": round(r["profit"] / r["n"], 4) if r["n"] else None,
                            "seasons": [round(x[b]["profit"] / x[b]["n"], 4) if x[b]["n"] else None for x in per_season]}
+    out["market"] = {k: {"bets": r["n"], "roi": round(r["profit"] / r["n"], 4) if r["n"] else None,
+                         "seasons": [round(x[k]["profit"] / x[k]["n"], 4) if x[k]["n"] else None for x in mkt_seasons]}
+                     for k, r in mkt.items()}
     return out
 
 
@@ -320,18 +338,20 @@ def update_journal(journal, code, name, fixtures_priced, results, now_iso, today
     entries = journal.setdefault("entries", [])
     known = {e["id"] for e in entries}
     for f in fixtures_priced:
-        if f["id"] in known or not f.get("bet"):
-            continue
-        b = f["bet"]
-        entries.append({"id": f["id"], "league": code, "league_name": name, "date": f["date"], "time": f["time"],
-                        "home": f["home"], "away": f["away"], "side": b["side"], "prob": b["prob"],
-                        "odds": b["odds"], "book": b["book"], "edge": b["edge"], "added": now_iso,
-                        "status": "open"})
+        for strategy, b in (("model", f.get("bet")), ("market", f.get("mbet"))):
+            eid = f["id"] + "|" + strategy
+            if not b or eid in known:
+                continue
+            entries.append({"id": eid, "match": f["id"], "strategy": strategy, "league": code, "league_name": name,
+                            "date": f["date"], "time": f["time"], "home": f["home"], "away": f["away"],
+                            "side": b["side"], "prob": b["prob"], "odds": b["odds"], "book": b["book"],
+                            "edge": b["edge"], "added": now_iso, "status": "open"})
+            known.add(eid)
     res_by_id = {match_id(code, m): m for m in results if m["hg"] is not None}
     for e in entries:
         if e["league"] != code or e["status"] != "open":
             continue
-        m = res_by_id.get(e["id"])
+        m = res_by_id.get(e.get("match", e["id"]))
         if not m:
             # postponed or never reported: void after three weeks, stake returned
             if today and dt.date.fromisoformat(e["date"]) < today - dt.timedelta(days=21):
@@ -348,14 +368,18 @@ def update_journal(journal, code, name, fixtures_priced, results, now_iso, today
 
 
 def journal_summary(journal):
-    settled = [e for e in journal.get("entries", []) if e["status"] in ("won", "lost")]
-    n = len(settled)
-    profit = sum(e["profit"] for e in settled)
-    clv = [e["odds"] / e["close_odds"] - 1 for e in settled if e.get("close_odds")]
-    return {"settled": n, "won": sum(1 for e in settled if e["status"] == "won"),
-            "open": sum(1 for e in journal.get("entries", []) if e["status"] == "open"),
-            "profit": round(profit, 2), "roi": round(profit / n, 4) if n else None,
-            "clv": round(sum(clv) / len(clv), 4) if clv else None}
+    out = {}
+    for strategy in ("model", "market"):
+        es = [e for e in journal.get("entries", []) if e.get("strategy", "model") == strategy]
+        settled = [e for e in es if e["status"] in ("won", "lost")]
+        n = len(settled)
+        profit = sum(e["profit"] for e in settled)
+        clv = [e["odds"] / e["close_odds"] - 1 for e in settled if e.get("close_odds")]
+        out[strategy] = {"settled": n, "won": sum(1 for e in settled if e["status"] == "won"),
+                         "open": sum(1 for e in es if e["status"] == "open"),
+                         "profit": round(profit, 2), "roi": round(profit / n, 4) if n else None,
+                         "clv": round(sum(clv) / len(clv), 4) if clv else None}
+    return out
 
 
 # ---------------------------------------------------------------- The Odds API (Ladbrokes, BetVictor)
@@ -363,7 +387,7 @@ def journal_summary(journal):
 ODDS_API = "https://api.the-odds-api.com/v4/sports/{sport}/odds"
 ODDS_SPORTS = {"E0": "soccer_epl", "SP1": "soccer_spain_la_liga", "I1": "soccer_italy_serie_a",
                "D1": "soccer_germany_bundesliga", "F1": "soccer_france_ligue_one"}
-USER_BOOKS = {"ladbrokes_uk": "LB", "betvictor": "BV"}   # the user's bookmakers
+USER_BOOKS = {"ladbrokes_uk": "LB", "betvictor": "BV"}   # the user's bookmakers (all UK books are fetched)
 ODDS_REFRESH_H = 11      # free plan budget: ~5 calls x 2-3 times a day
 LONDON = ZoneInfo("Europe/London")
 
@@ -434,7 +458,7 @@ class OddsAPI:
             for div, sport in ODDS_SPORTS.items():
                 url = ODDS_API.format(sport=sport) + "?" + "&".join([
                     "apiKey=" + self.key, "markets=totals", "oddsFormat=decimal", "dateFormat=iso",
-                    "bookmakers=" + ",".join(USER_BOOKS)])
+                    "regions=uk"])
                 try:
                     req = urllib.request.Request(url, headers={"User-Agent": "linia-goli/2"})
                     with urllib.request.urlopen(req, timeout=60) as r:
@@ -460,11 +484,11 @@ class OddsAPI:
                     ko = dt.datetime.fromisoformat(ev["commence_time"].replace("Z", "+00:00")).astimezone(LONDON)
                 except Exception:
                     continue
-                odds = {}
+                odds, books = {}, {}
                 for bm in ev.get("bookmakers", []):
                     code = USER_BOOKS.get(bm.get("key"))
                     for mk in bm.get("markets", []):
-                        if not code or mk.get("key") != "totals":
+                        if mk.get("key") != "totals":
                             continue
                         o = u = None
                         for oc in mk.get("outcomes", []):
@@ -475,9 +499,11 @@ class OddsAPI:
                             elif oc.get("name") == "Under":
                                 u = fnum(oc.get("price"))
                         if o or u:
-                            odds[code] = [o, u]
+                            books[bm.get("key")] = {"t": bm.get("title") or bm.get("key"), "o": o, "u": u}
+                            if code:
+                                odds[code] = [o, u]
                 rows.append({"d": ko.date(), "t": ko.strftime("%H:%M"), "home": ev.get("home_team", ""),
-                             "away": ev.get("away_team", ""), "odds": odds})
+                             "away": ev.get("away_team", ""), "odds": odds, "books": books})
             out[div] = rows
         return out
 
@@ -495,11 +521,42 @@ def merge_bookmaker_odds(fx, events, known, today, unmatched):
         m = idx.get((h, a))
         if m and abs((m["d"] - ev["d"]).days) <= 1:
             m["odds"] = dict(m["odds"], **ev["odds"])
-        elif ev["odds"] or not m:
+            m["books"] = ev["books"]
+        elif ev["odds"] or ev["books"] or not m:
             new = {"div": None, "d": ev["d"], "t": ev["t"], "h": h, "a": a, "hg": None, "ag": None,
-                   "hst": None, "ast": None, "odds": dict(ev["odds"]), "close": {}}
+                   "hst": None, "ast": None, "odds": dict(ev["odds"]), "books": ev["books"], "close": {}}
             fx.append(new); idx[(h, a)] = new
     return fx
+
+
+def fair_price(odds, books):
+    """Fair P(over 2.5): de-margined Pinnacle when available, else median of UK bookmakers."""
+    q = market_prob(odds.get("P", [None, None]))
+    if q:
+        return q, "Pinnacle", 1
+    qs = sorted(x for x in (market_prob([b["o"], b["u"]]) for b in (books or {}).values()) if x)
+    if len(qs) >= MIN_BOOKS_FAIR:
+        mid = len(qs) // 2
+        return (qs[mid] if len(qs) % 2 else (qs[mid - 1] + qs[mid]) / 2), "UK", len(qs)
+    return None, None, 0
+
+
+def market_bet(q, odds):
+    """A price at the user's bookmakers that beats the fair market price."""
+    if not q:
+        return None
+    cands = []
+    for b in ("LB", "BV"):
+        if b in odds:
+            bb = best_bet(q, odds[b])
+            if bb:
+                cands.append((bb, b))
+    if not cands:
+        return None
+    bb, b = max(cands, key=lambda c: c[0][3])
+    if bb[3] > MARKET_EDGE_MIN:
+        return {"side": bb[0], "prob": round(bb[1], 4), "odds": bb[2], "edge": round(bb[3], 4), "book": b}
+    return None
 
 
 def choose_bet(po, odds):
@@ -535,7 +592,7 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
     book_events = oa.load() if not fixtures_from_results else {}
     unmatched = []
     out = {"generated": now_iso, "today": today.isoformat(), "source": "football-data.co.uk",
-           "edge_min": EDGE_MIN, "params": {k: v for k, v in P.items() if k != "promoted"}, "leagues": []}
+           "edge_min": EDGE_MIN, "market_edge_min": MARKET_EDGE_MIN, "params": {k: v for k, v in P.items() if k != "promoted"}, "leagues": []}
     for code, folder, name, country in LEAGUES:
         seasons = [src.season(code, folder, y) for y in reversed(years)]  # oldest first
         cur = seasons[-1]
@@ -559,10 +616,21 @@ def run(today, src, outdir, fixtures_from_results=False, n_seasons=5):
             po = mk["over"]["2.5"]
             odds = {k: v for k, v in m["odds"].items() if v[0] or v[1]}
             bet = choose_bet(po, odds)
+            books = m.get("books") or {}
+            q, qsrc, qn = fair_price(odds, books)
+            mbet = market_bet(q, odds)
+            best = {}
+            for i, side in ((0, "over"), (1, "under")):
+                pr = [((b["o"], b["u"])[i], b["t"]) for b in books.values() if (b["o"], b["u"])[i]]
+                pr += [(odds[k][i], {"B365": "Bet365", "P": "Pinnacle"}[k]) for k in ("B365", "P") if k in odds and odds[k][i]]
+                if pr:
+                    best[side] = max(pr)
             mp = market_prob(odds.get("P", [None, None])) or market_prob(odds.get("Avg", [None, None]))
             priced.append({"id": match_id(code, m), "date": m["d"].isoformat(), "time": m["t"],
                            "home": m["h"], "away": m["a"], "xg": [round(lh, 2), round(la, 2)],
-                           "odds": odds, "market_over": round(mp, 4) if mp else None, "bet": bet, **mk})
+                           "odds": odds, "market_over": round(mp, 4) if mp else None, "bet": bet,
+                           "fair_over": round(q, 4) if q else None, "fair_src": qsrc, "fair_n": qn, "mbet": mbet,
+                           "best": best, "books": {k: [b["t"], b["o"], b["u"]] for k, b in sorted(books.items())}, **mk})
         update_journal(journal, code, name, priced, cur, now_iso, today)
         bt = backtest(seasons[:-1], 2) if len(seasons) >= 4 else None  # completed seasons only
         last = max((m["d"] for m in played), default=None)
