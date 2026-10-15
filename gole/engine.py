@@ -705,8 +705,11 @@ ALIASES = {  # normalised feed name -> football-data name
 }
 
 
+SPECIAL = str.maketrans({"ł": "l", "Ł": "L", "ø": "o", "Ø": "O", "æ": "ae", "Æ": "AE", "ß": "ss", "đ": "d", "Đ": "D", "ı": "i"})
+
+
 def ascii_low(s):
-    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower().replace("'", "")
+    s = unicodedata.normalize("NFKD", s.translate(SPECIAL)).encode("ascii", "ignore").decode().lower().replace("'", "")
     return " ".join(re.sub(r"[^a-z0-9 ]", " ", s).split())
 
 
