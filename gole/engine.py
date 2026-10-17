@@ -22,6 +22,7 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import agent as AG   # the betting agent: virtual money, learns from its own bets
 import nba as NBA    # NBA total points for the agent
+import zrodla as ZR  # extra free data for the agent (ClubElo team strength)
 
 # code, name, country, The Odds API sport key (None = not covered)
 MAIN = [
@@ -1740,6 +1741,7 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
     except Exception as e:
         print("agent: start failed:", e)
     if ag and not fixtures_from_results and not src.local and not only:
+        ag.elo = ZR.ClubElo(src.cache_dir or os.path.join(outdir, ".cache"), now)
         try:
             nba_ctx = NBA.prepare(src.cache_dir or os.path.join(outdir, ".cache"), now, oa)
         except Exception as e:
@@ -1811,7 +1813,7 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         update_journal(journal, code, f"{country} · {name}", priced, played, now, grades)
         if ag and code in AG.LEAGUES:
             try:
-                ag.football(code, f"{country} · {name}", priced, played)
+                ag.football(code, f"{country} · {name}", priced, played, teams=sorted(teams_of(cur) | teams_of(fx)))
             except Exception as e:  # the agent must never stop the app
                 ag.errors.append(f"{code}: {str(e)[:160]}")
         update_predictions(preds_log, code, priced, played, now)
@@ -1842,7 +1844,16 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         except Exception as e:
             ag.errors.append(f"NBA agent: {str(e)[:160]}")
         try:
-            agent_summary = ag.finish({"nba": nba_ctx["status"] if nba_ctx else None, "odds_remaining": oa.c.get("remaining")})
+            sources = {
+                "football_data": {"errors": src.errors[:5], "leagues": len(data)},
+                "odds": {"remaining": oa.c.get("remaining"), "leagues": sorted(d for d, s in oa.c["sports"].items() if s.get("odds") and d in AG.LEAGUES),
+                         "errors": (oa.status.get("errors") or [])[:3]},
+                "fpl": {"teams": len(absences), "players": sum(len(v) for v in absences.values())},
+                "clubelo": ag.elo.status() if ag.elo is not None else None,
+                "espn": {k: nba_ctx["status"].get(k) for k in ("games", "injuries", "errors")} if nba_ctx else None,
+            }
+            agent_summary = ag.finish({"nba": nba_ctx["status"] if nba_ctx else None, "odds_remaining": oa.c.get("remaining"),
+                                       "sources": sources})
         except Exception as e:
             print("agent: save failed:", e)
     oa.save()

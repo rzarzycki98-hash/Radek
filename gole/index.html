@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Linia Goli</title>
-<meta name="description" content="Analiza 38 lig piłkarskich: gole over/under i 1X2, model uczący się na wynikach, kursy i dziennik typów na sucho.">
+<meta name="description" content="Agent, który sam obstawia wirtualnymi pieniędzmi i uczy się na swoich zakładach: gole over/under w 11 ligach piłkarskich i suma punktów w NBA.">
 <meta name="theme-color" content="#0f2430">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -177,7 +177,7 @@ footer .wrap { padding-block: 4px calc(84px + env(safe-area-inset-bottom, 0px));
 
 /* bottom navigation */
 .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; background: var(--nav); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
-.nav .wrap { display: grid; grid-template-columns: repeat(6, 1fr); padding-inline: 4px; }
+.nav .wrap { display: grid; grid-template-columns: repeat(5, 1fr); padding-inline: 4px; }
 .nav button { border: 0; background: none; display: grid; justify-items: center; gap: 2px; padding: 8px 0 7px; font-size: 11px; font-weight: 600; color: var(--muted); }
 .nav svg { width: 22px; height: 22px; }
 .nav button[aria-selected="true"] { color: var(--ink); }
@@ -395,6 +395,21 @@ tr.act td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
 .tdesc div { display: grid; grid-template-columns: 128px 1fr; gap: 8px; }
 .tdesc b { font-weight: 700; }
 .kv.rules { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.row.arow2 .adec small { white-space: nowrap; }
+.row.abet { background: var(--gold-soft); box-shadow: inset 4px 0 0 var(--gold); }
+.row.abet .adec b { color: var(--gold); }
+.lrow { width: 100%; text-align: left; border: 0; background: none; color: inherit; font: inherit; }
+.lrow .jst.open { color: var(--gold); }
+.srcs { display: grid; gap: 2px; }
+.src { display: grid; gap: 1px; padding: 8px 0; border-top: 1px solid var(--line); }
+.src:first-child { border-top: 0; padding-top: 0; }
+.agbet { border-color: var(--gold); }
+.agdec { display: grid; gap: 2px; }
+.agdec b { font-size: 17px; font-weight: 800; }
+.agbet .agdec b { color: var(--gold); }
+.explain-p { margin: 0; font-size: 14px; }
+.agcard p { margin: 0; }
+details > summary.note { cursor: pointer; }
 table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } table.tt td:first-child { min-width: 96px; }
 .kv.rules dd { overflow-wrap: anywhere; }
 </style>
@@ -414,18 +429,16 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
 <main><div class="wrap" id="view"></div></main>
 
 <footer><div class="wrap">
-  <div>Ocena statystyk: model goli i strzałów celnych, tabela, forma, wyniki u siebie i na wyjeździe, bilans bramek i mecze bezpośrednie. Przy każdej aktualizacji aplikacja sama na nowo wylicza, ile każda statystyka waży w danej lidze.</div>
-  <div>Dane: football-data.co.uk (38 lig) i The Odds API (bukmacherzy z UK), co 4 godziny.</div>
-  <div>To narzędzie do analizy, nie porada. Typy są zapisywane na sucho. Graj tylko za pieniądze, które możesz stracić. Pomoc: BeGambleAware.org, GamCare 0808 8020 133.</div>
+  <div>Agent ocenia mecze co 4 godziny. Dane: football-data.co.uk, The Odds API (bukmacherzy z UK), ClubElo, Fantasy Premier League, ESPN.</div>
+  <div>To narzędzie do nauki, nie porada. Agent gra tylko wirtualnymi pieniędzmi. Graj tylko za pieniądze, które możesz stracić. Pomoc: BeGambleAware.org, GamCare 0808 8020 133.</div>
 </div></footer>
 
 <nav class="nav" aria-label="Widok"><div class="wrap" role="tablist">
   <button role="tab" data-tab="agent" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M9 13v1M15 13v1M9.5 17h5"/><circle cx="12" cy="3.5" r="1" fill="currentColor"/></svg>Agent</button>
-  <button role="tab" data-tab="matches" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 13h4M8 16h8"/></svg>Mecze</button>
-  <button role="tab" data-tab="journal" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Typy</button>
-  <button role="tab" data-tab="report" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Wyniki</button>
-  <button role="tab" data-tab="leagues" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Ligi</button>
-  <button role="tab" data-tab="teams" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 010 6.8M18.5 14.8c1.6.8 2.6 2.6 3 5.2"/></svg>Drużyny</button>
+  <button role="tab" data-tab="mecze" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 13h4M8 16h8"/></svg>Mecze</button>
+  <button role="tab" data-tab="nauka" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0012 3z"/></svg>Nauka</button>
+  <button role="tab" data-tab="wyniki" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Wyniki</button>
+  <button role="tab" data-tab="ligi" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Ligi</button>
 </div></nav>
 
 <div class="scrim" id="scrim" hidden></div>
@@ -445,19 +458,21 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     few: "Za mało zakładów w teście, żeby coś ocenić.",
     off: "Bezpiecznik: w dzienniku typy przegrywały z kursem zamknięcia, więc liga jest wyłączona.",
   };
-  const st = { agent: null, asp: "all", aview: "bets", data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "agent", jstrat: "model", sortKey: "pts", sortDir: -1, day: "ALL", show: "all", jview: "mine", sheet: null, form: null, lastBook: "" };
+  const st = { agent: null, asp: "all", mview: "all", lsel: null, data: null, journal: null, preds: null, predsLoading: false, league: "ALL", line: "1X2", tab: "agent", jstrat: "model", sortKey: "pts", sortDir: -1, day: "ALL", show: "all", jview: "mine", sheet: null, form: null, lastBook: "" };
   try {
     const s = JSON.parse(localStorage.getItem("linia-goli-3") || "{}");
     if (MARKETS.includes(s.line)) st.line = s.line;
     // the page always opens on all leagues and all days; the chosen market is remembered
-    if (["agent", "matches", "journal", "report", "leagues", "teams"].includes(s.tab)) st.tab = s.tab;
+    const OLD = { matches: "mecze", journal: "agent", report: "wyniki", leagues: "ligi", teams: "ligi" };
+    const t0 = OLD[s.tab] || s.tab;
+    if (["agent", "mecze", "nauka", "wyniki", "ligi"].includes(t0)) st.tab = t0;
     if (["all", "pilka", "nba"].includes(s.asp)) st.asp = s.asp;
-    if (["bets", "all"].includes(s.aview)) st.aview = s.aview;
+    if (["bets", "all"].includes(s.mview)) st.mview = s.mview;
     if (s.jstrat === "model" || s.jstrat === "market") st.jstrat = s.jstrat;
     if (["all", "strong", "tips"].includes(s.show)) st.show = s.show;
     if (s.jview === "model" || s.jview === "mine") st.jview = s.jview;
   } catch (e) {}
-  const save = () => { try { localStorage.setItem("linia-goli-3", JSON.stringify({ line: st.line, league: st.league, tab: st.tab, jstrat: st.jstrat, show: st.show, jview: st.jview, asp: st.asp, aview: st.aview })); } catch (e) {} };
+  const save = () => { try { localStorage.setItem("linia-goli-3", JSON.stringify({ line: st.line, league: st.league, tab: st.tab, jstrat: st.jstrat, show: st.show, jview: st.jview, asp: st.asp, mview: st.mview })); } catch (e) {} };
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -508,7 +523,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       sel;
     $("lines").innerHTML = MARKETS.map((l) => `<button data-line="${l}" aria-pressed="${l === st.line}">${l === "1X2" ? "1X2" : "Gole " + l}</button>`).join("");
     document.querySelectorAll(".nav [data-tab]").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === st.tab)));
-    $("filters").hidden = $("lines").hidden = st.tab === "agent";
+    $("filters").hidden = $("lines").hidden = true;   // the agent decides the market (goals 2.5); views carry their own filters
   }
 
   // ---------------------------------------------------------------- matches
@@ -894,7 +909,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     <p class="note">Bieżący sezon. Atak i obrona to oceny modelu: 1,00 to średnia ligi. Atak powyżej 1 strzela więcej, obrona powyżej 1 traci więcej. Dotknij nagłówka, żeby sortować.</p></div>`;
   }
 
-  // ---------------------------------------------------------------- agent: virtual wallet, judges its own bets, learns which tactic works
+  // ---------------------------------------------------------------- agent: the whole page is built around it
   const gbp = (x) => "£" + Math.abs(x).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const gMoney = (x) => x == null ? "—" : (x < 0 ? "−" : "") + gbp(x);
   const gMoneyS = (x) => x == null ? "—" : (x > 0.004 ? "+" : x < -0.004 ? "−" : "") + gbp(x);
@@ -903,6 +918,13 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
   const lgShort = (b) => b.sp === "nba" ? "NBA" : String(b.lgn || "").replace(" · ", ", ");
   const pnc = (x) => x > 0 ? "pos" : x < 0 ? "neg" : "";
   const pctS = (p) => p == null ? "—" : Math.abs(p) >= 0.1 ? (p > 0 ? "+" : "−") + Math.round(Math.abs(p) * 100) + "%" : pct1(p);
+  const A_ = () => st.agent || {};
+  const SUM = () => A_().summary || {};
+  const inSp = (x) => st.asp === "all" || x.sp === st.asp;
+  const tName = (s, k) => (((SUM().tactics || {})[s] || []).find((t) => t.key === k) || {}).name || k;
+  const spSeg = () => `<div class="seg2 show" role="group" aria-label="Sport">${[["all", "Wszystko"], ["pilka", "Piłka"], ["nba", "NBA"]].map(([k, l]) => `<button data-asp="${k}" aria-pressed="${st.asp === k}">${l}</button>`).join("")}</div>`;
+  const noAgent = () => `<div class="empty">Agent jeszcze nie ruszył. Pierwsze dane pojawią się po najbliższej aktualizacji (co 4 godziny).</div>`;
+  const fixtureId = (a) => a.sp === "pilka" ? a.id.slice(6) : null;   // "pilka|E0|..." -> "E0|..."
 
   function agentChart(A) {
     const h = A.history || [];
@@ -917,71 +939,117 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       <div class="chart-x"><span>${esc(shortFmt.format(d(h[0][0])))}</span><span>przerywana: start £${base}</span><span>${esc(shortFmt.format(d(h[h.length - 1][0])))}</span></div></div>`;
   }
 
-  function viewAgent() {
-    const A = st.agent;
-    if (!A) return `<div class="empty">Agent jeszcze nie ruszył. Pierwsze dane pojawią się po najbliższej aktualizacji (co 4 godziny).</div>`;
-    const S = A.summary || {}, sp = st.asp, now = Date.now();
-    const inSp = (x) => sp === "all" || x.sp === sp;
-    const blk = (S.stats || {})[sp] || {};
-    const tName = (s, k) => (((S.tactics || {})[s] || []).find((t) => t.key === k) || {}).name || k;
-    let out = `<div class="seg2 show" role="group" aria-label="Sport">${[["all", "Wszystko"], ["pilka", "Piłka"], ["nba", "NBA"]].map(([k, l]) => `<button data-asp="${k}" aria-pressed="${sp === k}">${l}</button>`).join("")}</div>`;
+  // what the agent sees in one match: numbers behind its decision, extra data, tactics on paper
+  function agentFacts(a) {
+    const out = [];
+    if (a.sp === "pilka") {
+      out.push(`Szansa na over 2.5: model ${pct(a.pm)}, rynek ${pct(a.pk)}, agent ${pct(a.p)}${a.p_inj != null ? `, z kontuzjami ${pct(a.p_inj)}` : ""}.`);
+      if (a.elo) out.push(`Siła drużyn (ClubElo): ${a.elo[0]} i ${a.elo[1]}, różnica ${Math.abs(a.elo[0] - a.elo[1])}.`);
+      if (a.inj && (a.inj.h.length || a.inj.a.length)) out.push(`Braki kluczowych: ${[...a.inj.h, ...a.inj.a].map((r) => r[0]).join(", ")}.`);
+      if (a.mv != null && Math.abs(a.mv) >= 0.005) out.push(`Rynek od pierwszego odczytu: over ${pct(a.pk0)} → ${pct(a.pk)}.`);
+    } else {
+      if (a.mu != null) out.push(`Prognoza sumy ${num1(Math.round(a.mu * 10) / 10)} pkt${a.mu_inj != null && a.mu_inj !== a.mu ? `, z kontuzjami ${num1(Math.round(a.mu_inj * 10) / 10)}` : ""}${a.line != null ? `, linia ${num1(a.line)}` : ""}.`);
+      if (a.inj && (a.inj.h.length || a.inj.a.length)) out.push(`Kontuzje gwiazd: ${[...a.inj.h, ...a.inj.a].map((r) => `${r[0]} (${r[1]})`).join(", ")}.`);
+      if (a.b2b && (a.b2b[0] || a.b2b[1])) out.push(`Grali wczoraj: ${[a.b2b[0] ? a.home : "", a.b2b[1] ? a.away : ""].filter(Boolean).join(" i ")}.`);
+      if (a.line0 != null && a.lmed != null && a.line0 !== a.lmed) out.push(`Linia od pierwszego odczytu: ${num1(a.line0)} → ${num1(a.lmed)}.`);
+      if (a.gp) out.push(`Mecze w sezonie: ${a.gp[0] ?? 0} i ${a.gp[1] ?? 0}.`);
+    }
+    const paper = Object.entries(a.tx || {}).filter(([, v]) => v).map(([k, v]) => `${tName(a.sp, k)}: ${["Over", "Under"][v[0]]}${a.sp === "nba" && v[4] != null ? " " + num1(v[4]) : ""} @ ${odd(v[1])}`);
+    if (paper.length) out.push(`Taktyki na sucho: ${paper.join(" · ")}.`);
+    return out;
+  }
 
-    // wallet
-    const prof = S.profit || 0;
-    out += `<div class="card"><div class="wallet"><span class="lbl">Portfel agenta (wirtualne pieniądze, wspólny dla piłki i NBA)</span>
-      <span class="big num">${gMoney(S.equity)}</span>
-      <span class="sub num ${pnc(prof)}">${gMoneyS(prof)} od startu (${pct1(prof / A.start_balance)})</span>
-      <span class="meta num">W grze ${gMoney(S.open)} w ${S.n_open || 0} zakł. · wolne ${gMoney(S.cash)} · gra od ${esc(longFmt.format(d(A.start)))}</span></div>
-      ${agentChart(A)}</div>`;
+  // one analysed match; football opens the full match analysis, NBA unfolds in place
+  function agRow(a) {
+    const bet = a.dec === "bet", b = a.best;
+    const ln = (x) => a.sp === "nba" ? num1(x.line) : "2.5";
+    const right = bet ? `<b>${esc(b.side)} ${ln(b)} @ ${odd(b.odds)}</b><small>stawka ${gMoney(a.stake)}</small>`
+      : `<small>pomija</small>${b ? `<small>${esc(b.side)} ${pct1(b.edge)}</small>` : ""}`;
+    const head = `<span class="rtime num">${esc(timeFmt.format(new Date(a.ko)))}</span>
+        <span class="rnames"><b>${esc(a.home)}</b><b>${esc(a.away)}</b><span class="meta">${esc(lgShort(a))}</span></span>
+        <span class="adec num">${right}</span>`;
+    const fid = fixtureId(a);
+    if (fid && fixtureById(fid)) return `<button class="row arow2 ${bet ? "abet" : ""}" data-id="${esc(fid)}">${head}</button>`;
+    return `<details class="arow ${bet ? "bet" : ""}"><summary>${head}</summary><div class="why"><p>${esc(a.why || "")}</p>${agentFacts(a).map((t) => `<p class="meta">${esc(t)}</p>`).join("")}</div></details>`;
+  }
+  function byDay(list) {
+    const today = isoDay(new Date()), tomorrow = isoDay(new Date(Date.now() + 864e5));
+    const g = {};
+    for (const a of list) (g[localDate(a)] = g[localDate(a)] || []).push(a);
+    return Object.entries(g).map(([k, rows]) => `<div class="day">${esc(dayLabel(k, today, tomorrow))}</div><div class="jlist">${rows.map(agRow).join("")}</div>`).join("");
+  }
+  const betRow = (b) => `<div class="jrow num"><span class="jst ${b.status === "won" ? "won" : b.status === "lost" ? "lost" : "open"}">${b.status === "won" ? "✓" : b.status === "lost" ? "✗" : b.status === "open" ? "•" : "="}</span>
+      <span class="jm"><b>${esc(b.home)} – ${esc(b.away)}</b><span class="meta">${esc(b.side)} ${b.sp === "nba" ? num1(b.line) : "2.5"} @ ${odd(b.odds)} ${esc(b.book)} · stawka ${gMoney(b.stake)}${b.score ? ` · wynik ${esc(b.score)}` : ""}${b.clv != null ? ` · vs zamkn. ${pct1(b.clv)}` : ""}${b.status === "push" ? " · zwrot (równo z linią)" : b.status === "void" ? " · zwrot" : ""}<br>${esc(lgShort(b))}, ${esc(kickoff(b.ko, b.date))}${b.tactic ? ` · ${esc(tName(b.sp, b.tactic))}` : ""}</span></span>
+      <span class="jp ${b.status === "open" ? "" : pnc(b.profit)}">${b.status === "open" ? pct1(b.edge) : gMoneyS(b.profit)}</span></div>`;
+  function statTiles(blk) {
     const decided = (blk.won || 0) + (blk.lost || 0);
-    out += `<div class="stats num">
+    return `<div class="stats num">
       <div><b>${blk.bets || 0}</b><span>rozliczone</span></div>
       <div><b>${decided ? pct(blk.won / decided) : "—"}</b><span>trafione</span></div>
       <div><b class="${pnc(blk.roi)}">${pctS(blk.roi)}</b><span>zysk na stawkę</span></div>
       <div><b class="${pnc(blk.clv)}">${pctS(blk.clv)}</b><span>vs zamknięcie</span></div></div>`;
+  }
+
+  // ---------------- tab 1: Agent – wallet and what it plays today
+  function viewAgent() {
+    const A = st.agent;
+    if (!A) return noAgent();
+    const S = SUM(), now = Date.now();
+    const prof = S.profit || 0;
+    let out = `<div class="card"><div class="wallet"><span class="lbl">Portfel agenta (wirtualne pieniądze, piłka i NBA razem)</span>
+      <span class="big num">${gMoney(S.equity)}</span>
+      <span class="sub num ${pnc(prof)}">${gMoneyS(prof)} od startu (${pct1(prof / A.start_balance)})</span>
+      <span class="meta num">W grze ${gMoney(S.open)} w ${S.n_open || 0} zakł. · wolne ${gMoney(S.cash)} · gra od ${esc(longFmt.format(d(A.start)))}</span></div>
+      ${agentChart(A)}</div>` + statTiles((S.stats || {}).all || {});
     const errs = ((A.status || {}).errors || []);
     if (errs.length) out += `<p class="warn">Problemy przy ostatniej aktualizacji: ${esc(errs.slice(0, 3).join("; "))}</p>`;
+    const up = A.upcoming || [];
+    const bets = up.filter((a) => a.dec === "bet");
+    const an = S.analysed || {};
+    out += `<div class="day">Agent gra (${bets.length})</div>` + (bets.length ? byDay(bets)
+      : `<div class="empty">Na razie agent nie widzi wartościowego zakładu wśród ${up.length} ocenionych meczów. Wszystkie oceny i powody są w zakładce Mecze.</div>`);
+    const waiting = (A.bets || []).filter((b) => b.status === "open" && new Date(b.ko).getTime() <= now).sort((x, y) => x.ko.localeCompare(y.ko));
+    if (waiting.length) out += `<div class="day">Czekają na wynik (${waiting.length})</div><div class="jlist">${waiting.map(betRow).join("")}</div><p class="note">Wyniki piłkarskie przychodzą zwykle w ciągu 1–2 dni.</p>`;
+    const settled = (A.bets || []).filter((b) => b.status !== "open").sort((x, y) => y.ko.localeCompare(x.ko));
+    if (settled.length) out += `<div class="day">Ostatnio rozliczone</div><div class="jlist">${settled.slice(0, 5).map(betRow).join("")}</div><button class="btn ghost" data-tab="wyniki">Wszystkie wyniki</button>`;
+    out += `<p class="note">Agent ocenił ${an.upcoming || 0} najbliższych meczów (11 lig piłkarskich i NBA). Uczy się na ${an.settled || 0} rozliczonych ocenach. Szczegóły nauki: zakładka Nauka.</p>`;
+    const Rd = S.ready || { days: [0, 90], bets: [0, 200] };
+    out += `<div class="card"><h3>Gotowość na prawdziwe pieniądze</h3>
+      ${chk(Rd.days[0] >= Rd.days[1], "Gra co najmniej 3 miesiące", `${Rd.days[0]} / ${Rd.days[1]} dni`)}
+      ${chk(Rd.bets[0] >= Rd.bets[1], "Co najmniej 200 rozliczonych zakładów", `${Rd.bets[0]} / ${Rd.bets[1]}`)}
+      ${chk(Rd.profit, "Portfel na plusie", gMoneyS(S.profit))}
+      ${chk(Rd.clv, "Kursy lepsze niż kurs zamknięcia", pct1(((S.stats || {}).all || {}).clv))}
+      <p class="note">${Rd.ok ? "Agent spełnia wszystkie warunki. To nadal nie gwarancja – zaczynaj od małych stawek." : "Jeszcze nie. Agent gra tylko wirtualnymi pieniędzmi – to informacja dla Ciebie, nic nie obstawia naprawdę."}</p></div>`;
+    out += `<details class="card live"><summary><h3>Jak działa agent</h3></summary><div class="explain" style="display:grid;gap:8px">
+      <p>Co 4 godziny agent sam ocenia każdy mecz 11 lig piłkarskich (gole over/under 2.5) i NBA (suma punktów). Bierze pod uwagę model goli i strzałów celnych, kursy wielu bukmacherów, tabelę, formę, mecze u siebie i na wyjeździe, mecze bezpośrednie, ranking siły ClubElo, kontuzje (Premier League i NBA), zmęczenie w NBA i to, jak ruszają się kursy.</p>
+      <p>Stawia 1% portfela tylko wtedy, gdy kurs jest wyższy, niż wynika z szansy. Po meczu sam rozlicza zakład i sprawdza, czy wziął kurs lepszy niż kurs zamknięcia.</p>
+      <p>Kilka taktyk typuje równolegle na sucho. Gdy któraś okaże się wyraźnie lepsza, agent na nią przechodzi. Po 30 rozliczonych zakładach sam poprawia swoje zasady (najwyżej raz w tygodniu) i zapisuje w dzienniku, co zmienił i dlaczego.</p>
+      <p>Bezpieczniki: najwyżej 30% portfela w grze naraz, kursy nie starsze niż 12 godzin. Pomoc przy problemach z hazardem: BeGambleAware.org, GamCare 0808 8020 133.</p></div></details>`;
+    if (A.updated) out += `<p class="note">Agent: ostatnia zmiana ${esc(stampFmt.format(new Date(A.updated)))}.</p>`;
+    return out;
+  }
+  const chk = (ok, label, val) => `<div class="chk ${ok ? "y" : "n"}"><span class="fi">${ok ? "✓" : "·"}</span><span>${label}</span><b class="num">${val}</b></div>`;
 
-    // what the agent thinks about the next matches
+  // ---------------- tab 2: Mecze – every match with the agent's verdict
+  function viewMecze() {
+    const A = st.agent;
+    if (!A) return noAgent();
     const up = (A.upcoming || []).filter(inSp);
-    const upBets = up.filter((a) => a.dec === "bet");
-    const list = st.aview === "all" ? up : upBets;
-    out += `<div class="day">Najbliższe mecze: co myśli agent</div>
-      <div class="seg2 show2" role="group" aria-label="Które mecze"><button data-aview="bets" aria-pressed="${st.aview !== "all"}">Obstawione (${upBets.length})</button><button data-aview="all" aria-pressed="${st.aview === "all"}">Wszystkie oceny (${up.length})</button></div>`;
-    const arow = (a) => {
-      const bet = a.dec === "bet", b = a.best;
-      const ln = (x) => a.sp === "nba" ? num1(x.line) : "2.5";
-      const paper = Object.entries(a.tx || {}).filter(([, v]) => v).map(([k, v]) => `${tName(a.sp, k)}: ${["Over", "Under"][v[0]]} @ ${odd(v[1])}`);
-      const nums = a.sp === "pilka"
-        ? `Szansa na over 2.5: model ${pct(a.pm)}, rynek ${pct(a.pk)}, agent ${pct(a.p)}.`
-        : (a.mu != null ? `Prognoza sumy ${num1(Math.round(a.mu * 10) / 10)} pkt${a.line != null ? `, linia ${num1(a.line)}` : ""}.` : "");
-      return `<details class="arow ${bet ? "bet" : ""}"><summary>
-        <span class="rtime num">${esc(timeFmt.format(new Date(a.ko)))}</span>
-        <span class="rnames"><b>${esc(a.home)}</b><b>${esc(a.away)}</b><span class="meta">${esc(lgShort(a))}</span></span>
-        <span class="adec num">${bet ? `<b>${esc(b.side)} ${ln(b)} @ ${odd(b.odds)}</b><small>stawka ${gMoney(a.stake)}</small>` : `<small>pomija</small>${b ? `<small>${esc(b.side)} ${pct1(b.edge)}</small>` : ""}`}</span>
-      </summary><div class="why"><p>${esc(a.why || "")}</p>${nums ? `<p class="meta">${esc(nums)}</p>` : ""}${paper.length ? `<p class="meta">Taktyki na sucho: ${esc(paper.join(" · "))}</p>` : ""}</div></details>`;
-    };
-    if (!list.length) {
-      out += `<div class="empty">${st.aview === "all" ? "Brak meczów do oceny w najbliższych 3 dniach." : `Agent nie widzi teraz wartościowego zakładu${up.length ? ` wśród ${up.length} ocenionych meczów` : ""}. Zobacz „Wszystkie oceny”, żeby sprawdzić dlaczego.`}</div>`;
-    } else {
-      const today = isoDay(new Date()), tomorrow = isoDay(new Date(now + 864e5));
-      const byDay = {};
-      for (const a of list) (byDay[localDate(a)] = byDay[localDate(a)] || []).push(a);
-      for (const [k, rows] of Object.entries(byDay)) out += `<div class="day">${esc(dayLabel(k, today, tomorrow))}</div><div class="jlist">${rows.map(arow).join("")}</div>`;
-    }
-    out += `<p class="note">Dotknij meczu, żeby zobaczyć, dlaczego agent gra albo pomija. Agent ocenia mecze od nowa co 4 godziny, aż do pierwszego gwizdka.</p>`;
+    const bets = up.filter((a) => a.dec === "bet");
+    const list = st.mview === "bets" ? bets : up;
+    let out = spSeg() + `<div class="seg2 show2" role="group" aria-label="Które mecze"><button data-mview="all" aria-pressed="${st.mview !== "bets"}">Wszystkie oceny (${up.length})</button><button data-mview="bets" aria-pressed="${st.mview === "bets"}">Obstawione (${bets.length})</button></div>`;
+    if (list.length && st.mview !== "bets") out += `<p class="note">Przy pominiętych meczach: najlepsza strona i jej przewaga. Agent gra dopiero od przewagi wymaganej przez jego taktykę (teraz ${pct1((((A.rules || {}).pilka || {}).edges || {})[((A.rules || {}).pilka || {}).tactic])} w piłce).</p>`;
+    out += list.length ? byDay(list) : `<div class="empty">${st.mview === "bets" ? "Agent nic teraz nie obstawia w tym widoku." : st.asp === "nba" ? "Brak meczów NBA w najbliższych dniach (albo kursy jeszcze się nie pojawiły)." : "Brak meczów do oceny w najbliższym tygodniu."}</div>`;
+    out += `<p class="note">Dotknij meczu: piłka otwiera pełną analizę z oceną agenta na górze, NBA rozwija się na miejscu. Agent ocenia mecze od nowa co 4 godziny, aż do pierwszego gwizdka.</p>`;
+    return out;
+  }
 
-    // bets
-    const bets = (A.bets || []).filter(inSp);
-    const brow = (b) => `<div class="jrow num"><span class="jst ${b.status === "won" ? "won" : b.status === "lost" ? "lost" : "open"}">${b.status === "won" ? "✓" : b.status === "lost" ? "✗" : b.status === "open" ? "•" : "="}</span>
-      <span class="jm"><b>${esc(b.home)} – ${esc(b.away)}</b><span class="meta">${esc(b.side)} ${b.sp === "nba" ? num1(b.line) : "2.5"} @ ${odd(b.odds)} ${esc(b.book)} · stawka ${gMoney(b.stake)}${b.score ? ` · wynik ${esc(b.score)}` : ""}${b.clv != null ? ` · vs zamkn. ${pct1(b.clv)}` : ""}${b.status === "push" ? " · zwrot (równo z linią)" : b.status === "void" ? " · zwrot" : ""}<br>${esc(lgShort(b))}, ${esc(kickoff(b.ko, b.date))}</span></span>
-      <span class="jp ${b.status === "open" ? "" : pnc(b.profit)}">${b.status === "open" ? pct1(b.edge) : gMoneyS(b.profit)}</span></div>`;
-    const waiting = bets.filter((b) => b.status === "open" && new Date(b.ko).getTime() <= now).sort((a, b) => a.ko.localeCompare(b.ko));
-    if (waiting.length) out += `<div class="day">Czekają na wynik (${waiting.length})</div><div class="jlist">${waiting.map(brow).join("")}</div><p class="note">Wyniki piłkarskie przychodzą z football-data.co.uk zwykle w ciągu 1–2 dni.</p>`;
-    const settled = bets.filter((b) => b.status !== "open").sort((a, b) => b.ko.localeCompare(a.ko));
-    out += `<div class="day">Rozliczone (${settled.length})</div>` + (settled.length ? `<div class="jlist">${settled.slice(0, 80).map(brow).join("")}</div>` : `<div class="empty">Jeszcze nic nie rozliczono. Pierwsze wyniki po najbliższych meczach.</div>`);
-
-    // tactics
+  // ---------------- tab 3: Nauka – tactics, lessons, rules, change log, data sources
+  function viewNauka() {
+    const A = st.agent;
+    if (!A) return noAgent();
+    const S = SUM(), sp = st.asp;
+    let out = spSeg();
     const tactCard = (k) => {
       const ts = (S.tactics || {})[k] || [];
       if (!ts.length) return "";
@@ -990,12 +1058,10 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
         ${ts.map((t) => `<tr class="${t.active ? "act" : ""}"><td>${esc(t.name)}<div class="meta">${t.active ? "gra pieniędzmi" : "na sucho"}${t.open ? ` · ${t.open} czeka` : ""}</div></td><td>${t.n}</td><td>${t.n ? pct(t.won / t.n) : "—"}</td><td class="${pnc(t.roi)}">${pctS(t.roi)}</td>${k === "pilka" ? `<td class="${pnc(t.clv)}">${pctS(t.clv)}</td>` : ""}</tr>`).join("")}
         </tbody></table></div>
         <p class="note">Każda taktyka typuje na sucho każdy mecz, a po meczu agent sprawdza, jak wypadła. Pieniądze idą na taktykę zaznaczoną na złoto. Agent sam przechodzi na lepszą, gdy ma dość dowodów: ${k === "pilka" ? "50" : "80"}+ typów, zysk${k === "pilka" ? " i kurs lepszy niż zamknięcie" : ""}.</p>
-        <div class="tdesc">${ts.map((t) => `<div><b>${esc(t.name)}</b><span class="note">${esc(t.desc)} Wymagana przewaga: ${pct1(t.edge)}.</span></div>`).join("")}</div>
+        <details><summary class="note">Opis taktyk</summary><div class="tdesc">${ts.map((t) => `<div><b>${esc(t.name)}</b><span class="note">${esc(t.desc)} Wymagana przewaga: ${pct1(t.edge)}.</span></div>`).join("")}</div></details>
       </div>`;
     };
     out += (sp !== "nba" ? tactCard("pilka") : "") + (sp !== "pilka" ? tactCard("nba") : "");
-
-    // what it learned
     const by = (S.stats || {}).by || {};
     const keep = (r) => sp === "all" || (sp === "nba" ? r.name.startsWith("NBA") : !r.name.startsWith("NBA"));
     const byTbl = (title, rows, filt) => {
@@ -1005,8 +1071,6 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const learned = byTbl("Liga", by.league, true) + byTbl("Strona zakładu", by.side, true) + byTbl("Kurs (oba sporty)", by.odds) + byTbl("Przewaga przy zakładzie (oba sporty)", by.edge) + byTbl("Bukmacher", by.book);
     out += `<div class="card"><h3>Czego agent się nauczył</h3>${learned || `<p class="note">Pierwsze wnioski po rozliczeniu pierwszych zakładów: gdzie agent zarabia, a gdzie rynek jest lepszy.</p>`}
       <p class="note">„Vs zamknięcie” to najważniejszy znak: czy agent brał kurs wyższy niż uczciwy kurs tuż przed meczem. Kto robi to stale, zwykle zarabia na dłuższą metę, nawet gdy pojedyncze zakłady przegrywa.</p></div>`;
-
-    // rules now and learning progress
     const R = A.rules || {}, rp = R.pilka || {}, rn = R.nba || {}, Lr = S.learning || {};
     const lgN = (c) => { const L = st.data && L_(c); return L ? lname(L) : c; };
     const prog = (k) => { const x = Lr[k] || {}; return x.settled >= x.need ? "sam zmienia zasady (najwyżej raz w tygodniu)" : `${x.settled || 0} z ${x.need || 30} zakładów do pierwszych zmian`; };
@@ -1027,46 +1091,127 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       <dt>Nauka (NBA)</dt><dd>${esc(prog("nba"))}</dd>` : ""}
       <dt>Stawka</dt><dd>1% portfela</dd><dt>Bezpiecznik</dt><dd>max 30% portfela w grze</dd></dl>
       <p class="note">Piłka: gole over/under 2.5 w 11 ligach (Top 5, Holandia, Portugalia, Belgia, Turcja, Szkocja, Grecja), kursy ${esc(((A.books || {}).pilka || []).join(", "))}. NBA: suma punktów, kursy ${esc(((A.books || {}).nba || []).join(" i "))}, a gdy nie mają linii – inny bukmacher z UK.</p></div>`;
-
-    // change log
     const ch = (A.changes || []).filter((c) => c.sport === "all" || inSp({ sp: c.sport })).slice().reverse();
     out += `<div class="card"><h3>Dziennik zmian agenta</h3>${ch.map((c) => `<div class="chg"><span class="meta">${esc(stampFmt.format(new Date(c.at)))} · ${c.sport === "all" ? "agent" : SPN[c.sport]}</span><b>${esc(c.text)}</b><span class="note">${esc(c.why)}</span></div>`).join("")}</div>`;
-
-    // readiness for real money
-    const Rd = S.ready || { days: [0, 90], bets: [0, 200] };
-    const chk = (ok, label, val) => `<div class="chk ${ok ? "y" : "n"}"><span class="fi">${ok ? "✓" : "·"}</span><span>${label}</span><b class="num">${val}</b></div>`;
-    out += `<div class="card"><h3>Gotowość na prawdziwe pieniądze</h3>
-      ${chk(Rd.days[0] >= Rd.days[1], "Gra co najmniej 3 miesiące", `${Rd.days[0]} / ${Rd.days[1]} dni`)}
-      ${chk(Rd.bets[0] >= Rd.bets[1], "Co najmniej 200 rozliczonych zakładów", `${Rd.bets[0]} / ${Rd.bets[1]}`)}
-      ${chk(Rd.profit, "Portfel na plusie", gMoneyS(S.profit))}
-      ${chk(Rd.clv, "Kursy lepsze niż kurs zamknięcia", pct1(((S.stats || {}).all || {}).clv))}
-      <p class="note">${Rd.ok ? "Agent spełnia wszystkie warunki. To nadal nie gwarancja – zaczynaj od małych stawek." : "Jeszcze nie. Agent gra tylko wirtualnymi pieniędzmi – to informacja dla Ciebie, nic nie obstawia naprawdę."}</p></div>`;
-
-    // NBA data
-    if (sp !== "pilka") {
-      const ns = (A.status || {}).nba;
-      out += ns ? `<div class="card"><h3>NBA: dane i model</h3><dl class="kv rules num">
-        ${ns.next ? `<dt>Najbliższy mecz</dt><dd>${esc(ns.next.home)} – ${esc(ns.next.away)}, ${esc(stampFmt.format(new Date(ns.next.ko)))}</dd>` : ""}
-        <dt>Mecze w bazie (ten i poprzedni sezon)</dt><dd>${ns.games ?? "—"}</dd>
-        <dt>Mecze tego sezonu</dt><dd>${ns.season_games ?? "—"}</dd>
-        ${ns.rmse ? `<dt>Średni błąd prognozy sumy</dt><dd>±${num1(ns.rmse)} pkt (test na ${ns.tested} meczach)</dd>` : ""}
-        <dt>Kursy na sumę punktów</dt><dd>${ns.odds_at ? esc(stampFmt.format(new Date(ns.odds_at))) : "pobierze w dniu meczu"}</dd></dl>
-        <p class="note">Agent gra NBA od 5. meczu każdej drużyny w sezonie, gdy forma się ustali. Sprawdza też zmęczenie: czy drużyna grała dzień wcześniej.</p>
-        ${(ns.errors || []).length ? `<p class="note err">Problemy z danymi NBA: ${esc(ns.errors.slice(0, 3).join("; "))}</p>` : ""}</div>`
-        : `<div class="card"><h3>NBA</h3><p class="note">Dane NBA pojawią się po najbliższej aktualizacji.</p></div>`;
-    }
-    out += `<details class="card live"><summary><h3>Jak działa agent</h3></summary><div class="explain" style="display:grid;gap:8px">
-      <p>Co 4 godziny agent sam ocenia każdy mecz swoich lig i NBA. Łączy model goli i strzałów celnych (NBA: atak i obrona w punktach), kursy wielu bukmacherów oraz tabelę, formę, wyniki u siebie i na wyjeździe i mecze bezpośrednie.</p>
-      <p>Stawia 1% portfela tylko wtedy, gdy kurs jest wyższy, niż wynika z szansy. Po meczu sam rozlicza zakład i sprawdza, czy wziął kurs lepszy niż kurs zamknięcia.</p>
-      <p>Kilka taktyk typuje równolegle na sucho. Gdy któraś okaże się wyraźnie lepsza, agent na nią przechodzi. Po 30 rozliczonych zakładach sam poprawia swoje zasady (najwyżej raz w tygodniu) i zapisuje w dzienniku, co zmienił i dlaczego – możesz uczyć się razem z nim.</p>
-      <p>Bezpieczniki: najwyżej 30% portfela w grze naraz, kursy nie starsze niż 12 godzin. Graj prawdziwymi pieniędzmi tylko tymi, które możesz stracić. Pomoc: BeGambleAware.org, GamCare 0808 8020 133.</p></div></details>`;
-    if (A.updated) out += `<p class="note">Agent: ostatnia zmiana ${esc(stampFmt.format(new Date(A.updated)))}.</p>`;
+    out += sourcesCard(A);
     return out;
+  }
+  function sourcesCard(A) {
+    const s = ((A.status || {}).sources) || {};
+    const ok = (good, txt) => `<span class="${good ? "pos" : "neg"}">${good ? "✓" : "!"}</span> ${txt}`;
+    const ce = s.clubelo, es = s.espn, fp = s.fpl, od = s.odds, fd = s.football_data;
+    const ceN = ce ? Object.values(ce.matched || {}).reduce((t, m) => t + Object.keys(m).length, 0) : 0;
+    const rows = [
+      ["football-data.co.uk", "wyniki, gole, strzały celne, kursy zamknięcia (6 sezonów)", fd ? ok(!(fd.errors || []).length, `${fd.leagues} lig`) : "—"],
+      ["The Odds API", "kursy bukmacherów z UK przed meczem", od ? ok(!(od.errors || []).length, `zostało ${od.remaining ?? "?"} zapytań w miesiącu`) : "—"],
+      ["ClubElo", "siła drużyn (ranking Elo)", ce ? ok(!(ce.errors || []).length && ceN > 0, `${ceN} drużyn dopasowanych`) : "—"],
+      ["Fantasy Premier League", "kontuzje i zawieszenia w Premier League", fp ? ok(fp.teams > 0, `${fp.players} zawodników na liście`) : "—"],
+      ["ESPN", "NBA: wyniki, terminarz, najlepsi strzelcy, raport kontuzji", es ? ok(!(es.errors || []).length, `${es.games ?? 0} meczów, ${es.injuries ?? 0} kontuzji`) : "—"],
+    ];
+    return `<div class="card"><h3>Skąd agent bierze dane</h3><div class="srcs">${rows.map(([n, w, v]) => `<div class="src"><b>${esc(n)}</b><span class="note">${esc(w)}</span><span class="meta num">${v}</span></div>`).join("")}</div>
+      <p class="note">Wszystko za darmo. Nowe dane agent zawsze najpierw sprawdza na sucho (osobna taktyka), a pieniądze idą za nimi dopiero, gdy pomagają. Newsów i składów nie czyta – to wymagałoby płatnej AI.</p></div>`;
+  }
+
+  // ---------------- tab 4: Wyniki – every settled bet and how accurate the forecasts are
+  function viewWyniki() {
+    const A = st.agent;
+    if (!A) return noAgent();
+    const S = SUM(), sp = st.asp;
+    let out = spSeg() + statTiles((S.stats || {})[sp] || {});
+    const bets = (A.bets || []).filter(inSp);
+    const settled = bets.filter((b) => b.status !== "open").sort((x, y) => y.ko.localeCompare(x.ko));
+    const months = {};
+    for (const b of settled) { const k = b.date.slice(0, 7); (months[k] = months[k] || []).push(b); }
+    const mrows = Object.entries(months).sort((x, y) => y[0].localeCompare(x[0]));
+    if (mrows.length) out += `<div class="card"><h3>Miesiąc po miesiącu</h3><div class="scroll"><table class="num tt"><thead><tr><th>Miesiąc</th><th>Zakł.</th><th>Traf.</th><th>Zysk</th><th>Wynik</th></tr></thead><tbody>
+      ${mrows.map(([k, bs]) => { const st0 = bs.reduce((t, b) => t + b.stake, 0), pr = bs.reduce((t, b) => t + b.profit, 0), w = bs.filter((b) => b.status === "won").length, l = bs.filter((b) => b.status === "lost").length;
+        return `<tr><td>${esc(new Intl.DateTimeFormat("pl-PL", { month: "long", year: "numeric" }).format(d(k + "-15")))}</td><td>${bs.length}</td><td>${w + l ? pct(w / (w + l)) : "—"}</td><td class="${pnc(pr)}">${gMoneyS(pr)}</td><td class="${pnc(pr)}">${pctS(st0 ? pr / st0 : null)}</td></tr>`; }).join("")}
+      </tbody></table></div></div>`;
+    out += `<div class="day">Rozliczone zakłady (${settled.length})</div>` + (settled.length ? `<div class="jlist">${settled.slice(0, 200).map(betRow).join("")}</div>` : `<div class="empty">Jeszcze nic nie rozliczono. Pierwsze wyniki po najbliższych meczach.</div>`);
+    if (sp !== "nba" && st.data && st.data.report) {
+      let n = 0, hit = 0, llf = 0, llk = 0;
+      for (const c of (A.leagues || [])) { const r = (st.data.report[c] || {}).ou; if (r && r.n && r.ll_final != null && r.ll_market != null) { n += r.n; hit += r.hit * r.n; llf += r.ll_final * r.n; llk += r.ll_market * r.n; } }
+      if (n) out += `<div class="card"><h3>Trafność prognoz goli</h3><dl class="kv rules num"><dt>Mecze z 11 lig agenta</dt><dd>${n}</dd><dt>Trafione (over/under 2.5)</dt><dd>${pct(hit / n)}</dd>
+        <dt>Błąd: agent (model + rynek)</dt><dd class="${llf <= llk ? "pos" : ""}">${(llf / n).toFixed(4)}</dd><dt>Błąd: sam rynek</dt><dd>${(llk / n).toFixed(4)}</dd></dl>
+        <p class="note">Wszystkie rozliczone prognozy, nie tylko obstawione. Im mniejszy błąd, tym trafniej. Gdy agent ma błąd mniejszy niż sam rynek, widzi coś, czego bukmacherzy nie widzą.</p></div>`;
+    }
+    return out;
+  }
+
+  // ---------------- tab 5: Ligi – how the agent does in each league, teams table inside
+  function viewLigi() {
+    const A = st.agent;
+    if (!A || !st.data) return noAgent();
+    const S = SUM(), byc = (S.stats || {}).by_code || {}, rp = (A.rules || {}).pilka || {};
+    const codes = (A.leagues || []).filter((c) => L_(c));
+    if (st.lsel) {
+      const back = `<button class="btn ghost" data-lsel="">← Wszystkie ligi</button>`;
+      if (st.lsel === "NBA") return back + nbaLeague(A, byc.NBA);
+      const L = L_(st.lsel);
+      if (!L) { st.lsel = null; return viewLigi(); }
+      return back + `<div class="card"><h3>${esc(flag(L) + " " + lname(L))}</h3>${leagueAgentKV(byc[L.code], rp.off_leagues && rp.off_leagues.includes(L.code))}</div>` + teamsTable(L) + leagueCard(L);
+    }
+    let out = `<p class="note">Jak agentowi idzie w każdej lidze. Dotknij ligi, żeby zobaczyć tabelę drużyn i testy modelu.</p><div class="jlist">`;
+    const rowL = (code, label, sub, blk, off) => `<button class="jrow tap lrow num" data-lsel="${esc(code)}"><span class="jst ${off ? "lost" : "open"}">${off ? "×" : "•"}</span>
+      <span class="jm"><b>${esc(label)}</b><span class="meta">${esc(sub)}${blk ? ` · ${blk.bets} zakł., trafione ${blk.won + blk.lost ? pct(blk.won / (blk.won + blk.lost)) : "—"}` : " · jeszcze bez zakładów"}</span></span>
+      <span class="jp ${blk ? pnc(blk.profit) : ""}">${blk ? gMoneyS(blk.profit) : ""}<i class="chev">›</i></span></button>`;
+    for (const c of codes) {
+      const L = L_(c), off = rp.off_leagues && rp.off_leagues.includes(c);
+      out += rowL(c, `${flag(L)} ${lname(L)}`, off ? "wyłączona przez agenta" : `model: ${GRADE[gradeOf(L, "ou")] || "bez testu"}`, byc[c], off);
+    }
+    const ns = (A.status || {}).nba;
+    out += rowL("NBA", "🏀 NBA", ns && ns.rmse ? `błąd prognozy ±${ns.rmse} pkt` : "koszykówka", byc.NBA, false);
+    return out + `</div>`;
+  }
+  function leagueAgentKV(blk, off) {
+    return `<dl class="kv rules num"><dt>Agent w tej lidze</dt><dd>${off ? "wyłączona (przegrywał z rynkiem)" : "gra"}</dd>
+      <dt>Zakłady</dt><dd>${blk ? blk.bets : 0}</dd><dt>Trafione</dt><dd>${blk && blk.won + blk.lost ? pct(blk.won / (blk.won + blk.lost)) : "—"}</dd>
+      <dt>Zysk</dt><dd class="${blk ? pnc(blk.profit) : ""}">${blk ? gMoneyS(blk.profit) : "—"}</dd><dt>Vs zamknięcie</dt><dd>${blk ? pct1(blk.clv) : "—"}</dd></dl>`;
+  }
+  function teamsTable(L) {
+    const det = DETV[L.code];
+    if (!det) { detail(L.code).then(() => { if (st.tab === "ligi" && st.lsel === L.code) render(); }).catch(() => {}); return `<div class="empty">Wczytuję tabelę…</div>`; }
+    const rows = Object.entries(det.teams).map(([name, t]) => ({ name: nm(L, name), ...t, o25p: t.gp ? t.o25 / t.gp : 0, bttsp: t.gp ? t.btts / t.gp : 0, gd: t.gf - t.ga }));
+    const k = st.sortKey;
+    rows.sort((a, b) => st.sortDir * ((a[k] > b[k]) - (a[k] < b[k])) || (b.gd - a.gd) || a.name.localeCompare(b.name));
+    const th = (key, label) => `<th class="sortable" data-sort="${key}"${k === key ? ` aria-sort="${st.sortDir < 0 ? "descending" : "ascending"}"` : ""}>${label}${k === key ? (st.sortDir < 0 ? " ↓" : " ↑") : ""}</th>`;
+    return `<div class="card"><h3>Drużyny</h3>
+    <div class="scroll"><table class="num tt"><thead><tr>${th("name", "Drużyna")}${th("gp", "M")}${th("pts", "Pkt")}${th("gd", "Bramki")}${th("o25p", "O2.5")}${th("bttsp", "BTTS")}${th("att", "Atak")}${th("def", "Obr.")}</tr></thead>
+    <tbody>${rows.map((r) => `<tr><td>${esc(r.name)}</td><td>${r.gp}</td><td><b>${r.pts ?? "—"}</b></td><td>${r.gf}:${r.ga}</td><td>${r.gp ? pct(r.o25p) : "—"}</td><td>${r.gp ? pct(r.bttsp) : "—"}</td><td>${r.att.toFixed(2)}</td><td>${r.def.toFixed(2)}</td></tr>`).join("")}</tbody></table></div>
+    <p class="note">Bieżący sezon. Atak i obrona to oceny modelu: 1,00 to średnia ligi. Atak powyżej 1 strzela więcej, obrona powyżej 1 traci więcej. Dotknij nagłówka, żeby sortować.</p></div>`;
+  }
+  function nbaLeague(A, blk) {
+    const ns = (A.status || {}).nba;
+    let out = `<div class="card"><h3>🏀 NBA</h3>${leagueAgentKV(blk, false)}</div>`;
+    if (!ns) return out + `<div class="card"><p class="note">Dane NBA pojawią się po najbliższej aktualizacji.</p></div>`;
+    out += `<div class="card"><h3>Dane i model</h3><dl class="kv rules num">
+      ${ns.next ? `<dt>Najbliższy mecz</dt><dd>${esc(ns.next.home)} – ${esc(ns.next.away)}, ${esc(stampFmt.format(new Date(ns.next.ko)))}</dd>` : ""}
+      <dt>Mecze w bazie</dt><dd>${ns.games ?? "—"}</dd><dt>Mecze tego sezonu</dt><dd>${ns.season_games ?? "—"}</dd>
+      ${ns.rmse ? `<dt>Średni błąd prognozy sumy</dt><dd>±${num1(ns.rmse)} pkt (test na ${ns.tested} meczach)</dd>` : ""}
+      <dt>Kontuzje w raporcie ESPN</dt><dd>${ns.injuries ?? "—"}</dd>
+      <dt>Kursy na sumę punktów</dt><dd>${ns.odds_at ? esc(stampFmt.format(new Date(ns.odds_at))) : "pobierze w dniu meczu"}</dd></dl>
+      <p class="note">Agent gra NBA od 5. meczu każdej drużyny w sezonie. Sprawdza też zmęczenie (mecz dzień po dniu) i kontuzje najlepszych strzelców.</p>
+      ${(ns.errors || []).length ? `<p class="note err">Problemy z danymi NBA: ${esc(ns.errors.slice(0, 3).join("; "))}</p>` : ""}</div>`;
+    const T = ns.teams || [];
+    if (T.length) out += `<div class="card"><h3>Drużyny</h3><div class="scroll"><table class="num tt"><thead><tr><th>Drużyna</th><th>M</th><th>Atak</th><th>Obrona</th><th>Bilans</th></tr></thead><tbody>
+      ${T.map((t) => `<tr><td>${esc(t[0])}${t[4] && t[4].length ? `<div class="meta">${esc(t[4].join(", "))}</div>` : ""}</td><td>${t[3]}</td><td class="${pnc(t[1])}">${t[1] > 0 ? "+" : ""}${t[1]}</td><td class="${pnc(-t[2])}">${t[2] > 0 ? "+" : ""}${t[2]}</td><td class="${pnc(t[1] - t[2])}">${(t[1] - t[2] > 0 ? "+" : "") + (t[1] - t[2]).toFixed(1)}</td></tr>`).join("")}
+      </tbody></table></div><p class="note">Punkty na mecz względem średniej ligi (${ns.league_pts ?? "—"} pkt na drużynę). Atak na plus zdobywa więcej, obrona na plus traci więcej. Pod nazwą: najlepsi strzelcy z ostatnich meczów.</p></div>`;
+    return out;
+  }
+
+  // the agent's verdict at the top of the match analysis
+  function agentCard(f) {
+    const a = (A_().upcoming || []).find((x) => x.id === "pilka|" + f.id);
+    if (!a) return "";
+    const bet = a.dec === "bet", b = a.best;
+    return `<div class="card agcard ${bet ? "agbet" : ""}"><h3>Ocena agenta</h3>
+      <div class="agdec num">${bet ? `<b>Obstawia ${esc(b.side)} 2.5 @ ${odd(b.odds)}</b><span class="meta">${esc(b.book)} · stawka ${gMoney(a.stake)}</span>` : `<b>Pomija</b>${b ? `<span class="meta">najlepiej ${esc(b.side)} 2.5 @ ${odd(b.odds)} (${pct1(b.edge)})</span>` : ""}`}</div>
+      <p class="explain-p">${esc(a.why || "")}</p>${agentFacts(a).map((t) => `<p class="meta">${esc(t)}</p>`).join("")}</div>`;
   }
 
   function render() {
     renderHeader();
-    const v = { agent: viewAgent, matches: viewMatches, journal: viewJournal, report: viewReport, leagues: viewLeagues, teams: viewTeams }[st.tab];
+    const v = { agent: viewAgent, mecze: viewMecze, nauka: viewNauka, wyniki: viewWyniki, ligi: viewLigi }[st.tab] || viewAgent;
     $("view").innerHTML = v();
   }
 
@@ -1297,20 +1442,20 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
   function openSheet(f, L, keepScroll, det) {
     det = det || (st.sheet && st.sheet.det);
     st.sheet = { f, L, det };
-    const lineNum = isX() ? 2.5 : parseFloat(st.line);
+    const lineNum = 2.5;
     const mx = f.dist ? Math.max(...f.dist) : 1;
     const scrollTop = $("sheet").scrollTop;
-    const first = isX() ? "x" : "ou";
+    const first = "ou";
     $("sheet").innerHTML = `<div class="sheet-head"><div class="wrap">
       <div class="grab" aria-hidden="true"></div>
       <div class="sheet-top"><span>${esc(flag(L) + " " + lname(L))}, ${esc(dayFmt.format(d(localDate(f))))} ${esc(localTime(f))}</span><button class="close" id="close">Zamknij</button></div>
       <div class="scoreline num"><div class="t" id="sheet-title">${esc(nm(L, f.home))}<small>xG ${f.xg[0].toFixed(2)}</small></div><div class="x">${(f.xg[0] + f.xg[1]).toFixed(2)}<small>xG razem</small></div><div class="t">${esc(nm(L, f.away))}<small>xG ${f.xg[1].toFixed(2)}</small></div></div>
     </div></div>
     <main><div class="wrap">
+      ${agentCard(f)}
       ${f.dist && liveMinuteGuess(f) > 0 ? liveCard(f, L) : ""}
       ${analysisCard(f, first, L)}${absencesCard(f, L)}${analysisCard(f, first === "x" ? "ou" : "x", L)}
       ${f.dist && !(liveMinuteGuess(f) > 0) ? liveCard(f, L) : ""}
-      ${betForm(f)}
       <div class="two">${formBlock(L, det, f.home)}${formBlock(L, det, f.away)}</div>
       ${f.dist ? `<div class="card"><h3>Rozkład liczby goli</h3>
         <div class="dist num">${f.dist.map((p, g) => `<div><b>${Math.round(p * 100)}%</b><span class="col ${g > lineNum ? "o" : ""}" style="height:${(p / mx * 100).toFixed(1)}%"></span><span>${g === 7 ? "7+" : g}</span></div>`).join("")}</div>
@@ -1318,7 +1463,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       </div>
       <div class="card"><h3>Linie goli</h3>
         <div class="scroll"><table class="lines num"><thead><tr><th>Linia</th><th>Over</th><th>Under</th></tr></thead><tbody>
-        ${Object.entries(f.over).map(([l, p]) => `<tr class="${l === st.line ? "hl" : ""}"><td>${l}</td><td class="${p >= .5 ? "o" : ""}">${pct(p)}<small>${fairOdd(p)}</small></td><td class="${p < .5 ? "u" : ""}">${pct(1 - p)}<small>${fairOdd(1 - p)}</small></td></tr>`).join("")}
+        ${Object.entries(f.over).map(([l, p]) => `<tr class="${l === "2.5" ? "hl" : ""}"><td>${l}</td><td class="${p >= .5 ? "o" : ""}">${pct(p)}<small>${fairOdd(p)}</small></td><td class="${p < .5 ? "u" : ""}">${pct(1 - p)}<small>${fairOdd(1 - p)}</small></td></tr>`).join("")}
         <tr><td>Obie strzelą (tak / nie)</td><td class="${f.btts >= .5 ? "o" : ""}">${pct(f.btts)}<small>${fairOdd(f.btts)}</small></td><td class="${f.btts < .5 ? "u" : ""}">${pct(1 - f.btts)}<small>${fairOdd(1 - f.btts)}</small></td></tr>
         </tbody></table></div>
         <p class="note">Mała liczba pod procentem to kurs fair. W trakcie meczu: jeśli kurs na żywo jest dużo wyższy niż fair, a przebieg meczu tego nie tłumaczy, warto się przyjrzeć.</p>
@@ -1379,7 +1524,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
   }
 
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-asp],[data-aview],[data-delbet],[data-savebet],[data-fm],[data-fside],[data-backup],[data-jview],[data-show],[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],[data-lv],#close,#scrim");
+    const t = e.target.closest("[data-asp],[data-mview],[data-lsel],[data-delbet],[data-savebet],[data-fm],[data-fside],[data-backup],[data-jview],[data-show],[data-day],[data-league],[data-line],[data-tab],[data-id],[data-sort],[data-jstrat],[data-lv],#close,#scrim");
     if (!t) return;
     if (t.id === "close" || t.id === "scrim") return closeSheet();
     const ds = t.dataset;
@@ -1393,7 +1538,8 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     else if (ds.fm) { const [m, l] = ds.fm.split("|"); st.form = { mkt: m, line: l, side: null }; openSheet(st.sheet.f, st.sheet.L, true); }
     else if (ds.fside) { st.form.side = +ds.fside; const keep = { s: $("b-stake").value, b: $("b-book").value }; openSheet(st.sheet.f, st.sheet.L, true); $("b-stake").value = keep.s; $("b-book").value = keep.b; }
     else if (ds.asp) { st.asp = ds.asp; save(); render(); }
-    else if (ds.aview) { st.aview = ds.aview; save(); render(); }
+    else if (ds.mview) { st.mview = ds.mview; save(); render(); }
+    else if (ds.lsel !== undefined) { st.lsel = ds.lsel || null; render(); window.scrollTo({ top: 0 }); }
     else if (ds.backup) backup(ds.backup);
     else if (ds.jview) { st.jview = ds.jview; save(); render(); }
     else if (ds.show) { st.show = ds.show; if (st.tab !== "matches") st.tab = "matches"; save(); render(); }

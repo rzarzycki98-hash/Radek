@@ -82,7 +82,13 @@ a aplikacja pokazuje wprost, gdzie działa, a gdzie nie. Pomoc przy problemach z
 
 ## Agent – obstawia sam i uczy się na swoich zakładach
 
-Zakładka **Agent** w aplikacji Linia Goli: https://rzarzycki98-hash.github.io/Radek/gole/
+Cała strona Linii Goli jest zbudowana wokół agenta: https://rzarzycki98-hash.github.io/Radek/gole/
+
+- **Agent** (start): portfel, wykres salda, co agent gra dziś i jutro, wyniki ostatnich zakładów.
+- **Mecze:** każdy mecz z oceną agenta i powodem decyzji; mecz piłkarski otwiera pełną analizę.
+- **Nauka:** która taktyka działa, czego agent się nauczył, jego zasady, dziennik zmian i źródła danych.
+- **Wyniki:** wszystkie rozliczone zakłady, miesiąc po miesiącu, trafność prognoz.
+- **Ligi:** jak agentowi idzie w każdej lidze, tabela drużyn (w NBA: atak i obrona drużyn).
 
 Agent działa sam, razem z resztą aplikacji (co 4 godziny, GitHub Actions). Gra tylko wirtualnymi pieniędzmi.
 
@@ -92,6 +98,9 @@ Agent działa sam, razem z resztą aplikacji (co 4 godziny, GitHub Actions). Gra
   (w darmowych danych tylko oni podają over/under; Ladbrokes i BetVictor mają tam tylko wynik 1X2).
 - **NBA:** suma punktów over/under. Wyniki i terminarz z ESPN (za darmo), kursy Ladbrokes i BetVictor, a gdy nie mają linii –
   inny bukmacher z UK. Model: atak i obrona każdej drużyny w punktach, starsze mecze ważą mniej. Agent gra od 5. meczu drużyny w sezonie.
+- **Dodatkowe darmowe dane:** siła drużyn z [ClubElo](http://clubelo.com), kontuzje w Premier League (Fantasy Premier League)
+  i w NBA (raport ESPN + najlepsi strzelcy każdej drużyny), zmęczenie w NBA (mecz dzień po dniu) i ruchy kursów od pierwszego odczytu.
+  Każde z nich ma własną taktykę na sucho – agent przenosi na nią pieniądze dopiero, gdy się sprawdzi.
 - **Każdy mecz oceniony:** agent zapisuje szansę, najlepszy kurs, decyzję i powód. Stawia tylko wtedy, gdy kurs jest wyższy, niż wynika z szansy.
   Po meczu sam rozlicza zakład i sprawdza, czy wziął kurs lepszy niż kurs zamknięcia.
 - **Taktyki:** kilka taktyk typuje równolegle na sucho (np. „Model + rynek”, „Sam model”, „Statystyki potwierdzają”, „Duża przewaga”,
@@ -105,6 +114,7 @@ Agent działa sam, razem z resztą aplikacji (co 4 godziny, GitHub Actions). Gra
 | Plik | Do czego służy |
 | --- | --- |
 | `gole/agent.py` | agent: portfel, decyzje, rozliczanie, taktyki, nauka |
-| `gole/nba.py` | NBA: wyniki z ESPN, model sumy punktów, kursy |
+| `gole/nba.py` | NBA: wyniki, najlepsi strzelcy i kontuzje z ESPN, model sumy punktów, kursy |
+| `gole/zrodla.py` | siła drużyn z ClubElo i dopasowanie nazw drużyn |
 | `gole/agent.json` | portfel, zakłady, zasady i dziennik zmian (czyta go strona) |
 | `gole/agent_analizy.json` | ocena każdego meczu i jego wynik – dane do nauki |

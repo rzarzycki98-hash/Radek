@@ -9,6 +9,10 @@ import datetime as dt, json, math, os, time, urllib.request
 from zoneinfo import ZoneInfo
 
 ESPN = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
+ESPN_INJ = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries"
+STAR_SHARE = 0.25           # a player who was his team's top scorer in 25%+ of its recent games is a star
+STAR_POINTS = 3.0           # a missing star takes about 3 points off the expected total (tested on paper by the agent)
+INJ_W = {"out": 1.0, "doubtful": 0.75, "questionable": 0.4, "day-to-day": 0.4, "probable": 0.1}
 ET = ZoneInfo("America/New_York")
 TEAMS = {"hawks", "celtics", "nets", "hornets", "bulls", "cavaliers", "mavericks", "nuggets", "pistons", "warriors",
          "rockets", "pacers", "clippers", "lakers", "grizzlies", "heat", "bucks", "timberwolves", "pelicans", "knicks",
@@ -75,10 +79,25 @@ def parse(js):
             done = bool(stt.get("completed")) and hs + as_ > 0
             games.append({"id": str(ev["id"]), "ko": ev["date"].replace("Z", "+00:00"), "h": hk, "a": ak, "hn": hn, "an": an,
                           "hs": hs if done else None, "as": as_ if done else None, "done": done,
+                          "lh": top_scorer(h), "la": top_scorer(a),
                           "type": as_int((ev.get("season") or {}).get("type")) or default_type, "st": stt.get("name")})
         except Exception:
             continue
     return games
+
+
+def top_scorer(comp):
+    """[name, points] of a team's top scorer: in the game (finished) or per game this season (upcoming)."""
+    try:
+        for L in comp.get("leaders", []) or []:
+            if L.get("name") in ("points", "pointsPerGame"):
+                x = (L.get("leaders") or [])[0]
+                a = x.get("athlete") or {}
+                return [a.get("displayName") or a.get("fullName") or a.get("shortName"), as_int(x.get("value")),
+                        "g" if L.get("name") == "points" else "s"]
+    except Exception:
+        pass
+    return None
 
 
 def calendar(js):
@@ -100,8 +119,8 @@ class ESPNSource:
         self.now = now
         self.errors, self.downloads = [], 0
 
-    def _get(self, params):
-        url = ESPN + ("?" + params if params else "")
+    def _get(self, params, base=ESPN):
+        url = base + ("?" + params if params else "")
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (linia-goli; +github actions)", "Accept": "application/json"})
         for attempt in range(3):
             try:
@@ -114,7 +133,7 @@ class ESPNSource:
                     raise
                 time.sleep(2)
 
-    def _cache(self, name, params, fresh, build):
+    def _cache(self, name, params, fresh, build, base=ESPN):
         """fresh(data, age_h) -> True when the cached copy can be used."""
         path = os.path.join(self.dir, name)
         old = None
@@ -126,7 +145,7 @@ class ESPNSource:
             except Exception:
                 old = None
         try:
-            data = build(self._get(params))
+            data = build(self._get(params, base))
         except Exception as e:
             if old is not None:
                 return old
@@ -145,12 +164,35 @@ class ESPNSource:
             if past and all(g["done"] or g.get("st") in ("STATUS_POSTPONED", "STATUS_CANCELED") for g in d["games"]):
                 return True
             return age < 3.0
-        return self._cache(f"d{ymd}.json", f"dates={ymd}", fresh, lambda js: {"games": parse(js)})["games"]
+        return self._cache(f"e{ymd}.json", f"dates={ymd}", fresh, lambda js: {"games": parse(js)})["games"]
+
+    def injuries(self):
+        """{team key: [[player, status, comment]]} from ESPN's injury report (refreshed every 3 hours)."""
+        def build(js):
+            out = {}
+            for t in (js or {}).get("injuries", []) or []:
+                k = team_key(t.get("displayName", ""))
+                if k not in TEAMS:
+                    continue
+                rows = []
+                for i in t.get("injuries", []) or []:
+                    a = i.get("athlete") or {}
+                    stt = i.get("status") or ((i.get("type") or {}).get("description")) or ""
+                    rows.append([a.get("displayName") or "", str(stt), (i.get("shortComment") or "")[:140]])
+                out[k] = rows
+            return {"teams": out}
+        return self._cache("injuries.json", "", lambda d, age: age < 3.0, build, base=ESPN_INJ)["teams"]
 
 
 def load_games(cache_dir, now):
     src = ESPNSource(cache_dir, now)
     today = now.astimezone(ET).date()
+    for fn in os.listdir(src.dir):  # older cache layout without top scorers
+        if fn.startswith("d") and fn.endswith(".json"):
+            try:
+                os.remove(os.path.join(src.dir, fn))
+            except OSError:
+                pass
     top = src.season_calendar(f"dates={today:%Y%m%d}", "cal_now.json", 12)   # the season that contains today
     cal_now, y = top["cal"], top["season"]
     if not y:
@@ -246,6 +288,30 @@ def tune(played):
         if n and (best is None or se / n < best[0]):
             best = (se / n, hl, k, r, n)
     return best
+
+
+def team_stars(played, upcoming):
+    """{team key: {player: share of games as top scorer}} from the last 30 games, plus this season's leader."""
+    by_team = {}
+    for g in reversed(played):
+        for k, top in ((g["h"], g.get("lh")), (g["a"], g.get("la"))):
+            lst = by_team.setdefault(k, [])
+            if len(lst) < 30 and top and top[0]:
+                lst.append(top[0])
+    out = {}
+    for k, names in by_team.items():
+        n = len(names)
+        if n < 5:
+            continue
+        cnt = {}
+        for x in names:
+            cnt[x] = cnt.get(x, 0) + 1
+        out[k] = {x: round(c / n, 2) for x, c in cnt.items() if c / n >= STAR_SHARE}
+    for g in upcoming:  # the season's points-per-game leader counts as a star too
+        for k, top in ((g["h"], g.get("lh")), (g["a"], g.get("la"))):
+            if top and top[0] and top[2] == "s":
+                out.setdefault(k, {}).setdefault(top[0], 0.5)
+    return out
 
 
 # ---------------------------------------------------------------- prices
@@ -346,6 +412,37 @@ def prepare(cache_dir, now, oa):
         yday = (dt.date.fromisoformat(g["day"]) - dt.timedelta(days=1)).isoformat()
         g["b2b_h"] = yday in days_by_team.get(g["h"], set())   # second night of a back-to-back
         g["b2b_a"] = yday in days_by_team.get(g["a"], set())
+    # stars and the injury report: a missing top scorer usually means fewer points
+    stars = team_stars(played, upcoming)
+    try:
+        inj = src.injuries()
+    except Exception as e:
+        inj = {}
+        status["errors"].append(f"ESPN kontuzje: {str(e)[:80]}")
+    status["injuries"] = sum(len(v) for v in inj.values())
+    for g in upcoming:
+        out = {}
+        for side, k in (("h", g["h"]), ("a", g["a"])):
+            rows = []
+            for name, stt, comment in inj.get(k, []):
+                w = INJ_W.get(stt.strip().lower(), 0.0)
+                if name in stars.get(k, {}) and w > 0:
+                    rows.append([name, stt, w, stars[k][name]])
+            out[side] = rows
+        adj = -STAR_POINTS * sum(r[2] for r in out["h"] + out["a"])
+        g["inj"] = {"h": out["h"], "a": out["a"], "adj": round(adj, 1)}
+        if g.get("mu") is not None:
+            g["mu_inj"] = g["mu"] + adj
+    if best:
+        names = {}
+        for g in games:
+            names[g["h"]], names[g["a"]] = g["hn"], g["an"]
+        today = now.astimezone(ET).date()
+        Lh, La = r.base()
+        status["teams"] = sorted(([names.get(t, t), round(r.rating(t, today)[0], 1), round(r.rating(t, today)[1], 1), gp.get(t, 0),
+                                   sorted(stars.get(t, {}), key=lambda n: -stars[t][n])[:2]] for t in TEAMS if t in r.t),
+                                 key=lambda x: -(x[1] - x[2]))
+        status["league_pts"] = round((Lh + La) / 2, 1)
     S = fetch_odds(oa, now, upcoming, status["errors"]) if oa is not None else {}
     evs = S.get("odds", []) if S else []
     for g in upcoming:
