@@ -82,7 +82,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 10.0
+   "last_odds": 11.0
   },
   {
    "id": "E0|2026-10-19|Tottenham|Coventry|model|1x2",
@@ -130,7 +130,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 4.9
+   "last_odds": 4.7
   },
   {
    "id": "E0|2026-10-25|Hull|Brentford|model|1x2",
@@ -154,7 +154,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 4.6
+   "last_odds": 4.5
   },
   {
    "id": "E2|2026-10-17|Milton Keynes Dons|Luton|market|1x2",
@@ -178,7 +178,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 4.0
+   "last_odds": 3.8
   },
   {
    "id": "E2|2026-10-17|Barnsley|Cambridge|market|1x2",
@@ -202,7 +202,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 2.6
+   "last_odds": 2.48
   },
   {
    "id": "E2|2026-10-17|Stockport|Bromley|model|1x2",
@@ -274,7 +274,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 5.25
+   "last_odds": 5.3
   },
   {
    "id": "E2|2026-10-17|Sheffield Weds|AFC Wimbledon|market|1x2",
@@ -298,7 +298,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 5.25
+   "last_odds": 5.3
   },
   {
    "id": "D1|2026-10-16|Ein Frankfurt|FC Koln|market|1x2",
@@ -466,7 +466,7 @@
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 3.55
+   "last_odds": 3.45
   },
   {
    "id": "D1|2026-10-24|FC Koln|Schalke 04|market|1x2",
@@ -490,7 +490,7 @@
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 3.55
+   "last_odds": 3.45
   },
   {
    "id": "D1|2026-10-24|Augsburg|Union Berlin|model|1x2",
@@ -514,7 +514,7 @@
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 4.1
+   "last_odds": 3.95
   },
   {
    "id": "D1|2026-10-24|Augsburg|Union Berlin|market|1x2",
@@ -538,7 +538,7 @@
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 4.1
+   "last_odds": 3.95
   },
   {
    "id": "D1|2026-10-24|RB Leipzig|Elversberg|model|1x2",
@@ -610,7 +610,7 @@
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 6.0
+   "last_odds": 6.5
   },
   {
    "id": "D1|2026-10-25|Freiburg|Bayern Munich|market|1x2",
@@ -634,7 +634,7 @@
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 6.0
+   "last_odds": 6.5
   },
   {
    "id": "D2|2026-10-18|Bielefeld|Osnabruck|model|1x2",
@@ -730,7 +730,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 5.0
+   "last_odds": 4.5
   },
   {
    "id": "I1|2026-10-17|Venezia|Napoli|market|1x2",
@@ -754,7 +754,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 5.0
+   "last_odds": 4.5
   },
   {
    "id": "I1|2026-10-17|Roma|Genoa|model",
@@ -778,7 +778,7 @@
    "grade": "no",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 2.15
+   "last_odds": 2.0
   },
   {
    "id": "I1|2026-10-17|Roma|Genoa|model|1x2",
@@ -802,7 +802,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 7.5
+   "last_odds": 5.75
   },
   {
    "id": "I1|2026-10-17|Roma|Genoa|market|1x2",
@@ -826,7 +826,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 7.5
+   "last_odds": 5.75
   },
   {
    "id": "I1|2026-10-18|Udinese|Lecce|market|1x2",
@@ -850,7 +850,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 4.5
+   "last_odds": 4.2
   },
   {
    "id": "I1|2026-10-18|Fiorentina|Como|model",
@@ -994,7 +994,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 6.5
+   "last_odds": 6.0
   },
   {
    "id": "SP1|2026-10-17|Betis|Barcelona|market|1x2",
@@ -1018,7 +1018,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 6.5
+   "last_odds": 6.0
   },
   {
    "id": "SP1|2026-10-18|Osasuna|Santander|market|1x2",
@@ -1042,7 +1042,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 3.85
+   "last_odds": 3.7
   },
   {
    "id": "SP1|2026-10-18|Real Madrid|Sevilla|model|1x2",
@@ -1114,7 +1114,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 3.75
+   "last_odds": 3.55
   },
   {
    "id": "SP1|2026-10-24|Ath Madrid|La Coruna|model|1x2",
@@ -1306,7 +1306,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 7.5
   },
   {
    "id": "T1|2026-10-17|Genclerbirligi|Galatasaray|market|1x2",
@@ -1330,7 +1330,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 7.5
   },
   {
    "id": "T1|2026-10-17|Fenerbahce|Alanyaspor|model|1x2",
@@ -1354,7 +1354,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 10.5
+   "last_odds": 10.0
   },
   {
    "id": "T1|2026-10-17|Fenerbahce|Alanyaspor|market|1x2",
@@ -1378,7 +1378,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 10.5
+   "last_odds": 10.0
   },
   {
    "id": "ARG|2026-10-25|River Plate|Racing Club|model|1x2",
@@ -1714,7 +1714,7 @@
    "grade": "watch",
    "added": "2026-10-15T11:01+00:00",
    "status": "open",
-   "last_odds": 5.5
+   "last_odds": 5.75
   },
   {
    "id": "I1|2026-10-18|Milan|Atalanta|model|1x2",
@@ -1738,7 +1738,7 @@
    "grade": "watch",
    "added": "2026-10-15T11:01+00:00",
    "status": "open",
-   "last_odds": 4.25
+   "last_odds": 4.1
   },
   {
    "id": "I1|2026-10-18|Juventus|Lazio|model|1x2",
@@ -1834,7 +1834,7 @@
    "grade": "few",
    "added": "2026-10-16T00:59+00:00",
    "status": "open",
-   "last_odds": 2.23
+   "last_odds": 2.18
   },
   {
    "id": "E0|2026-10-24|Aston Villa|Man City|market|1x2",
@@ -1858,7 +1858,7 @@
    "grade": "no",
    "added": "2026-10-16T00:59+00:00",
    "status": "open",
-   "last_odds": 4.9
+   "last_odds": 4.7
   },
   {
    "id": "D1|2026-10-17|Union Berlin|Dortmund|model|1x2",
@@ -1882,7 +1882,7 @@
    "grade": "few",
    "added": "2026-10-16T00:59+00:00",
    "status": "open",
-   "last_odds": 5.5
+   "last_odds": 5.0
   },
   {
    "id": "I1|2026-10-24|Como|Sassuolo|market|1x2",
@@ -1954,7 +1954,7 @@
    "grade": "few",
    "added": "2026-10-16T00:59+00:00",
    "status": "open",
-   "last_odds": 7.0
+   "last_odds": 6.5
   },
   {
    "id": "F1|2026-10-17|Strasbourg|Paris SG|market|1x2",
@@ -1978,7 +1978,7 @@
    "grade": "few",
    "added": "2026-10-16T00:59+00:00",
    "status": "open",
-   "last_odds": 7.0
+   "last_odds": 6.5
   },
   {
    "id": "F2|2026-10-16|Reims|Dijon|model|1x2",
@@ -2938,7 +2938,7 @@
    "grade": "few",
    "added": "2026-10-16T08:53+00:00",
    "status": "open",
-   "last_odds": 2.06
+   "last_odds": 1.88
   },
   {
    "id": "G1|2026-10-18|Panetolikos|Olympiakos|model|1x2",
@@ -3539,13 +3539,709 @@
    "added": "2026-10-16T08:53+00:00",
    "status": "open",
    "last_odds": 3.2
+  },
+  {
+   "id": "E0|2026-10-18|Brighton|Crystal Palace|market|1x2",
+   "match": "E0|2026-10-18|Brighton|Crystal Palace",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-10-18",
+   "time": "14:00",
+   "ko": "2026-10-18T13:00+00:00",
+   "home": "Brighton",
+   "away": "Crystal Palace",
+   "side": "2",
+   "prob": 0.1704,
+   "odds": 6.0,
+   "book": "Sky Bet",
+   "book_key": "skybet",
+   "user_book": false,
+   "edge": 0.0226,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 6.0
+  },
+  {
+   "id": "E0|2026-10-18|Leeds|Man United|model|1x2",
+   "match": "E0|2026-10-18|Leeds|Man United",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-10-18",
+   "time": "14:00",
+   "ko": "2026-10-18T13:00+00:00",
+   "home": "Leeds",
+   "away": "Man United",
+   "side": "2",
+   "prob": 0.347,
+   "odds": 3.0,
+   "book": "BoyleSports",
+   "book_key": "boylesports",
+   "user_book": false,
+   "edge": 0.0409,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 3.0
+  },
+  {
+   "id": "E0|2026-10-18|Nott'm Forest|Arsenal|market|1x2",
+   "match": "E0|2026-10-18|Nott'm Forest|Arsenal",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-10-18",
+   "time": "16:30",
+   "ko": "2026-10-18T15:30+00:00",
+   "home": "Nott'm Forest",
+   "away": "Arsenal",
+   "side": "1",
+   "prob": 0.1705,
+   "odds": 6.0,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0229,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 6.0
+  },
+  {
+   "id": "E0|2026-10-24|Chelsea|Tottenham|model|1x2",
+   "match": "E0|2026-10-24|Chelsea|Tottenham",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-10-24",
+   "time": "17:30",
+   "ko": "2026-10-24T16:30+00:00",
+   "home": "Chelsea",
+   "away": "Tottenham",
+   "side": "2",
+   "prob": 0.2489,
+   "odds": 4.2,
+   "book": "Paddy Power",
+   "book_key": "paddypower",
+   "user_book": false,
+   "edge": 0.0454,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.2
+  },
+  {
+   "id": "E0|2026-10-24|Chelsea|Tottenham|market|1x2",
+   "match": "E0|2026-10-24|Chelsea|Tottenham",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-10-24",
+   "time": "17:30",
+   "ko": "2026-10-24T16:30+00:00",
+   "home": "Chelsea",
+   "away": "Tottenham",
+   "side": "2",
+   "prob": 0.2444,
+   "odds": 4.2,
+   "book": "Paddy Power",
+   "book_key": "paddypower",
+   "user_book": false,
+   "edge": 0.0266,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.2
+  },
+  {
+   "id": "E1|2026-10-17|Norwich|Portsmouth|model|1x2",
+   "match": "E1|2026-10-17|Norwich|Portsmouth",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E1",
+   "league_name": "Anglia · Championship",
+   "date": "2026-10-17",
+   "time": "15:00",
+   "ko": "2026-10-17T14:00+00:00",
+   "home": "Norwich",
+   "away": "Portsmouth",
+   "side": "2",
+   "prob": 0.235,
+   "odds": 4.4,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0338,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.4
+  },
+  {
+   "id": "E1|2026-10-17|Norwich|Portsmouth|market|1x2",
+   "match": "E1|2026-10-17|Norwich|Portsmouth",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E1",
+   "league_name": "Anglia · Championship",
+   "date": "2026-10-17",
+   "time": "15:00",
+   "ko": "2026-10-17T14:00+00:00",
+   "home": "Norwich",
+   "away": "Portsmouth",
+   "side": "2",
+   "prob": 0.235,
+   "odds": 4.4,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0338,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.4
+  },
+  {
+   "id": "E2|2026-10-17|Peterboro|Burton|model|1x2",
+   "match": "E2|2026-10-17|Peterboro|Burton",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E2",
+   "league_name": "Anglia · League One",
+   "date": "2026-10-17",
+   "time": "12:30",
+   "ko": "2026-10-17T11:30+00:00",
+   "home": "Peterboro",
+   "away": "Burton",
+   "side": "2",
+   "prob": 0.26,
+   "odds": 4.1,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.0661,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.1
+  },
+  {
+   "id": "E2|2026-10-17|Peterboro|Burton|market|1x2",
+   "match": "E2|2026-10-17|Peterboro|Burton",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E2",
+   "league_name": "Anglia · League One",
+   "date": "2026-10-17",
+   "time": "12:30",
+   "ko": "2026-10-17T11:30+00:00",
+   "home": "Peterboro",
+   "away": "Burton",
+   "side": "2",
+   "prob": 0.26,
+   "odds": 4.1,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.0661,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.1
+  },
+  {
+   "id": "D1|2026-10-17|Hamburg|Stuttgart|model|1x2",
+   "match": "D1|2026-10-17|Hamburg|Stuttgart",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "D1",
+   "league_name": "Niemcy · Bundesliga",
+   "date": "2026-10-17",
+   "time": "14:30",
+   "ko": "2026-10-17T13:30+00:00",
+   "home": "Hamburg",
+   "away": "Stuttgart",
+   "side": "1",
+   "prob": 0.2457,
+   "odds": 4.2,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.0321,
+   "grade": "few",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.2
+  },
+  {
+   "id": "D1|2026-10-17|Hamburg|Stuttgart|market|1x2",
+   "match": "D1|2026-10-17|Hamburg|Stuttgart",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "D1",
+   "league_name": "Niemcy · Bundesliga",
+   "date": "2026-10-17",
+   "time": "14:30",
+   "ko": "2026-10-17T13:30+00:00",
+   "home": "Hamburg",
+   "away": "Stuttgart",
+   "side": "1",
+   "prob": 0.2457,
+   "odds": 4.2,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.0321,
+   "grade": "few",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.2
+  },
+  {
+   "id": "D2|2026-10-17|Hannover|St Pauli|market|1x2",
+   "match": "D2|2026-10-17|Hannover|St Pauli",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "D2",
+   "league_name": "Niemcy · 2. Bundesliga",
+   "date": "2026-10-17",
+   "time": "19:30",
+   "ko": "2026-10-17T18:30+00:00",
+   "home": "Hannover",
+   "away": "St Pauli",
+   "side": "2",
+   "prob": 0.3193,
+   "odds": 3.2,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0217,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 3.2
+  },
+  {
+   "id": "I1|2026-10-17|Bologna|Inter|model|1x2",
+   "match": "I1|2026-10-17|Bologna|Inter",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-10-17",
+   "time": "17:00",
+   "ko": "2026-10-17T16:00+00:00",
+   "home": "Bologna",
+   "away": "Inter",
+   "side": "1",
+   "prob": 0.1733,
+   "odds": 6.0,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.0396,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 6.0
+  },
+  {
+   "id": "I1|2026-10-17|Roma|Genoa|market",
+   "match": "I1|2026-10-17|Roma|Genoa",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-10-17",
+   "time": "19:45",
+   "ko": "2026-10-17T18:45+00:00",
+   "home": "Roma",
+   "away": "Genoa",
+   "side": "Under",
+   "prob": 0.4919,
+   "odds": 2.1,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0331,
+   "grade": "few",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 2.1
+  },
+  {
+   "id": "I1|2026-10-18|Udinese|Lecce|model|1x2",
+   "match": "I1|2026-10-18|Udinese|Lecce",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-10-18",
+   "time": "11:30",
+   "ko": "2026-10-18T10:30+00:00",
+   "home": "Udinese",
+   "away": "Lecce",
+   "side": "2",
+   "prob": 0.2247,
+   "odds": 4.6,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.0335,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.6
+  },
+  {
+   "id": "I1|2026-10-18|Fiorentina|Como|model|1x2",
+   "match": "I1|2026-10-18|Fiorentina|Como",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-10-18",
+   "time": "14:00",
+   "ko": "2026-10-18T13:00+00:00",
+   "home": "Fiorentina",
+   "away": "Como",
+   "side": "1",
+   "prob": 0.2883,
+   "odds": 3.6,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.0378,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 3.6
+  },
+  {
+   "id": "I1|2026-10-18|Fiorentina|Como|market|1x2",
+   "match": "I1|2026-10-18|Fiorentina|Como",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-10-18",
+   "time": "14:00",
+   "ko": "2026-10-18T13:00+00:00",
+   "home": "Fiorentina",
+   "away": "Como",
+   "side": "1",
+   "prob": 0.2856,
+   "odds": 3.6,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.028,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 3.6
+  },
+  {
+   "id": "I1|2026-10-18|Milan|Atalanta|market|1x2",
+   "match": "I1|2026-10-18|Milan|Atalanta",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-10-18",
+   "time": "17:00",
+   "ko": "2026-10-18T16:00+00:00",
+   "home": "Milan",
+   "away": "Atalanta",
+   "side": "2",
+   "prob": 0.2257,
+   "odds": 4.6,
+   "book": "Betfair Sportsbook",
+   "book_key": "betfair_sb_uk",
+   "user_book": false,
+   "edge": 0.0383,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.6
+  },
+  {
+   "id": "I1|2026-10-25|Atalanta|Frosinone|market|1x2",
+   "match": "I1|2026-10-25|Atalanta|Frosinone",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-10-25",
+   "time": "14:00",
+   "ko": "2026-10-25T14:00+00:00",
+   "home": "Atalanta",
+   "away": "Frosinone",
+   "side": "2",
+   "prob": 0.2045,
+   "odds": 5.0,
+   "book": "Betfred (UK)",
+   "book_key": "betfred_uk",
+   "user_book": false,
+   "edge": 0.0227,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 5.0
+  },
+  {
+   "id": "SP1|2026-10-17|Betis|Barcelona|market",
+   "match": "SP1|2026-10-17|Betis|Barcelona",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "SP1",
+   "league_name": "Hiszpania · LaLiga",
+   "date": "2026-10-17",
+   "time": "17:30",
+   "ko": "2026-10-17T16:30+00:00",
+   "home": "Betis",
+   "away": "Barcelona",
+   "side": "Under",
+   "prob": 0.2446,
+   "odds": 4.2,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.0272,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.2
+  },
+  {
+   "id": "SP1|2026-10-17|Valencia|Ath Bilbao|market|1x2",
+   "match": "SP1|2026-10-17|Valencia|Ath Bilbao",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "SP1",
+   "league_name": "Hiszpania · LaLiga",
+   "date": "2026-10-17",
+   "time": "20:00",
+   "ko": "2026-10-17T19:00+00:00",
+   "home": "Valencia",
+   "away": "Ath Bilbao",
+   "side": "1",
+   "prob": 0.3018,
+   "odds": 3.4,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0262,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 3.4
+  },
+  {
+   "id": "SP1|2026-10-24|Valencia|Villarreal|market|1x2",
+   "match": "SP1|2026-10-24|Valencia|Villarreal",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "SP1",
+   "league_name": "Hiszpania · LaLiga",
+   "date": "2026-10-24",
+   "time": "17:30",
+   "ko": "2026-10-24T16:30+00:00",
+   "home": "Valencia",
+   "away": "Villarreal",
+   "side": "1",
+   "prob": 0.2923,
+   "odds": 3.5,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0229,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 3.5
+  },
+  {
+   "id": "SP1|2026-10-25|Barcelona|Real Madrid|model|1x2",
+   "match": "SP1|2026-10-25|Barcelona|Real Madrid",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "SP1",
+   "league_name": "Hiszpania · LaLiga",
+   "date": "2026-10-25",
+   "time": "20:00",
+   "ko": "2026-10-25T20:00+00:00",
+   "home": "Barcelona",
+   "away": "Real Madrid",
+   "side": "2",
+   "prob": 0.1887,
+   "odds": 5.5,
+   "book": "Betfred (UK)",
+   "book_key": "betfred_uk",
+   "user_book": false,
+   "edge": 0.0377,
+   "grade": "watch",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 5.5
+  },
+  {
+   "id": "F1|2026-10-25|Paris SG|Lyon|model|1x2",
+   "match": "F1|2026-10-25|Paris SG|Lyon",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-10-25",
+   "time": "19:45",
+   "ko": "2026-10-25T19:45+00:00",
+   "home": "Paris SG",
+   "away": "Lyon",
+   "side": "2",
+   "prob": 0.1486,
+   "odds": 7.0,
+   "book": "Betfred (UK)",
+   "book_key": "betfred_uk",
+   "user_book": false,
+   "edge": 0.0401,
+   "grade": "few",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 7.0
+  },
+  {
+   "id": "FIN|2026-10-17|Lahti|TPS|model",
+   "match": "FIN|2026-10-17|Lahti|TPS",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "FIN",
+   "league_name": "Finlandia · Veikkausliiga",
+   "date": "2026-10-17",
+   "time": "12:00",
+   "ko": "2026-10-17T11:00+00:00",
+   "home": "Lahti",
+   "away": "TPS",
+   "side": "Under",
+   "prob": 0.5004,
+   "odds": 2.32,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.1609,
+   "grade": null,
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 2.32
+  },
+  {
+   "id": "JPN|2026-10-17|Sanfrecce Hiroshima|Kyoto|market|1x2",
+   "match": "JPN|2026-10-17|Sanfrecce Hiroshima|Kyoto",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "JPN",
+   "league_name": "Japonia · J1 League",
+   "date": "2026-10-17",
+   "time": "06:00",
+   "ko": "2026-10-17T05:00+00:00",
+   "home": "Sanfrecce Hiroshima",
+   "away": "Kyoto",
+   "side": "2",
+   "prob": 0.1364,
+   "odds": 7.5,
+   "book": "Unibet (UK)",
+   "book_key": "unibet_uk",
+   "user_book": false,
+   "edge": 0.0227,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 7.5
+  },
+  {
+   "id": "MEX|2026-10-18|Toluca|Atl. San Luis|model|1x2",
+   "match": "MEX|2026-10-18|Toluca|Atl. San Luis",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-10-18",
+   "time": "02:00",
+   "ko": "2026-10-18T01:00+00:00",
+   "home": "Toluca",
+   "away": "Atl. San Luis",
+   "side": "X",
+   "prob": 0.1815,
+   "odds": 5.75,
+   "book": "Betway",
+   "book_key": "betway",
+   "user_book": false,
+   "edge": 0.0436,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 5.75
+  },
+  {
+   "id": "MEX|2026-10-19|Monterrey|Pachuca|model|1x2",
+   "match": "MEX|2026-10-19|Monterrey|Pachuca",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-10-19",
+   "time": "02:00",
+   "ko": "2026-10-19T01:00+00:00",
+   "home": "Monterrey",
+   "away": "Pachuca",
+   "side": "2",
+   "prob": 0.2194,
+   "odds": 4.75,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0422,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.75
+  },
+  {
+   "id": "MEX|2026-10-19|Monterrey|Pachuca|market|1x2",
+   "match": "MEX|2026-10-19|Monterrey|Pachuca",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-10-19",
+   "time": "02:00",
+   "ko": "2026-10-19T01:00+00:00",
+   "home": "Monterrey",
+   "away": "Pachuca",
+   "side": "2",
+   "prob": 0.2194,
+   "odds": 4.75,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0422,
+   "grade": "no",
+   "added": "2026-10-17T01:00+00:00",
+   "status": "open",
+   "last_odds": 4.75
   }
  ],
  "summary": {
   "model_ou": {
    "settled": 0,
    "won": 0,
-   "open": 17,
+   "open": 18,
    "profit": 0,
    "roi": null,
    "clv": null
@@ -3553,7 +4249,7 @@
   "model_x": {
    "settled": 0,
    "won": 0,
-   "open": 61,
+   "open": 73,
    "profit": 0,
    "roi": null,
    "clv": null
@@ -3561,7 +4257,7 @@
   "market_ou": {
    "settled": 0,
    "won": 0,
-   "open": 5,
+   "open": 7,
    "profit": 0,
    "roi": null,
    "clv": null
@@ -3569,11 +4265,11 @@
   "market_x": {
    "settled": 0,
    "won": 0,
-   "open": 65,
+   "open": 79,
    "profit": 0,
    "roi": null,
    "clv": null
   }
  },
- "updated": "2026-10-16T08:53+00:00"
+ "updated": "2026-10-17T01:00+00:00"
 }
