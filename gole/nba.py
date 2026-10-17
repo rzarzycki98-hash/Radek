@@ -163,7 +163,7 @@ def load_games(cache_dir, now):
             d = dt.date(int(ymd[:4]), int(ymd[4:6]), int(ymd[6:]))
         except ValueError:
             continue
-        if d > today + dt.timedelta(days=2) or d < today - dt.timedelta(days=500):
+        if d > today + dt.timedelta(days=7) or d < today - dt.timedelta(days=500):   # a week ahead: the next game shows early
             continue
         try:
             for g in src.day(ymd, d < today - dt.timedelta(days=1)):
@@ -327,6 +327,7 @@ def prepare(cache_dir, now, oa):
             gp[g["h"]] = gp.get(g["h"], 0) + 1
             gp[g["a"]] = gp.get(g["a"], 0) + 1
     status["season_games"] = sum(gp.values()) // 2
+    status["season_start"] = season_start
     if best:
         mse, hl, k, r, n = best
         sd = min(max(math.sqrt(mse), SD_RANGE[0]), SD_RANGE[1])
