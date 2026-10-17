@@ -7,7 +7,7 @@ on:
   workflow_dispatch:          # ręczne uruchomienie: Actions → Run workflow
   push:
     branches: [main]
-    paths: ["gole/engine.py", "gole/agent.py", "gole/nba.py", ".github/workflows/linia-goli.yml"]
+    paths: ["gole/engine.py", "gole/agent.py", "gole/nba.py", "gole/zrodla.py", ".github/workflows/linia-goli.yml"]
 
 permissions:
   contents: write
