@@ -280,9 +280,10 @@ class Agent:
         if f.get("xg"):
             parts.append(f"Oczekiwane gole {numf(f['xg'][0])} – {numf(f['xg'][1])}.")
         if st and st.get("n"):
-            s_side = SIDES[st["side"]]
-            parts.append(f"Statystyki (tabela, forma, u siebie/na wyjeździe, H2H): {st.get('agree', 0)} za {s_side}, "
-                         f"{st.get('against', 0)} przeciw" + ("." if s_side == best["side"] else " – wskazują drugą stronę, ale słabo."))
+            same = SIDES[st["side"]] == best["side"]
+            pro, con = (st.get("agree", 0), st.get("against", 0)) if same else (st.get("against", 0), st.get("agree", 0))
+            parts.append(f"Statystyki (tabela, forma, u siebie/na wyjeździe, H2H): {pro} za {best['side']}, {con} przeciw"
+                         + (" – agent idzie tu pod prąd statystyk, bo kurs daje przewagę; po meczu sprawdzi, czy słusznie." if con > pro else "."))
         return " ".join(parts)
 
     def settle_football(self, code, results):
