@@ -7,7 +7,7 @@ on:
   workflow_dispatch:          # ręczne uruchomienie: Actions → Run workflow
   push:
     branches: [main]
-    paths: ["gole/engine.py", ".github/workflows/linia-goli.yml"]
+    paths: ["gole/engine.py", "gole/agent.py", "gole/nba.py", ".github/workflows/linia-goli.yml"]
 
 permissions:
   contents: write
@@ -37,7 +37,7 @@ jobs:
       - name: Zainstaluj numpy (obliczenia wag statystyk)
         run: pip install --quiet numpy
 
-      - name: Pobierz wyniki i kursy, naucz model, przelicz typy
+      - name: Pobierz wyniki i kursy, naucz model, przelicz typy, agent obstawia
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}   # darmowy klucz z the-odds-api.com (Ladbrokes, BetVictor)
         run: python gole/engine.py --out gole
@@ -48,6 +48,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add gole/data.json gole/journal.json gole/predictions.json gole/names.json gole/liga
           if [ -f gole/odds_cache.json ]; then git add gole/odds_cache.json; fi
+          if [ -f gole/agent.json ]; then git add gole/agent.json gole/agent_analizy.json; fi   # agent: portfel, zakłady, nauka
           if [ -d gole/archiwum ]; then git add gole/archiwum; fi   # rozliczone typy starsze niż 120 dni, na stałe
           if git diff --cached --quiet; then
             echo "Bez zmian w danych"

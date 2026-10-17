@@ -19,6 +19,10 @@ Usage:
 import argparse, csv, difflib, io, json, math, os, re, sys, time, unicodedata, urllib.request, datetime as dt
 from zoneinfo import ZoneInfo
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import agent as AG   # the betting agent: virtual money, learns from its own bets
+import nba as NBA    # NBA total points for the agent
+
 # code, name, country, The Odds API sport key (None = not covered)
 MAIN = [
     ("E0", "Premier League", "Anglia", "soccer_epl"),
@@ -62,7 +66,7 @@ EXTRA = [  # one file per league with all seasons, 1X2 closing odds only, no sho
     ("SWZ", "Super League", "Szwajcaria", "soccer_switzerland_superleague", "Switzerland"),
     ("USA", "MLS", "USA", "soccer_usa_mls", "USA"),
 ]
-TOP = ["E0", "SP1", "I1", "D1", "F1"]          # first in line for the odds budget
+TOP = AG.LEAGUES                              # the agent's 11 leagues are first in line for the odds budget
 BASE = "https://www.football-data.co.uk"
 N_SEASONS = 6
 
@@ -1175,8 +1179,9 @@ class OddsAPI:
             return 1e9
         return (self.now - dt.datetime.fromisoformat(iso)).total_seconds() / 3600
 
-    def refresh(self, sports_by_div, kickoffs_by_div):
-        """kickoffs_by_div: known upcoming kick-off datetimes (UTC) per league, to aim the paid calls."""
+    def refresh(self, sports_by_div, kickoffs_by_div, reserve=0):
+        """kickoffs_by_div: known upcoming kick-off datetimes (UTC) per league, to aim the paid calls.
+        reserve: credits kept for the NBA odds for the rest of the month."""
         if not self.key:
             return
         errors = []
@@ -1200,7 +1205,7 @@ class OddsAPI:
         month_end = (self.now.date().replace(day=28) + dt.timedelta(days=4)).replace(day=1) - dt.timedelta(days=1)
         days_left = (month_end - self.now.date()).days + 1
         remaining = self.c.get("remaining")
-        allowance = 12 if remaining is None else max(0, int((remaining - 10) / days_left))
+        allowance = 12 if remaining is None else max(0, int((remaining - 10 - reserve) / days_left))
         horizon = self.now + dt.timedelta(hours=ODDS_WINDOW_H)
         cands = []
         for div, sport in sports_by_div.items():
@@ -1728,7 +1733,18 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
                 kickoffs.setdefault(code, []).append(dt.datetime.combine(m["d"], dt.time(int(hh), int(mm)), LONDON).astimezone(dt.timezone.utc))
             except Exception:
                 pass
-    oa.refresh(sports, kickoffs)
+    # the agent and its NBA data (results from ESPN, prices from the same odds budget)
+    ag, nba_ctx = None, None
+    try:
+        ag = AG.Agent(outdir, now)
+    except Exception as e:
+        print("agent: start failed:", e)
+    if ag and not fixtures_from_results and not src.local and not only:
+        try:
+            nba_ctx = NBA.prepare(src.cache_dir or os.path.join(outdir, ".cache"), now, oa)
+        except Exception as e:
+            ag.errors.append(f"NBA: {str(e)[:160]}")
+    oa.refresh(sports, kickoffs, reserve=NBA.reserve(now) if nba_ctx else 0)
 
     out = {"version": VERSION, "generated": now_iso, "today": today.isoformat(), "edge_min": EDGE_MIN,
            "market_edge_min": MARKET_EDGE_MIN, "leagues": []}
@@ -1793,6 +1809,11 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
                     f["absences"] = {"home": absences.get(m["h"], []), "away": absences.get(m["a"], [])}
                 priced.append(f)
         update_journal(journal, code, f"{country} · {name}", priced, played, now, grades)
+        if ag and code in AG.LEAGUES:
+            try:
+                ag.football(code, f"{country} · {name}", priced, played)
+            except Exception as e:  # the agent must never stop the app
+                ag.errors.append(f"{code}: {str(e)[:160]}")
         update_predictions(preds_log, code, priced, played, now)
         last = max((m["d"] for m in played), default=None)
         H, A, _ = r.base()
@@ -1813,6 +1834,17 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
             "names": {k: v for k, v in names.get(code, {}).items() if k in details[code]["teams"]},
             "fixtures": [light_fixture(f) for f in priced],
         })
+    agent_summary = None
+    if ag:
+        try:
+            if nba_ctx:
+                ag.nba(nba_ctx)
+        except Exception as e:
+            ag.errors.append(f"NBA agent: {str(e)[:160]}")
+        try:
+            agent_summary = ag.finish({"nba": nba_ctx["status"] if nba_ctx else None, "odds_remaining": oa.c.get("remaining")})
+        except Exception as e:
+            print("agent: save failed:", e)
     oa.save()
     out["bookmakers"] = dict(oa.status, remaining=oa.c.get("remaining"),
                              leagues_with_prices=sorted(d for d, s in oa.c["sports"].items() if s.get("odds")),
@@ -1825,11 +1857,13 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
     out["errors"] = src.errors
     out["runtime_s"] = round(time.time() - t0, 1)
     out["downloads"] = src.downloads
+    out["_agent"] = agent_summary
     if not out["leagues"]:  # source down: keep the last good data instead of publishing an empty page
         raise SystemExit("no leagues built: " + "; ".join(src.errors[:3]))
     os.makedirs(outdir, exist_ok=True)
     dpath = os.path.join(outdir, "data.json")
     old = load_json(dpath, None)
+    agent_summary = out.pop("_agent", None)
     strip = lambda o: {k: v for k, v in o.items() if k not in ("generated", "runtime_s", "downloads")}
     if old and strip(old) == strip(out):  # nothing changed: keep the timestamp, so no commit is made
         out["generated"] = old.get("generated", out["generated"])
@@ -1844,6 +1878,7 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
     json.dump(journal, open(os.path.join(outdir, "journal.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     archive_predictions(preds_log, outdir, today)  # older settled predictions are kept for good in gole/archiwum
     json.dump(preds_log, open(os.path.join(outdir, "predictions.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    out["agent"] = agent_summary
     return out
 
 
@@ -1868,6 +1903,10 @@ if __name__ == "__main__":
               f"x1 {t['x']['one']} ou1 {t['ou']['one'] if t['ou'] else None} prm {L['params']}")
     print("journal", o["journal_summary"])
     print("bookmakers", {k: v for k, v in o["bookmakers"].items() if k != "unmatched"})
+    a = o.get("agent")
+    if a:
+        print("agent: portfel", a["equity"], "otwarte", a["n_open"], "rozliczone", a["stats"]["all"]["bets"],
+              "przeanalizowane", a["analysed"])
     print("runtime", o["runtime_s"], "s, downloads", o["downloads"])
     if o["errors"]:
         print("errors:", *o["errors"][:30], sep="\n  ")
