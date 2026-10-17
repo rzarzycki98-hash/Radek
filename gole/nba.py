@@ -44,11 +44,22 @@ def prob_total(mu, sd, line):
 
 # ---------------------------------------------------------------- ESPN
 
+def as_int(v):
+    """ESPN gives some fields as numbers and some as objects ({"id": "2", "type": 2, ...})."""
+    for _ in range(2):
+        if isinstance(v, dict):
+            v = next((v[k] for k in ("type", "value", "id", "displayValue") if k in v), None)
+    try:
+        return int(float(v))
+    except (TypeError, ValueError):
+        return 0
+
+
 def parse(js):
     games = []
     default_type = 0
     for L in (js or {}).get("leagues", []) or []:
-        default_type = int((L.get("season") or {}).get("type") or 0)
+        default_type = as_int((L.get("season") or {}).get("type"))
         break
     for ev in (js or {}).get("events", []) or []:
         try:
@@ -60,11 +71,11 @@ def parse(js):
             if hk not in TEAMS or ak not in TEAMS or hk == ak:
                 continue
             stt = ((ev.get("status") or comp.get("status") or {}).get("type") or {})
-            hs, as_ = int(float(h.get("score") or 0)), int(float(a.get("score") or 0))
+            hs, as_ = as_int(h.get("score")), as_int(a.get("score"))
             done = bool(stt.get("completed")) and hs + as_ > 0
             games.append({"id": str(ev["id"]), "ko": ev["date"].replace("Z", "+00:00"), "h": hk, "a": ak, "hn": hn, "an": an,
                           "hs": hs if done else None, "as": as_ if done else None, "done": done,
-                          "type": int((ev.get("season") or {}).get("type") or default_type), "st": stt.get("name")})
+                          "type": as_int((ev.get("season") or {}).get("type")) or default_type, "st": stt.get("name")})
         except Exception:
             continue
     return games
@@ -77,7 +88,7 @@ def calendar(js):
             v = c if isinstance(c, str) else (c.get("startDate") if isinstance(c, dict) else None)
             if v and len(v) >= 10:
                 out.append(v[:10].replace("-", ""))
-        season = (L.get("season") or {}).get("year")
+        season = as_int((L.get("season") or {}).get("year")) or None
         return sorted(set(out)), season
     return [], None
 
