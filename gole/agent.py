@@ -192,6 +192,7 @@ class Agent:
         self.cands = []
         self.errors = []
         self.elo = None   # zrodla.ClubElo, set by the engine
+        self.elo_src = {}
         self.by_id = {b["id"]: b for b in s["bets"]}
 
     # ------------------------------------------------ money
@@ -210,7 +211,7 @@ class Agent:
                   "settled": self.now.isoformat(timespec="minutes")})
 
     # ------------------------------------------------ football
-    def football(self, code, league_name, priced, results, teams=None):
+    def football(self, code, league_name, priced, results, teams=None, elo_backup=None):
         rules = self.s["rules"]["pilka"]
         elo = {}
         if self.elo is not None:
@@ -219,6 +220,11 @@ class Agent:
                 elo = self.elo.match(code, sorted(names))
             except Exception as e:
                 self.errors.append(f"ClubElo {code}: {str(e)[:80]}")
+        src = "ClubElo" if elo else None
+        if not elo and elo_backup:  # ClubElo unreachable: Elo from the league's own results
+            elo = {t: (t, v, 1.0) for t, v in elo_backup.items()}
+            src = "wyniki ligi"
+        self.elo_src[code] = src
         for f in priced:
             if dt.datetime.fromisoformat(f["ko"]) <= self.now:
                 continue
@@ -361,7 +367,7 @@ class Agent:
             parts.append(f"Statystyki (tabela, forma, u siebie/na wyjeździe, H2H): {pro} za {best['side']}, {con} przeciw"
                          + (" – agent idzie tu pod prąd statystyk, bo kurs daje przewagę; po meczu sprawdzi, czy słusznie." if con > pro else "."))
         if an.get("elo"):
-            parts.append(f"Siła drużyn (ClubElo): {an['elo'][0]} i {an['elo'][1]}.")
+            parts.append(f"Siła drużyn (Elo): {an['elo'][0]} i {an['elo'][1]}.")
         inj = an.get("inj")
         if inj and (inj["h"] or inj["a"]):
             who = [n[0] for n in inj["h"] + inj["a"]][:4]
@@ -900,6 +906,7 @@ class Agent:
                          for a in upcoming]
         S["status"] = dict(extra_status or {}, errors=self.errors)
         S["leagues"] = LEAGUES
+        S["elo_src"] = self.elo_src
         S["books"] = {"pilka": list(FOOT_BOOKS.values()), "nba": list(NBA_PREF.values())}
         S["updated"] = self.now.isoformat(timespec="minutes")
         S["bets"].sort(key=lambda b: (b["ko"], b["id"]))

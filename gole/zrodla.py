@@ -5,7 +5,7 @@ independent opinion on how strong the two teams are; the tactic built on it is t
 """
 import csv, difflib, io, os, time, unicodedata, urllib.request
 
-ELO_URL = "http://api.clubelo.com/{day}"
+ELO_URLS = ["https://api.clubelo.com/{day}", "http://api.clubelo.com/{day}"]
 COUNTRY = {"E0": "ENG", "SP1": "ESP", "I1": "ITA", "D1": "GER", "F1": "FRA", "N1": "NED", "P1": "POR",
            "B1": "BEL", "T1": "TUR", "SC0": "SCO", "G1": "GRE"}
 # football-data name -> how ClubElo usually writes it (a hint for the matcher, not a hard rule)
@@ -56,15 +56,27 @@ class ClubElo:
         if path and os.path.exists(path) and (time.time() - os.path.getmtime(path)) / 3600 < 12:
             text = open(path, encoding="utf-8").read()
         if text is None:
-            try:
-                req = urllib.request.Request(ELO_URL.format(day=day), headers={"User-Agent": "linia-goli-agent/1 (+github actions)"})
-                with urllib.request.urlopen(req, timeout=40) as r:
-                    text = r.read().decode("utf-8", errors="replace")
-                if path:
-                    os.makedirs(self.dir, exist_ok=True)
-                    open(path, "w", encoding="utf-8").write(text)
-            except Exception as e:
-                self.errors.append(f"ClubElo: {str(e)[:100]}")
+            last = None
+            for attempt in range(2):
+                for url in ELO_URLS:
+                    try:
+                        req = urllib.request.Request(url.format(day=day), headers={"User-Agent": "linia-goli-agent/1 (+github actions)"})
+                        with urllib.request.urlopen(req, timeout=40) as r:
+                            got = r.read().decode("utf-8", errors="replace")
+                        if got.startswith("Rank") or "Club," in got[:200]:
+                            text = got
+                            break
+                        last = "nieoczekiwana odpowiedź"
+                    except Exception as e:
+                        last = str(e)[:100]
+                if text is not None:
+                    break
+                time.sleep(5)
+            if text is not None and path:
+                os.makedirs(self.dir, exist_ok=True)
+                open(path, "w", encoding="utf-8").write(text)
+            if text is None:
+                self.errors.append(f"ClubElo: {last}")
                 old = sorted(f for f in os.listdir(self.dir) if f.startswith("clubelo-")) if self.dir and os.path.isdir(self.dir) else []
                 if old:  # source down: yesterday's ratings are still good
                     text = open(os.path.join(self.dir, old[-1]), encoding="utf-8").read()
@@ -103,3 +115,26 @@ class ClubElo:
     def status(self):
         return {"errors": self.errors, "clubs": sum(len(v) for v in (self.rows or {}).values()),
                 "matched": {c: {t: [v[0], round(v[1]), v[2]] for t, v in m.items()} for c, m in self.maps.items()}}
+
+
+def results_elo(seasons, k=20.0, home=60.0):
+    """Backup when ClubElo cannot be reached: Elo from the league's own results (6 seasons),
+    goal difference counts, a third of the way back to the average between seasons."""
+    elo = {}
+    for i, rows in enumerate(seasons):
+        if i:
+            mean = sum(elo.values()) / len(elo) if elo else 1500.0
+            for t in elo:
+                elo[t] = elo[t] - (elo[t] - mean) / 3
+        for m in rows:
+            if m.get("hg") is None:
+                continue
+            h, a = m["h"], m["a"]
+            rh, ra = elo.get(h, 1450.0), elo.get(a, 1450.0)   # newcomers start a little below average
+            exp = 1 / (1 + 10 ** ((ra - rh - home) / 400))
+            res = 1.0 if m["hg"] > m["ag"] else 0.5 if m["hg"] == m["ag"] else 0.0
+            gd = abs(m["hg"] - m["ag"])
+            mult = 1.0 if gd <= 1 else 1.5 if gd == 2 else (11 + gd) / 8
+            delta = k * mult * (res - exp)
+            elo[h], elo[a] = rh + delta, ra - delta
+    return elo

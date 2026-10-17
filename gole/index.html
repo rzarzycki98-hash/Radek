@@ -944,7 +944,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const out = [];
     if (a.sp === "pilka") {
       out.push(`Szansa na over 2.5: model ${pct(a.pm)}, rynek ${pct(a.pk)}, agent ${pct(a.p)}${a.p_inj != null ? `, z kontuzjami ${pct(a.p_inj)}` : ""}.`);
-      if (a.elo) out.push(`Siła drużyn (ClubElo): ${a.elo[0]} i ${a.elo[1]}, różnica ${Math.abs(a.elo[0] - a.elo[1])}.`);
+      if (a.elo) out.push(`Siła drużyn (Elo${((A_().elo_src || {})[a.lg] || "") === "wyniki ligi" ? " z wyników ligi" : ", ClubElo"}): ${a.elo[0]} i ${a.elo[1]}, różnica ${Math.abs(a.elo[0] - a.elo[1])}.`);
       if (a.inj && (a.inj.h.length || a.inj.a.length)) out.push(`Braki kluczowych: ${[...a.inj.h, ...a.inj.a].map((r) => r[0]).join(", ")}.`);
       if (a.mv != null && Math.abs(a.mv) >= 0.005) out.push(`Rynek od pierwszego odczytu: over ${pct(a.pk0)} → ${pct(a.pk)}.`);
     } else {
@@ -1104,7 +1104,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const rows = [
       ["football-data.co.uk", "wyniki, gole, strzały celne, kursy zamknięcia (6 sezonów)", fd ? ok(!(fd.errors || []).length, `${fd.leagues} lig`) : "—"],
       ["The Odds API", "kursy bukmacherów z UK przed meczem", od ? ok(!(od.errors || []).length, `zostało ${od.remaining ?? "?"} zapytań w miesiącu`) : "—"],
-      ["ClubElo", "siła drużyn (ranking Elo)", ce ? ok(!(ce.errors || []).length && ceN > 0, `${ceN} drużyn dopasowanych`) : "—"],
+      ["ClubElo", "siła drużyn (ranking Elo)", ce ? (ceN > 0 ? ok(true, `${ceN} drużyn dopasowanych`) : ok(false, "nie odpowiada – zastępczo Elo liczone z wyników lig")) : "—"],
       ["Fantasy Premier League", "kontuzje i zawieszenia w Premier League", fp ? ok(fp.teams > 0, `${fp.players} zawodników na liście`) : "—"],
       ["ESPN", "NBA: wyniki, terminarz, najlepsi strzelcy, raport kontuzji", es ? ok(!(es.errors || []).length, `${es.games ?? 0} meczów, ${es.injuries ?? 0} kontuzji`) : "—"],
     ];

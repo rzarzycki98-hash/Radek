@@ -1813,7 +1813,8 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         update_journal(journal, code, f"{country} · {name}", priced, played, now, grades)
         if ag and code in AG.LEAGUES:
             try:
-                ag.football(code, f"{country} · {name}", priced, played, teams=sorted(teams_of(cur) | teams_of(fx)))
+                ag.football(code, f"{country} · {name}", priced, played, teams=sorted(teams_of(cur) | teams_of(fx)),
+                            elo_backup=ZR.results_elo(seasons))
             except Exception as e:  # the agent must never stop the app
                 ag.errors.append(f"{code}: {str(e)[:160]}")
         update_predictions(preds_log, code, priced, played, now)
