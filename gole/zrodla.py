@@ -55,13 +55,17 @@ class ClubElo:
         text = None
         if path and os.path.exists(path) and (time.time() - os.path.getmtime(path)) / 3600 < 12:
             text = open(path, encoding="utf-8").read()
+        fail_mark = os.path.join(self.dir, f"clubelo-fail-{day}") if self.dir else None
+        if text is None and fail_mark and os.path.exists(fail_mark):
+            self.errors.append("ClubElo: dziś nie odpowiadało – spróbuje jutro")
+            text = ""  # do not wait on a source that is down; the backup Elo from results is used
         if text is None:
             last = None
             for attempt in range(2):
                 for url in ELO_URLS:
                     try:
                         req = urllib.request.Request(url.format(day=day), headers={"User-Agent": "linia-goli-agent/1 (+github actions)"})
-                        with urllib.request.urlopen(req, timeout=40) as r:
+                        with urllib.request.urlopen(req, timeout=20) as r:
                             got = r.read().decode("utf-8", errors="replace")
                         if got.startswith("Rank") or "Club," in got[:200]:
                             text = got
@@ -77,6 +81,9 @@ class ClubElo:
                 open(path, "w", encoding="utf-8").write(text)
             if text is None:
                 self.errors.append(f"ClubElo: {last}")
+                if fail_mark:
+                    os.makedirs(self.dir, exist_ok=True)
+                    open(fail_mark, "w").write(last or "")
                 old = sorted(f for f in os.listdir(self.dir) if f.startswith("clubelo-")) if self.dir and os.path.isdir(self.dir) else []
                 if old:  # source down: yesterday's ratings are still good
                     text = open(os.path.join(self.dir, old[-1]), encoding="utf-8").read()
