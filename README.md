@@ -134,5 +134,6 @@ Testy skilli (na kopiach, nie ruszają prawdziwego stanu): `python3 gole/testy/t
 | `gole/zrodla.py` | siła drużyn z ClubElo i dopasowanie nazw drużyn |
 | `gole/stan.py` | stan agenta w kilku linijkach: `python3 gole/stan.py` |
 | `CLAUDE.md` | notatki dla Claude: ustalenia, jak działa projekt i na czym skończyliśmy |
+| `gole/HISTORIA.md` | historia rozmów z Claude o agencie i decyzji Radka (od 14.10.2026); Claude wczytuje ją razem z `CLAUDE.md` |
 | `gole/agent.json` | portfel, zakłady, zasady i dziennik zmian (czyta go strona) |
 | `gole/agent_analizy.json` | ocena każdego meczu i jego wynik – dane do nauki |

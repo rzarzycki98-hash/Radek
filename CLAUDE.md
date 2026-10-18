@@ -1,73 +1,53 @@
 # Repozytorium „Radek” – notatki dla Claude
 
-Ten plik Claude czyta na początku każdej rozmowy z tym repozytorium. Mówi, co tu jest, co ustaliliśmy z Radkiem
-i na czym skończyliśmy. **Na koniec każdej sesji pracy zaktualizuj sekcję „Na czym skończyliśmy”** (data, co zrobione,
-co sprawdzić) i wypchnij zmianę.
+Ten plik Claude czyta na początku każdej rozmowy z tym repozytorium, także w każdym wątku projektu w Claude Code. Mówi, co
+tu jest, co ustaliliśmy z Radkiem i na czym skończyliśmy. **Na koniec każdej sesji pracy zaktualizuj sekcję „Na czym
+skończyliśmy”** (data, co zrobione, co sprawdzić) i wypchnij zmianę. Ważne nowe decyzje Radka dopisz też do osi czasu
+w `gole/HISTORIA.md`.
 
-## Na czym skończyliśmy – 18.10.2026
+**Gdzie rozmawiamy:** od 18.10.2026 rozmowy o agencie do obstawiania (Linia Goli) toczą się w projekcie w Claude Code
+(claude.ai/code → Projects) na tym repozytorium. Agent Tradingowy (akcje) to osobny projekt Radka, poza tym repozytorium.
 
-18.10.2026 Radek poprosił o **skille** (umiejętności) dla agenta – zainspirowane grafiką „AI Agent Skills You Must Learn”
-(tool calling, memory, RAG, multi-agent). Dodaliśmy cztery, wszystkie w `gole/agent.py`, widoczne na stronie (Nauka → Skille agenta):
+**Historia wszystkich rozmów i ustaleń (14–18.10.2026), wczytywana automatycznie:** @gole/HISTORIA.md
 
-- **Krytyk** (multi-agent): drugi, niezależny przegląd każdego zakładu przed postawieniem (`Agent.warnings`/`review`).
-  5 ostrzeżeń, każde blokuje zakład: `rozjazd` (model i rynek różnią się o 12+ pkt proc., NBA 20+), `rynek_przeciw`
-  (kursy ruszyły w drugą stronę o 3+ pkt proc., NBA linia o 1.5+ pkt), `kontuzje_przeciw`, `poczatek_sezonu` (drużyna < 4 mecze),
-  `slaba_liga` (na 60+ rozliczonych ocenach ligi agent gorszy od rynku). Zablokowane mecze mają `veto` w ocenie i są śledzone
-  na sucho (`cf`). Krok nauki `step_critic` (zaraz po zmianie taktyki): 20+ zablokowanych z zyskiem i CLV > 0 → blokada
-  wyłączona (`rules.<sport>.critic_off`); zakłady postawione mimo wyłączonego ostrzeżenia (`bet.flags`) przegrywają
-  (15+, wynik < −10%, CLV < 0) → blokada wraca.
-- **Analiza po meczu** (memory): każdy rozliczony zakład dostaje `pm_cat` (zasluzona, szczescie, pech, zla_cena,
-  bez_porownania – z wyniku i CLV) i `lesson` (z xG albo prognozą sumy NBA). `summary.luck`: zysk vs „uczciwy” wynik
-  według kursów zamknięcia (szczęście czy umiejętność).
-- **Kalibracja** (evaluation): `summary.calib` – na wszystkich rozliczonych ocenach: błąd (log loss) agenta, rynku i modelu,
-  przedziały „agent daje X% → weszło Y%”, skrzywienie, osobno każda liga (z tego korzysta krytyk).
-- **Wnioski** (memory): `summary.insights` – do 8 prostych zdań (najlepsza/najsłabsza liga, strona, kurs, bukmacher od 10+
-  zakładów, kalibracja od 50+ meczów, szczęście od 20+ zakładów, blokady krytyka od 15+).
+## Na czym skończyliśmy – 18.10.2026 (wieczór)
 
-Testy (wszystko na kopiach) są w `gole/testy/`: `python3 gole/testy/test_skills.py` (prawdziwy `agent.json` i mecze
-z `gole/liga/*.json`, rozliczenie na wynikach symulowanych, nauka krytyka w obie strony) i `test_page.py` (Playwright, 390 px,
-jasny i ciemny motyw; sposób użycia na górze pliku) – oba przeszły 18.10.
-
-**Do sprawdzenia po 18.10:**
-
-1. Czy pierwsze rozliczone zakłady (19–20.10) mają `pm_cat` i `lesson`, a na stronie pod zakładem jest ocena.
-2. Czy krytyk coś blokuje (`python3 gole/stan.py` → sekcja „Krytyk”) i czy blokady wyglądają rozsądnie. Na danych z 18.10
-   próg `rozjazd` 12 pkt proc. zatrzymałby ok. 3% meczów; gdyby blokował za dużo albo za mało – progi w `GAP_MAX`.
-3. `summary.calib.pilka`: już na pierwszych 118 ocenach model sam zaniżał szansę na over 2.5 – obserwuj, czy blend (agent)
-   dogania rynek.
-
-## Na czym skończyliśmy wcześniej – 17.10.2026 (wieczór)
-
-17.10.2026 zbudowaliśmy **agenta**, który sam obstawia wirtualnymi pieniędzmi i uczy się na swoich zakładach,
-i przebudowaliśmy stronę Linii Goli wokół niego.
-
-- Agent gra od 17.10.2026. Pierwsze zakłady (po £10): Roma – Genoa Under 2.5 @ 2.00 (William Hill, 17.10)
-  i Brighton – Crystal Palace Under 2.5 @ 2.40 (Casumo, 18.10). Na koniec dnia: portfel £1000, nic jeszcze nie rozliczone.
-- Wszystkie automatyczne aktualizacje na GitHubie przechodziły bez błędów.
+- Rano: agent dostał 4 skille – krytyk, analiza po meczu, kalibracja, wnioski (szczegóły niżej, w „Skille agenta”).
+- Wieczorem: Radek przeniósł rozmowy o agencie do projektu w Claude Code; historia rozmów jest w `gole/HISTORIA.md`.
+- Stan 18.10 21:44: portfel £1000, 7 otwartych zakładów po £10 (3 mecze już rozegrane, czekają na wyniki), nic jeszcze
+  nierozliczone, krytyk niczego nie zablokował, wszystkie aktualizacje na GitHubie bez błędów. ClubElo dalej nie odpowiada
+  (agent liczy Elo z wyników lig).
+- 19.10 o 8:00 (czas UK) jednorazowe sprawdzenie „Sprawdzenie rozliczeń Linii Goli” w rozmowie sprzed projektu. Jego wynik
+  ma trafić do tej sekcji – po `git pull` przeczytaj go tutaj.
 - Aktualny stan (liczby zmieniają się co 4 godziny): `git pull && python3 gole/stan.py`.
 
 **Do sprawdzenia w najbliższych dniach:**
 
-1. **Pierwsze rozliczenia (ok. 19–20.10).** Wyniki z football-data.co.uk przychodzą 1–2 dni po meczu. Sprawdź, czy oba
-   zakłady rozliczyły się same i czy policzył się „vs zamknięcie” (CLV z kursów zamknięcia Pinnacle, kolumny PC>2.5 i PC<2.5).
-2. **ClubElo nie działało 17.10 (błąd 502 po ich stronie).** Agent liczy wtedy zastępczo Elo z wyników lig
+1. **Pierwsze rozliczenia (ok. 19–20.10).** Wyniki z football-data.co.uk przychodzą 1–2 dni po meczu. Sprawdź, czy zakłady
+   rozliczyły się same, czy policzył się „vs zamknięcie” (CLV z kursów zamknięcia Pinnacle, kolumny PC>2.5 i PC<2.5) i czy
+   mają ocenę po meczu (`pm_cat`, `lesson`) widoczną na stronie pod zakładem.
+2. **Krytyk.** Czy coś blokuje (`python3 gole/stan.py` → sekcja „Krytyk”) i czy blokady wyglądają rozsądnie. Na prawdziwych
+   meczach z 18.10 próg `rozjazd` (12 pkt proc.) zatrzymałby ok. 3% meczów; gdyby blokował za dużo albo za mało – progi
+   w `GAP_MAX`.
+3. **Kalibracja.** Pojawi się po pierwszych rozliczonych ocenach (`summary.calib`). Liczby z testu 18.10 pochodziły z wyników
+   losowych i nic nie mówią o modelu.
+4. **ClubElo nie działało 17–18.10** (błąd po ich stronie). Agent liczy wtedy zastępczo Elo z wyników lig
    (`zrodla.results_elo`) i próbuje ClubElo raz dziennie. Dopasowania nazw drużyn do ClubElo (`zrodla.HINT`) nie
    sprawdziliśmy jeszcze na prawdziwych danych – po pierwszym udanym pobraniu przejrzyj `status.sources.clubelo.matched`
    w `gole/agent.json` (wynik dopasowania poniżej 0.8 = podejrzane).
-3. **NBA rusza 20.10** (pierwszy mecz Pistons – Celtics). Kod NBA testowaliśmy na danych symulowanych oraz na prawdziwym
+5. **NBA rusza 20.10** (pierwszy mecz Pistons – Celtics). Kod NBA testowaliśmy na danych symulowanych oraz na prawdziwym
    kalendarzu i raporcie kontuzji ESPN, ale nie na meczach w trakcie sezonu. Po starcie sprawdź w `status.nba`:
    `upcoming > 0`, `with_odds > 0`, brak błędów i czy czytają się najlepsi strzelcy (pole `leaders` z ESPN). Agent zacznie
    obstawiać NBA, gdy każda drużyna rozegra 5 meczów (ok. początek listopada).
-4. **Limit kursów (The Odds API, darmowe 500 zapytań na miesiąc).** 17.10 dzienny przydział zużyły poranne aktualizacje
-   sprzed startu agenta, więc tego dnia agent miał tylko kursy z ok. 02:00. Od 18.10 przydział to ok. 26 zapytań dziennie;
-   ligi agenta mają pierwszeństwo, NBA ma zarezerwowane 2 zapytania dziennie (październik–czerwiec).
-5. **Pierwsza nauka:** po 30 rozliczonych zakładach w danym sporcie agent zacznie sam zmieniać zasady – sprawdź,
+6. **Limit kursów (The Odds API, darmowe 500 zapytań na miesiąc).** Przydział to ok. 26 zapytań dziennie; ligi agenta mają
+   pierwszeństwo, NBA ma zarezerwowane 2 zapytania dziennie (październik–czerwiec). 18.10 zostało 385 zapytań do końca miesiąca.
+7. **Pierwsza nauka:** po 30 rozliczonych zakładach w danym sporcie agent zacznie sam zmieniać zasady – sprawdź,
    czy wpisy w dzienniku zmian są sensowne.
 
 ## Szybki start w nowej rozmowie
 
 - `git pull` – bot dopisuje dane co 4 godziny.
-- `python3 gole/stan.py` – portfel, zakłady, taktyki, nauka, źródła danych, błędy (skrypt tylko czyta).
+- `python3 gole/stan.py` – portfel, zakłady, taktyki, nauka, krytyk, kalibracja, źródła danych, błędy (skrypt tylko czyta).
 - `gh run list -R rzarzycki98-hash/Radek -L 5` – czy automatyczne aktualizacje przechodzą.
 - Strona agenta: https://rzarzycki98-hash.github.io/Radek/gole/ (Listy: https://rzarzycki98-hash.github.io/Radek/).
 
@@ -80,10 +60,11 @@ i przebudowaliśmy stronę Linii Goli wokół niego.
 | Plik | Co robi |
 | --- | --- |
 | `gole/engine.py` | silnik: dane z football-data.co.uk (38 lig, 6 sezonów), kursy z The Odds API, model Poissona z poprawką Dixona-Colesa (gole + strzały celne), test walk-forward każdej ligi, statystyki meczów, kontuzje z FPL (Premier League), dziennik typów, prognozy; na końcu wywołuje agenta |
-| `gole/agent.py` | agent: portfel, ocena każdego meczu, taktyki na sucho, stawianie zakładów, rozliczanie, nauka (zmiany zasad), podsumowanie dla strony |
+| `gole/agent.py` | agent: portfel, ocena każdego meczu, taktyki na sucho, krytyk, stawianie zakładów, rozliczanie, analiza po meczu, nauka (zmiany zasad), kalibracja, wnioski, podsumowanie dla strony |
 | `gole/nba.py` | NBA: wyniki, terminarz, najlepsi strzelcy i raport kontuzji z ESPN, model sumy punktów, kursy |
 | `gole/zrodla.py` | siła drużyn z ClubElo, dopasowanie nazw drużyn, zastępcze Elo z wyników ligi |
 | `gole/stan.py` | stan agenta w kilku linijkach (tylko czyta `agent.json`) |
+| `gole/HISTORIA.md` | historia rozmów z Radkiem i jego decyzji (14–18.10.2026), pomysły i co się z nimi stało |
 | `gole/testy/` | testy skilli agenta i strony (na kopiach, nigdy na prawdziwym stanie) |
 | `gole/index.html` | cała strona (HTML + CSS + JS w jednym pliku) |
 | `gole/agent.json` | stan agenta: portfel, zakłady, zasady, dziennik zmian, podsumowanie, oceny meczów na 7 dni, status źródeł |
@@ -103,6 +84,9 @@ i przebudowaliśmy stronę Linii Goli wokół niego.
   dla 11 lig agenta → `ag.nba(...)` → `ag.finish(...)` (stawia zakłady, uczy się, zapisuje oba pliki agenta).
 - Bot commituje dane („Linia Goli: aktualizacja danych …”), GitHub Pages publikuje stronę.
 - Agent nie może zatrzymać aplikacji: jego wywołania są w try/except, błędy trafiają do `agent.json` → `status.errors`.
+- Zadania zaplanowane w Claude: „Sprawdzenie rozliczeń Linii Goli” (jednorazowo 19.10, 8:00 czasu UK, w rozmowie sprzed
+  projektu) i wyłączone „Linia Goli: odświeżanie na żądanie” (stara wersja strony). Nowe sprawdzenia ustawiaj w projekcie
+  (rutyny w zakładce Routines).
 
 ## Agent – decyzje Radka (17.10.2026)
 
@@ -137,11 +121,30 @@ Przewaga = szansa × kurs − 1. „Vs zamknięcie” (CLV) = nasz kurs × uczci
 
 ### Kroki nauki (`Agent.adapt`, w tej kolejności, najwyżej jedna zmiana naraz)
 
-zmiana taktyki → krytyk (wyłączenie albo włączenie blokady, patrz „Na czym skończyliśmy – 18.10.2026”) →
+zmiana taktyki → krytyk (wyłączenie albo włączenie blokady, patrz „Skille agenta”) →
 wyłączenie ligi (15+ zakładów, wynik poniżej −10%, CLV poniżej 0) → włączenie ligi (20+ typów na sucho
 od wyłączenia, zysk) → wyłączenie strony Over/Under (20+ zakładów, wynik poniżej −15%) → wyższa przewaga (ostatnie 50 zakładów
 na minusie: +1 pkt proc., max 10%) → niższa przewaga (50+ zakładów na plusie, a pominięte tuż pod progiem też by zarobiły:
 −0.5 pkt proc., min 1%) → niższy najwyższy kurs → filtr statystyk włącz/wyłącz → NBA: waga własnego modelu (100+ meczów).
+
+### Skille agenta (18.10.2026)
+
+Wszystkie w `gole/agent.py`, widoczne na stronie (Nauka → Skille agenta) i w `stan.py`:
+
+- **Krytyk** (multi-agent): drugi, niezależny przegląd każdego zakładu przed postawieniem (`Agent.warnings`/`review`).
+  5 ostrzeżeń, każde blokuje zakład: `rozjazd` (model i rynek różnią się o 12+ pkt proc., NBA 20+), `rynek_przeciw`
+  (kursy ruszyły w drugą stronę o 3+ pkt proc., NBA linia o 1.5+ pkt), `kontuzje_przeciw`, `poczatek_sezonu` (drużyna < 4 mecze),
+  `slaba_liga` (na 60+ rozliczonych ocenach ligi agent gorszy od rynku). Zablokowane mecze mają `veto` w ocenie i są śledzone
+  na sucho (`cf`). Krok nauki `step_critic` (zaraz po zmianie taktyki): 20+ zablokowanych z zyskiem i CLV > 0 → blokada
+  wyłączona (`rules.<sport>.critic_off`); zakłady postawione mimo wyłączonego ostrzeżenia (`bet.flags`) przegrywają
+  (15+, wynik < −10%, CLV < 0) → blokada wraca.
+- **Analiza po meczu** (memory): każdy rozliczony zakład dostaje `pm_cat` (zasluzona, szczescie, pech, zla_cena,
+  bez_porownania – z wyniku i CLV) i `lesson` (z xG albo prognozą sumy NBA). `summary.luck`: zysk vs „uczciwy” wynik
+  według kursów zamknięcia (szczęście czy umiejętność).
+- **Kalibracja** (evaluation): `summary.calib` – na wszystkich rozliczonych ocenach: błąd (log loss) agenta, rynku i modelu,
+  przedziały „agent daje X% → weszło Y%”, skrzywienie, osobno każda liga (z tego korzysta krytyk).
+- **Wnioski** (memory): `summary.insights` – do 8 prostych zdań (najlepsza/najsłabsza liga, strona, kurs, bukmacher od 10+
+  zakładów, kalibracja od 50+ meczów, szczęście od 20+ zakładów, blokady krytyka od 15+).
 
 ## Źródła danych (wszystkie darmowe)
 
@@ -177,6 +180,8 @@ na minusie: +1 pkt proc., max 10%) → niższa przewaga (50+ zakładów na plusi
   (w `DIR/data/E0/` pliki `season-2122.csv` … `season-2627.csv` w formacie football-data, mogą być symulowane).
 - Agent na prawdziwych meczach: `fixtures` z `gole/liga/<kod>.json` → `Agent(folder_tymczasowy, now).football(kod, nazwa, fixtures, [])`
   → `finish({})`; rozliczenie: drugie wywołanie z listą wyników (pola `d`, `h`, `a`, `hg`, `ag`, `ouc`).
+- Skille: `python3 gole/testy/test_skills.py` (prawdziwy `agent.json` i mecze z `gole/liga/*.json`, rozliczenie na wynikach
+  symulowanych, nauka krytyka w obie strony) i `gole/testy/test_page.py` (strona; sposób użycia na górze pliku).
 - NBA: podmieniony `ESPNSource._get` (symulowany sezon) i prosty obiekt zamiast `OddsAPI` (pola `key`, `c`, metoda `_get`).
 - Strona: kopia `gole/` w folderze tymczasowym, `python3 -m http.server`, Playwright + Chromium na szerokości 390 px
   (w chmurze Claude: `PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers`); bez błędów JS i bez poziomego przewijania.
@@ -189,7 +194,8 @@ na minusie: +1 pkt proc., max 10%) → niższa przewaga (50+ zakładów na plusi
   (localStorage `linia-goli-bets`) – widok można przywrócić, jeśli poprosi.
 - Silnik nadal liczy wszystkie 38 lig (testy modelu, dziennik typów), a strona pokazuje tylko 11 lig agenta i NBA.
 - Odłożone lub odrzucone: czytanie newsów przez AI (płatne), zakłady na żywo (brak darmowych kursów na żywo),
-  rynek 1X2 dla agenta (Radek wybrał gole), powiadomienia na telefon (Radek wybrał tylko stronę).
+  rynek 1X2 dla agenta (Radek wybrał gole), powiadomienia na telefon (Radek wybrał tylko stronę), ligi młodzieżowe U19/U20
+  (jeszcze nie ma – trzeba znaleźć darmowe źródło ich wyników i kursów).
 
 ## Jak pracować z Radkiem
 
@@ -198,12 +204,12 @@ na minusie: +1 pkt proc., max 10%) → niższa przewaga (50+ zakładów na plusi
 - Gdy nie wiesz dokładnie, o co mu chodzi – pytaj (najlepiej z gotowymi opcjami), aż będzie jasne; po skończeniu zawsze
   sprawdź, że wszystko działa (testy, przebieg na GitHubie, strona na telefonie).
 - Chce, żeby to, co buduje, działało jako samodzielne agenty, które uczą się na swoich wynikach – on uczy się razem z nimi.
+- Rozmowy o agencie prowadzi w projekcie w Claude Code. Ustalenia z rozmów zapisuj w repozytorium (ten plik albo
+  `gole/HISTORIA.md`), żeby kolejne wątki projektu je znały.
 - Ma też osobny projekt „Agent Tradingowy” (akcje) – nie jest częścią tego repozytorium.
 
 ## Historia
 
-- Wcześniej: Listy (PWA); Linia Goli v3 – 38 lig, gole over/under i 1X2, model uczący się na wynikach, test walk-forward,
-  dziennik typów, kalkulator na żywo, kontuzje w Premier League, „Moje zakłady”.
-- 17.10.2026: agent (`agent.py`), NBA (`nba.py`), strona wokół agenta, dodatkowe dane – ClubElo, kontuzje, ruchy kursów
-  (`zrodla.py`), zastępcze Elo z wyników, `stan.py` i ten plik.
-- 18.10.2026: skille agenta – krytyk, analiza po meczu, kalibracja, wnioski (strona: Nauka → Skille agenta; `stan.py` je pokazuje).
+Pełna oś czasu jest w `gole/HISTORIA.md`. W skrócie: 14.10 pierwsza wersja Linii Goli i repozytorium; 15.10 Linia Goli v3
+(38 lig, model, test lig, statystyki, kontuzje, kalkulator na żywo); 17.10 agent, NBA i strona wokół agenta; 18.10 skille
+agenta i przejście rozmów do projektu w Claude Code.
