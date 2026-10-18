@@ -115,6 +115,29 @@ def main(path):
               f"{pct((rn.get('edges') or {}).get(rn.get('tactic')))}, kursy {rn.get('odds_min')}–{rn.get('odds_max')}, "
               f"zaufanie do własnego modelu {pct(rn.get('w_model'), False)}, gra od {rn.get('min_games')}. meczu drużyny"
               + (f", wyłączone strony: {', '.join(rn['off_sides'])}" if rn.get("off_sides") else ""))
+    # skills added 18.10.2026: critic, post-match verdicts, calibration, conclusions
+    cr = S.get("critic") or {}
+    if cr:
+        print("\nKrytyk (blokuje podejrzane zakłady; wynik = co by było, gdyby agent zagrał):")
+        for sp in ("pilka", "nba"):
+            for r in cr.get(sp) or []:
+                if r.get("n") or r.get("open") or not r.get("on"):
+                    print(f"  {SPORT[sp]}: {r['name']} – {'blokuje' if r.get('on') else 'WYŁĄCZONA (tylko ostrzega)'}, "
+                          f"zablokowane rozliczone {r.get('n', 0)} (wynik {pct(r.get('roi'))}), czeka {r.get('open', 0)}")
+        if not any(r.get("n") or r.get("open") for rows in cr.values() for r in rows):
+            print("  na razie niczego nie zablokował")
+    lk = S.get("luck") or {}
+    if lk.get("n"):
+        cat_names = {"zasluzona": "zasłużone wygrane", "szczescie": "szczęście", "pech": "pech", "zla_cena": "błąd ceny",
+                     "bez_porownania": "bez porównania"}
+        cats = ", ".join(f"{cat_names.get(k, k)}: {v}" for k, v in (lk.get("cats") or {}).items())
+        print(f"Analiza po meczu: {cats or '—'}; zysk {gbp(lk.get('profit_clv'), True)} przy „uczciwym” wg zamknięcia "
+              f"{gbp(lk.get('exp_close'), True)} (na {lk.get('n_clv', 0)} zakładach z kursem zamknięcia)")
+    for sp, c in (S.get("calib") or {}).items():
+        print(f"Kalibracja {SPORT[sp]}: {c.get('n')} rozliczonych ocen, błąd agenta {c.get('ll_agent')} vs rynek {c.get('ll_market')}"
+              f" (mniej = lepiej), agent {'zawyża' if (c.get('bias') or 0) > 0 else 'zaniża'} over o {abs(c.get('bias') or 0) * 100:.0f} pkt proc.")
+    for t in S.get("insights") or []:
+        print(f"  Wniosek: {t}")
     ch = a.get("changes") or []
     print(f"\nDziennik zmian (wpisy: {len(ch)}), ostatnie:")
     for c in ch[-3:][::-1]:

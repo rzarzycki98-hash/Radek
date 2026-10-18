@@ -412,6 +412,27 @@ tr.act td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
 details > summary.note { cursor: pointer; }
 table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } table.tt td:first-child { min-width: 96px; }
 .kv.rules dd { overflow-wrap: anywhere; }
+
+/* skills (18.10.2026): skill list, critic, post-match verdicts, calibration, conclusions */
+.skills { display: grid; }
+.skill { border-top: 1px solid var(--line); padding: 9px 0; }
+.skill:first-child { border-top: 0; padding-top: 0; }
+.skill:last-child { padding-bottom: 0; }
+.skill > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; align-items: baseline; }
+.skill > summary::-webkit-details-marker { display: none; }
+.skill > summary b { font-weight: 700; font-size: 15px; }
+.skill .sk-cat { font-size: 12px; color: var(--muted); }
+.skill .sk-st { grid-column: 1 / -1; font-size: 12px; color: var(--ink); opacity: .8; }
+.skill p { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+.g.new { background: var(--gold); color: var(--gold-ink); }
+.lesson { font-size: 12px; color: var(--ink); opacity: .85; margin-top: 3px; white-space: normal; }
+.lesson b { font-weight: 700; }
+.ins { margin: 0; padding-left: 18px; display: grid; gap: 5px; font-size: 14px; }
+.adec small.crit, .agdec .crit { color: var(--loss); }
+.pmc { display: flex; flex-wrap: wrap; gap: 6px; }
+.pmc span { background: var(--raised); border-radius: 8px; padding: 4px 9px; font-size: 13px; font-weight: 600; }
+.pmc span b { margin-left: 4px; }
+.cr-off td:first-child { opacity: .7; }
 </style>
 </head>
 <body>
@@ -956,6 +977,9 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     }
     const paper = Object.entries(a.tx || {}).filter(([, v]) => v).map(([k, v]) => `${tName(a.sp, k)}: ${["Over", "Under"][v[0]]}${a.sp === "nba" && v[4] != null ? " " + num1(v[4]) : ""} @ ${odd(v[1])}`);
     if (paper.length) out.push(`Taktyki na sucho: ${paper.join(" · ")}.`);
+    const CN = A_().critic_names || {};
+    if (a.veto && a.veto.length) out.unshift(`Krytyk blokuje: ${a.veto.map((k) => CN[k] || k).join(", ")}.`);
+    if (a.flags_off && a.flags_off.length) out.push(`Krytyk ostrzega (tę blokadę agent wyłączył, bo przeszkadzała): ${a.flags_off.map((k) => CN[k] || k).join(", ")}.`);
     return out;
   }
 
@@ -964,7 +988,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const bet = a.dec === "bet", b = a.best;
     const ln = (x) => a.sp === "nba" ? num1(x.line) : "2.5";
     const right = bet ? `<b>${esc(b.side)} ${ln(b)} @ ${odd(b.odds)}</b><small>stawka ${gMoney(a.stake)}</small>`
-      : `<small>pomija</small>${b ? `<small>${esc(b.side)} ${pct1(b.edge)}</small>` : ""}`;
+      : `<small${a.veto ? ` class="crit"` : ""}>${a.veto ? "krytyk blokuje" : "pomija"}</small>${b ? `<small>${esc(b.side)} ${pct1(b.edge)}</small>` : ""}`;
     const head = `<span class="rtime num">${esc(timeFmt.format(new Date(a.ko)))}</span>
         <span class="rnames"><b>${esc(a.home)}</b><b>${esc(a.away)}</b><span class="meta">${esc(lgShort(a))}</span></span>
         <span class="adec num">${right}</span>`;
@@ -979,8 +1003,14 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     return Object.entries(g).map(([k, rows]) => `<div class="day">${esc(dayLabel(k, today, tomorrow))}</div><div class="jlist">${rows.map(agRow).join("")}</div>`).join("");
   }
   const betRow = (b) => `<div class="jrow num"><span class="jst ${b.status === "won" ? "won" : b.status === "lost" ? "lost" : "open"}">${b.status === "won" ? "✓" : b.status === "lost" ? "✗" : b.status === "open" ? "•" : "="}</span>
-      <span class="jm"><b>${esc(b.home)} – ${esc(b.away)}</b><span class="meta">${esc(b.side)} ${b.sp === "nba" ? num1(b.line) : "2.5"} @ ${odd(b.odds)} ${esc(b.book)} · stawka ${gMoney(b.stake)}${b.score ? ` · wynik ${esc(b.score)}` : ""}${b.clv != null ? ` · vs zamkn. ${pct1(b.clv)}` : ""}${b.status === "push" ? " · zwrot (równo z linią)" : b.status === "void" ? " · zwrot" : ""}<br>${esc(lgShort(b))}, ${esc(kickoff(b.ko, b.date))}${b.tactic ? ` · ${esc(tName(b.sp, b.tactic))}` : ""}</span></span>
+      <span class="jm"><b>${esc(b.home)} – ${esc(b.away)}</b><span class="meta">${esc(b.side)} ${b.sp === "nba" ? num1(b.line) : "2.5"} @ ${odd(b.odds)} ${esc(b.book)} · stawka ${gMoney(b.stake)}${b.score ? ` · wynik ${esc(b.score)}` : ""}${b.clv != null ? ` · vs zamkn. ${pct1(b.clv)}` : ""}${b.status === "push" ? " · zwrot (równo z linią)" : b.status === "void" ? " · zwrot" : ""}<br>${esc(lgShort(b))}, ${esc(kickoff(b.ko, b.date))}${b.tactic ? ` · ${esc(tName(b.sp, b.tactic))}` : ""}</span>${lessonLine(b)}</span>
       <span class="jp ${b.status === "open" ? "" : pnc(b.profit)}">${b.status === "open" ? pct1(b.edge) : gMoneyS(b.profit)}</span></div>`;
+  // skill "Analiza po meczu": the verdict on a settled bet ("Pech: ...") with the verdict in bold
+  function lessonLine(b) {
+    if (!b.lesson) return "";
+    const i = b.lesson.indexOf(": ");
+    return `<span class="lesson">${i > 0 ? `<b>${esc(b.lesson.slice(0, i))}.</b> ${esc(b.lesson.slice(i + 2))}` : esc(b.lesson)}</span>`;
+  }
   function statTiles(blk) {
     const decided = (blk.won || 0) + (blk.lost || 0);
     return `<div class="stats num">
@@ -1024,6 +1054,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       <p>Co 4 godziny agent sam ocenia każdy mecz 11 lig piłkarskich (gole over/under 2.5) i NBA (suma punktów). Bierze pod uwagę model goli i strzałów celnych, kursy wielu bukmacherów, tabelę, formę, mecze u siebie i na wyjeździe, mecze bezpośrednie, ranking siły ClubElo, kontuzje (Premier League i NBA), zmęczenie w NBA i to, jak ruszają się kursy.</p>
       <p>Stawia 1% portfela tylko wtedy, gdy kurs jest wyższy, niż wynika z szansy. Po meczu sam rozlicza zakład i sprawdza, czy wziął kurs lepszy niż kurs zamknięcia.</p>
       <p>Kilka taktyk typuje równolegle na sucho. Gdy któraś okaże się wyraźnie lepsza, agent na nią przechodzi. Po 30 rozliczonych zakładach sam poprawia swoje zasady (najwyżej raz w tygodniu) i zapisuje w dzienniku, co zmienił i dlaczego.</p>
+      <p>Każdy zakład przed postawieniem sprawdza krytyk – drugi, niezależny „agent”, który blokuje podejrzane zakłady (np. gdy rynek ruszył przeciwko). Po meczu agent ocenia, czy to był pech, błąd ceny, czy dobra decyzja, i sprawdza, czy jego szanse się sprawdzają. Wszystkie umiejętności agenta: zakładka Nauka → Skille agenta.</p>
       <p>Bezpieczniki: najwyżej 30% portfela w grze naraz, kursy nie starsze niż 12 godzin. Pomoc przy problemach z hazardem: BeGambleAware.org, GamCare 0808 8020 133.</p></div></details>`;
     if (A.updated) out += `<p class="note">Agent: ostatnia zmiana ${esc(stampFmt.format(new Date(A.updated)))}.</p>`;
     return out;
@@ -1049,7 +1080,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const A = st.agent;
     if (!A) return noAgent();
     const S = SUM(), sp = st.asp;
-    let out = spSeg();
+    let out = spSeg() + skillsCard(S);
     const tactCard = (k) => {
       const ts = (S.tactics || {})[k] || [];
       if (!ts.length) return "";
@@ -1069,8 +1100,10 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       return rows.length ? `<div class="lc-head"><b>${title}</b></div><div class="scroll"><table class="num tt"><thead><tr><th></th><th>Zakł.</th><th>Traf.</th><th>Zysk</th><th>Wynik</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${esc(r.name.replace(" · ", ", "))}</td><td>${r.bets}</td><td>${r.won + r.lost ? pct(r.won / (r.won + r.lost)) : "—"}</td><td class="${pnc(r.profit)}">${gMoneyS(r.profit)}</td><td class="${pnc(r.roi)}">${pctS(r.roi)}</td></tr>`).join("")}</tbody></table></div>` : "";
     };
     const learned = byTbl("Liga", by.league, true) + byTbl("Strona zakładu", by.side, true) + byTbl("Kurs (oba sporty)", by.odds) + byTbl("Przewaga przy zakładzie (oba sporty)", by.edge) + byTbl("Bukmacher", by.book);
-    out += `<div class="card"><h3>Czego agent się nauczył</h3>${learned || `<p class="note">Pierwsze wnioski po rozliczeniu pierwszych zakładów: gdzie agent zarabia, a gdzie rynek jest lepszy.</p>`}
+    const ins = S.insights || [];
+    out += `<div class="card"><h3>Czego agent się nauczył</h3>${ins.length ? `<div class="lc-head"><b>Wnioski agenta</b></div><ul class="ins">${ins.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}${learned || (ins.length ? "" : `<p class="note">Pierwsze wnioski po rozliczeniu pierwszych zakładów: gdzie agent zarabia, a gdzie rynek jest lepszy.</p>`)}
       <p class="note">„Vs zamknięcie” to najważniejszy znak: czy agent brał kurs wyższy niż uczciwy kurs tuż przed meczem. Kto robi to stale, zwykle zarabia na dłuższą metę, nawet gdy pojedyncze zakłady przegrywa.</p></div>`;
+    out += criticCard(S, sp) + luckCard(S) + calibCard(S, sp);
     const R = A.rules || {}, rp = R.pilka || {}, rn = R.nba || {}, Lr = S.learning || {};
     const lgN = (c) => { const L = st.data && L_(c); return L ? lname(L) : c; };
     const prog = (k) => { const x = Lr[k] || {}; return x.settled >= x.need ? "sam zmienia zasady (najwyżej raz w tygodniu)" : `${x.settled || 0} z ${x.need || 30} zakładów do pierwszych zmian`; };
@@ -1081,6 +1114,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       <dt>Pomija, gdy statystyki mocno przeciw</dt><dd>${rp.stats_filter ? "tak" : "nie"}</dd>
       <dt>Wyłączone ligi</dt><dd>${(rp.off_leagues || []).length ? esc(rp.off_leagues.map(lgN).join(", ")) : "brak"}</dd>
       <dt>Wyłączone strony</dt><dd>${(rp.off_sides || []).length ? esc(rp.off_sides.join(", ")) : "brak"}</dd>
+      <dt>Krytyk: wyłączone blokady</dt><dd>${critOff(rp)}</dd>
       <dt>Nauka (piłka)</dt><dd>${esc(prog("pilka"))}</dd>` : ""}
       ${sp !== "pilka" ? `<dt>NBA: taktyka</dt><dd>${esc(tName("nba", rn.tactic))}</dd>
       <dt>Wymagana przewaga</dt><dd>${pct1((rn.edges || {})[rn.tactic])}</dd>
@@ -1088,6 +1122,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       <dt>Zaufanie do własnego modelu</dt><dd>${pct(rn.w_model)} (reszta: rynek)</dd>
       <dt>Gra od meczu nr w sezonie</dt><dd>${rn.min_games}</dd>
       <dt>Wyłączone strony</dt><dd>${(rn.off_sides || []).length ? esc(rn.off_sides.join(", ")) : "brak"}</dd>
+      <dt>Krytyk: wyłączone blokady</dt><dd>${critOff(rn)}</dd>
       <dt>Nauka (NBA)</dt><dd>${esc(prog("nba"))}</dd>` : ""}
       <dt>Stawka</dt><dd>1% portfela</dd><dt>Bezpiecznik</dt><dd>max 30% portfela w grze</dd></dl>
       <p class="note">Piłka: gole over/under 2.5 w 11 ligach (Top 5, Holandia, Portugalia, Belgia, Turcja, Szkocja, Grecja), kursy ${esc(((A.books || {}).pilka || []).join(", "))}. NBA: suma punktów, kursy ${esc(((A.books || {}).nba || []).join(" i "))}, a gdy nie mają linii – inny bukmacher z UK.</p></div>`;
@@ -1096,6 +1131,67 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     out += sourcesCard(A);
     return out;
   }
+  // ---------------- skills (18.10.2026)
+  function skillsCard(S) {
+    const sk = S.skills || [];
+    if (!sk.length) return "";
+    const nNew = sk.filter((s) => s.new).length;
+    return `<div class="card"><h3>Skille agenta</h3><div class="skills">${sk.map((s) => `<details class="skill"><summary>
+        <b>${esc(s.name)}</b>${s.new ? `<span class="g new">nowy</span>` : `<span></span>`}
+        <span class="sk-cat">${esc(s.cat)}</span><span></span>
+        <span class="sk-st">${esc(s.status || "")}</span></summary><p>${esc(s.desc)}</p></details>`).join("")}</div>
+      <p class="note">Skille to umiejętności agenta.${nNew ? ` ${nNew} nowe dodane 18.10.2026.` : ""} Dotknij skilla, żeby zobaczyć, co robi.</p></div>`;
+  }
+  const critOff = (r) => { const CN = A_().critic_names || {}, off = r.critic_off || []; return off.length ? esc(off.map((k) => CN[k] || k).join(", ")) : "brak (krytyk blokuje wszystko)"; };
+  function criticCard(S, sp) {
+    const C = S.critic || {};
+    const block = (k) => {
+      const rows = C[k] || [];
+      if (!rows.length) return "";
+      return `<div class="lc-head"><b>${SPN[k]}</b></div><div class="scroll"><table class="num tt"><thead><tr><th>Ostrzeżenie</th><th>Stan</th><th>Zabl.</th><th>Gdyby</th><th>Czeka</th></tr></thead><tbody>
+        ${rows.map((r) => `<tr class="${r.on ? "" : "cr-off"}"><td>${esc(r.name)}</td><td>${r.on ? "blokuje" : "wyłączone"}</td><td>${r.n}</td><td class="${pnc(r.roi)}">${r.n ? pctS(r.roi) : "—"}</td><td>${r.open}</td></tr>`).join("")}
+        </tbody></table></div>`;
+    };
+    const all = Object.values(C).flat();
+    const desc = all.length ? `<details><summary class="note">Co znaczą ostrzeżenia</summary><div class="tdesc">${[...new Map(all.map((r) => [r.key, r])).values()].map((r) => `<div><b>${esc(r.name)}</b><span class="note">${esc(r.desc)}</span></div>`).join("")}</div></details>` : "";
+    return `<div class="card"><h3>Krytyk – druga opinia przed zakładem</h3>
+      <p class="note">Zanim agent postawi pieniądze, krytyk szuka powodów, żeby tego nie robić. Każde ostrzeżenie blokuje zakład. Zablokowane typy agent śledzi na sucho: „Zabl.” to zablokowane i już rozliczone, „Gdyby” – wynik, jaki dałyby te zakłady, „Czeka” – zablokowane mecze, które jeszcze się nie odbyły.</p>
+      ${(sp !== "nba" ? block("pilka") : "") + (sp !== "pilka" ? block("nba") : "")}
+      <p class="note">Gdy zablokowane typy zarabiałyby (20+ typów, zysk i kurs lepszy niż zamknięcie), agent sam wyłącza tę blokadę. Gdy zakłady postawione mimo wyłączonego ostrzeżenia przegrywają, włącza ją z powrotem. Każda zmiana trafia do dziennika.</p>${desc}</div>`;
+  }
+  function luckCard(S) {
+    const L = S.luck || {};
+    const NAMES = { zasluzona: "Zasłużone wygrane", szczescie: "Szczęście", pech: "Pech", zla_cena: "Błąd ceny", bez_porownania: "Bez porównania" };
+    if (!L.n) return `<div class="card"><h3>Szczęście czy umiejętność?</h3><p class="note">Po każdym rozliczonym zakładzie agent oceni, czy to był pech, błąd ceny, szczęście, czy zasłużona wygrana. Pierwsze oceny po najbliższych meczach.</p></div>`;
+    const cats = Object.entries(L.cats || {}).sort((a, b) => b[1] - a[1]);
+    const luck = L.n_clv ? (L.profit_clv || 0) - (L.exp_close || 0) : null;
+    return `<div class="card"><h3>Szczęście czy umiejętność?</h3>
+      ${cats.length ? `<div class="pmc">${cats.map(([k, v]) => `<span>${esc(NAMES[k] || k)}<b>${v}</b></span>`).join("")}</div>` : ""}
+      <dl class="kv rules num"><dt>Zysk (zakłady z kursem zamknięcia: ${L.n_clv || 0})</dt><dd class="${pnc(L.profit_clv)}">${gMoneyS(L.profit_clv)}</dd>
+        <dt>„Uczciwy” wynik według kursów zamknięcia</dt><dd class="${pnc(L.exp_close)}">${gMoneyS(L.exp_close)}</dd>
+        <dt>Szczęście (+) albo pech (−)</dt><dd class="${pnc(luck)}">${luck == null ? "—" : gMoneyS(luck)}</dd>
+        <dt>Agent spodziewał się (według swoich szans)</dt><dd>${gMoneyS(L.exp_agent)}</dd></dl>
+      <p class="note">„Uczciwy” wynik to zysk, jaki dałyby te zakłady, gdyby wyniki układały się dokładnie według kursów tuż przed meczem. Umiejętność to dobry kurs; szczęście i pech z czasem się wyrównują. Ocena każdego zakładu jest pod nim w zakładce Wyniki.</p></div>`;
+  }
+  function calibCard(S, sp) {
+    const C = S.calib || {};
+    const block = (k) => {
+      const c = C[k];
+      if (!c || !c.n) return "";
+      const better = c.ll_agent != null && c.ll_market != null && c.ll_agent < c.ll_market;
+      return `<div class="lc-head"><b>${SPN[k]}: ${c.n} rozliczonych meczów</b></div>
+        <div class="scroll"><table class="num tt"><thead><tr><th>Agent daje na over</th><th>Mecze</th><th>Średnio</th><th>Weszło</th></tr></thead><tbody>
+        ${(c.buckets || []).map((b) => `<tr><td>${Math.round(b.lo * 100)}–${Math.round(b.hi * 100)}%</td><td>${b.n}</td><td>${pct(b.p)}</td><td class="${Math.abs(b.hit - b.p) <= 0.05 ? "pos" : ""}">${pct(b.hit)}</td></tr>`).join("")}
+        </tbody></table></div>
+        <dl class="kv rules num"><dt>Błąd agenta</dt><dd class="${better ? "pos" : ""}">${c.ll_agent != null ? c.ll_agent.toFixed(4) : "—"}</dd><dt>Błąd samego rynku</dt><dd>${c.ll_market != null ? c.ll_market.toFixed(4) : "—"}</dd>
+          ${c.ll_model != null ? `<dt>Błąd samego modelu</dt><dd>${c.ll_model.toFixed(4)}</dd>` : ""}
+          <dt>Over wszedł w</dt><dd>${pct(c.rate)} meczów</dd>${c.bias != null ? `<dt>Agent ${c.bias > 0 ? "zawyża" : "zaniża"} szansę na over</dt><dd>o ${Math.abs(Math.round(c.bias * 100))} pkt proc.</dd>` : ""}</dl>`;
+    };
+    const body = (sp !== "nba" ? block("pilka") : "") + (sp !== "pilka" ? block("nba") : "");
+    return `<div class="card"><h3>Kalibracja – czy szanse agenta się sprawdzają</h3>${body || `<p class="note">Pojawi się po rozliczeniu pierwszych ocenionych meczów.</p>`}
+      <p class="note">Wszystkie ocenione mecze, nie tylko obstawione. Dobrze skalibrowany agent: gdy daje 60%, over wchodzi mniej więcej w 6 meczach na 10. Błąd (mniej = lepiej) porównuje agenta z samym rynkiem. W lidze, w której agent na 60+ meczach jest gorszy od rynku, krytyk blokuje zakłady.</p></div>`;
+  }
+
   function sourcesCard(A) {
     const s = ((A.status || {}).sources) || {};
     const ok = (good, txt) => `<span class="${good ? "pos" : "neg"}">${good ? "✓" : "!"}</span> ${txt}`;
@@ -1205,7 +1301,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     if (!a) return "";
     const bet = a.dec === "bet", b = a.best;
     return `<div class="card agcard ${bet ? "agbet" : ""}"><h3>Ocena agenta</h3>
-      <div class="agdec num">${bet ? `<b>Obstawia ${esc(b.side)} 2.5 @ ${odd(b.odds)}</b><span class="meta">${esc(b.book)} · stawka ${gMoney(a.stake)}</span>` : `<b>Pomija</b>${b ? `<span class="meta">najlepiej ${esc(b.side)} 2.5 @ ${odd(b.odds)} (${pct1(b.edge)})</span>` : ""}`}</div>
+      <div class="agdec num">${bet ? `<b>Obstawia ${esc(b.side)} 2.5 @ ${odd(b.odds)}</b><span class="meta">${esc(b.book)} · stawka ${gMoney(a.stake)}</span>` : `<b${a.veto ? ` class="crit"` : ""}>${a.veto ? "Krytyk blokuje zakład" : "Pomija"}</b>${b ? `<span class="meta">najlepiej ${esc(b.side)} 2.5 @ ${odd(b.odds)} (${pct1(b.edge)})</span>` : ""}`}</div>
       <p class="explain-p">${esc(a.why || "")}</p>${agentFacts(a).map((t) => `<p class="meta">${esc(t)}</p>`).join("")}</div>`;
   }
 

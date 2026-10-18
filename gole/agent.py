@@ -10,6 +10,14 @@ Decyzje Radka (17.10.2026):
   - po 30+ rozliczonych zakładach sam, ostrożnie zmienia swoje zasady (najwyżej jedna zmiana na tydzień),
   - gotowość na prawdziwe pieniądze: 3+ miesiące, 200+ zakładów, zysk i kursy lepsze niż zamknięcie.
 
+Skille dodane 18.10.2026 (na prośbę Radka):
+  - Krytyk: drugi, niezależny przegląd każdego zakładu przed postawieniem (5 ostrzeżeń, każde blokuje zakład);
+    zablokowane typy są śledzone na sucho, a agent sam wyłącza blokady, które przeszkadzają (krok nauki step_critic),
+  - Analiza po meczu: każdy rozliczony zakład dostaje ocenę (pech, błąd ceny, szczęście, zasłużona wygrana)
+    i lekcję; podsumowanie „szczęście czy umiejętność” względem kursów zamknięcia,
+  - Kalibracja: czy szanse agenta się sprawdzają (na wszystkich rozliczonych ocenach, też w każdej lidze),
+  - Wnioski: proste zdania o tym, gdzie agent zarabia, a gdzie traci.
+
 Pliki: gole/agent.json (portfel, zakłady, taktyki, zasady, zmiany - czyta je strona),
        gole/agent_analizy.json (ocena każdego meczu, typ każdej taktyki i wynik - do nauki).
 """
@@ -58,13 +66,72 @@ MOVE_MIN = 0.03                  # market moved by 3+ percentage points since th
 LINE_MOVE_MIN = 1.5              # NBA line moved by 1.5+ points
 RULES0 = {
     "pilka": {"tactic": "blend", "edges": EDGES0["pilka"], "odds_min": 1.5, "odds_max": 3.2, "stats_filter": True,
-              "off_leagues": [], "off_sides": []},
+              "off_leagues": [], "off_sides": [], "critic_off": []},
     "nba": {"tactic": "blend", "edges": EDGES0["nba"], "odds_min": 1.6, "odds_max": 2.4, "w_model": 0.3, "min_games": 5,
-            "off_sides": []},
+            "off_sides": [], "critic_off": []},
 }
 EDGE_LIMITS = (0.01, 0.10)
 ODDS_MAX_LIMITS = {"pilka": (2.2, 3.2), "nba": (2.0, 2.4)}
 SWITCH_MIN = {"pilka": 50, "nba": 80}   # tactic needs this many settled paper picks before the agent switches to it
+
+# Skill "Krytyk" (18.10.2026): a second, independent check of every bet the agent wants to place.
+# Each warning blocks the bet; blocked picks are followed on paper, and the agent switches a warning off
+# when the bets it blocked would have made money (and back on when bets placed despite it lose).
+CRITIC = {
+    "rozjazd": {"name": "Model i rynek mocno się różnią", "sp": ("pilka", "nba"),
+                "desc": "Własna szansa agenta różni się od rynku o 12+ pkt proc. (NBA: 20+). Tak duża różnica zwykle znaczy, "
+                        "że model czegoś nie wie – składów, motywacji, pogody."},
+    "rynek_przeciw": {"name": "Rynek ruszył przeciwko", "sp": ("pilka", "nba"),
+                      "desc": "Od pierwszego odczytu kursy przesunęły się w drugą stronę (piłka: o 3+ pkt proc., NBA: linia o 1.5+ pkt). "
+                              "Zwykle to znak, że lepiej poinformowani gracze myślą inaczej."},
+    "kontuzje_przeciw": {"name": "Kontuzje przeciw", "sp": ("pilka", "nba"),
+                         "desc": "Braki kadrowe wskazują drugą stronę zakładu (piłka: Premier League, dane Fantasy Premier League; "
+                                 "NBA: brak najlepszych strzelców przy zakładzie na Over)."},
+    "poczatek_sezonu": {"name": "Za mało meczów w sezonie", "sp": ("pilka",),
+                        "desc": "Któraś drużyna rozegrała w tym sezonie mniej niż 4 mecze – ocena jej formy jest jeszcze niepewna."},
+    "slaba_liga": {"name": "Agent słabo zna tę ligę", "sp": ("pilka",),
+                   "desc": "Na 60+ rozliczonych meczach tej ligi szanse agenta były mniej trafne niż sam rynek, "
+                           "więc jego „przewaga” w tej lidze jest mało wiarygodna."},
+}
+GAP_MAX = {"pilka": 0.12, "nba": 0.20}   # model vs market: bigger gap = the model is probably missing something
+INJ_AGAINST = 0.02                      # football: injuries move the chance of over 2.5 against the bet by 2+ points
+INJ_PTS_AGAINST = 3.0                   # NBA: missing scorers take 3+ points off the forecast of an Over bet
+EARLY_GAMES = 4
+CAL_MIN, CAL_MARGIN = 60, 0.005         # league calibration: settled matches needed, log-loss margin vs the market
+
+# Skill "Analiza po meczu": every settled bet gets a verdict - luck, a bad price, a deserved win.
+POSTMORTEM = {
+    "zasluzona": ("Zasłużona wygrana", "Dobry kurs (lepszy niż zamknięcie) i trafiony wynik."),
+    "szczescie": ("Szczęście", "Wygrana, choć rynek przed meczem poszedł przeciwko – kurs był gorszy niż zamknięcie."),
+    "pech": ("Pech", "Decyzja była dobra (kurs lepszy niż zamknięcie), ale wynik nie wszedł. Na dłuższą metę takie zakłady zarabiają."),
+    "zla_cena": ("Błąd ceny", "Rynek przed meczem poszedł przeciwko – bukmacherzy wiedzieli więcej. Sygnał do nauki."),
+    "bez_porownania": ("Bez porównania", "Brak kursu zamknięcia – nie da się ocenić, czy to pech, czy błąd."),
+}
+
+# What the agent can do (shown on the page, tab Nauka). Categories follow the usual names of AI agent skills.
+SKILLS = [
+    {"key": "dane", "name": "Dane z 5 darmowych źródeł", "cat": "Narzędzia (tool calling)",
+     "desc": "Sam pobiera wyniki, kursy bukmacherów, siłę drużyn, kontuzje i dane NBA: football-data.co.uk, The Odds API, ClubElo, "
+             "Fantasy Premier League, ESPN. Gdy źródło nie działa, liczy zastępczo."},
+    {"key": "model", "name": "Model goli i punktów", "cat": "Model",
+     "desc": "Model Poissona z poprawką Dixona-Colesa (gole i strzały celne) dla piłki, atak i obrona drużyn dla NBA; "
+             "łączy swoją szansę z kursami rynku."},
+    {"key": "taktyki", "name": "Taktyki na sucho", "cat": "Wiele strategii",
+     "desc": "Kilka taktyk typuje równolegle każdy mecz; pieniądze idą na tę, która najlepiej się sprawdza."},
+    {"key": "nauka", "name": "Nauka zasad", "cat": "Pamięć (memory)",
+     "desc": "Po 30 rozliczonych zakładach sam zmienia zasady (najwyżej raz w tygodniu) i zapisuje w dzienniku, co i dlaczego."},
+    {"key": "krytyk", "name": "Krytyk", "cat": "Wiele agentów (multi-agent)", "new": True,
+     "desc": "Drugi, niezależny „agent” sprawdza każdy zakład przed postawieniem i blokuje podejrzane (5 rodzajów ostrzeżeń). "
+             "Zablokowane typy śledzi na sucho i sam wyłącza blokady, które przeszkadzają."},
+    {"key": "po_meczu", "name": "Analiza po meczu", "cat": "Pamięć (memory)", "new": True,
+     "desc": "Po każdym zakładzie ocenia, czy to był pech, błąd ceny, szczęście, czy zasłużona wygrana, "
+             "i liczy, ile w wyniku jest szczęścia, a ile umiejętności."},
+    {"key": "kalibracja", "name": "Kalibracja", "cat": "Samoocena (evaluation)", "new": True,
+     "desc": "Na wszystkich rozliczonych meczach sprawdza, czy jego szanse się sprawdzają (gdy mówi 60%, czy wchodzi 6 na 10), "
+             "i porównuje się z rynkiem w każdej lidze. Krytyk korzysta z tego przy blokadzie „Agent słabo zna tę ligę”."},
+    {"key": "wnioski", "name": "Wnioski", "cat": "Pamięć (memory)", "new": True,
+     "desc": "Z rozliczonych zakładów i ocen sam wypisuje prostym językiem, gdzie zarabia, gdzie traci i co z tego wynika."},
+]
 
 
 # ---------------------------------------------------------------- helpers
@@ -194,6 +261,7 @@ class Agent:
         self.elo = None   # zrodla.ClubElo, set by the engine
         self.elo_src = {}
         self.by_id = {b["id"]: b for b in s["bets"]}
+        self._cal = None  # calibration on settled analyses, computed once per run
 
     # ------------------------------------------------ money
     def open_stakes(self):
@@ -225,6 +293,11 @@ class Agent:
             elo = {t: (t, v, 1.0) for t, v in elo_backup.items()}
             src = "wyniki ligi"
         self.elo_src[code] = src
+        gp = {}  # matches played this season, for the critic
+        for m in results or []:
+            if m.get("hg") is not None:
+                gp[m["h"]] = gp.get(m["h"], 0) + 1
+                gp[m["a"]] = gp.get(m["a"], 0) + 1
         for f in priced:
             if dt.datetime.fromisoformat(f["ko"]) <= self.now:
                 continue
@@ -239,6 +312,8 @@ class Agent:
                 an = old  # prices went stale: the last view with fresh prices stays the agent's judgement of this match
             if b:  # already placed: keep the reason it was placed for
                 an["dec"], an["why"], an["stake"] = "bet", b["why"], b["stake"]
+            elif an["dec"] == "cand":
+                self.review(an, "pilka", [gp.get(f["home"], 0), gp.get(f["away"], 0)])
             self.A[an["id"]] = an
             if an["dec"] == "cand" and not b:
                 self.cands.append((an["best"]["edge"], an))
@@ -404,6 +479,7 @@ class Agent:
             if b.get("last_odds"):
                 extra["close_odds"] = b["last_odds"]
             self.settle(b, "won" if won else "lost", extra)
+            self.post_mortem(b)
         for a in self.A.values():
             if a["sp"] != "pilka" or a["lg"] != code or "res" in a:
                 continue
@@ -445,6 +521,8 @@ class Agent:
                 an = old
             if b:
                 an["dec"], an["why"], an["stake"] = "bet", b["why"], b["stake"]
+            elif an["dec"] == "cand":
+                self.review(an, "nba")
             self.A[an["id"]] = an
             if an["dec"] == "cand" and not b:
                 self.cands.append((an["best"]["edge"], an))
@@ -467,6 +545,7 @@ class Agent:
                 self.settle(b, "push", extra)
             else:
                 self.settle(b, "won" if (total > b["line"]) == (b["side"] == "Over") else "lost", extra)
+                self.post_mortem(b)
         for a in self.A.values():
             if a["sp"] != "nba" or "res" in a:
                 continue
@@ -591,6 +670,222 @@ class Agent:
         an["dec"], an["why"] = dec, why
         return an
 
+    # ------------------------------------------------ skill "Krytyk": a second opinion before a bet is placed
+    def warnings(self, an, sp, gp=None):
+        """Independent check of a candidate bet. Returns the keys of CRITIC that apply."""
+        b = an["best"]
+        over = b["side"] == "Over"
+        out = []
+        pm, pk = an.get("pm"), an.get("pk")
+        if pm is not None and pk is not None and abs(pm - pk) >= GAP_MAX[sp]:
+            out.append("rozjazd")
+        if sp == "pilka":
+            mv = an.get("mv")
+            if mv is not None and ((over and mv <= -MOVE_MIN + 1e-9) or (not over and mv >= MOVE_MIN - 1e-9)):
+                out.append("rynek_przeciw")
+            inj = an.get("inj")
+            if inj and ((over and inj["d"] <= -INJ_AGAINST) or (not over and inj["d"] >= INJ_AGAINST)):
+                out.append("kontuzje_przeciw")
+            if gp is not None and min(gp) < EARLY_GAMES:
+                out.append("poczatek_sezonu")
+            c = ((self.calibration().get("pilka") or {}).get("by_league") or {}).get(an["lg"])
+            if c and c["n"] >= CAL_MIN and c["ll_agent"] is not None and c["ll_market"] is not None \
+                    and c["ll_agent"] > c["ll_market"] + CAL_MARGIN:
+                out.append("slaba_liga")
+        else:
+            lmed, line0 = an.get("lmed"), an.get("line0")
+            if lmed is not None and line0 is not None:
+                lmv = lmed - line0
+                if (over and lmv <= -LINE_MOVE_MIN) or (not over and lmv >= LINE_MOVE_MIN):
+                    out.append("rynek_przeciw")
+            if over and an.get("mu_inj") is not None and an.get("mu") is not None and an["mu_inj"] <= an["mu"] - INJ_PTS_AGAINST:
+                out.append("kontuzje_przeciw")
+        return out
+
+    def review(self, an, sp, gp=None):
+        """The critic looks at a candidate: active warnings block the bet, switched-off ones are only noted."""
+        try:
+            flags = self.warnings(an, sp, gp)
+        except Exception as e:  # the critic must never stop the agent
+            self.errors.append(f"krytyk: {str(e)[:80]}")
+            return
+        off = self.s["rules"][sp].get("critic_off") or []
+        block = [k for k in flags if k not in off]
+        an.pop("veto", None)
+        an.pop("flags_off", None)
+        if block:
+            an["veto"] = block
+            an["dec"] = "skip"
+            an["why"] = ("Krytyk zablokował zakład: " + "; ".join(CRITIC[k]["name"].lower() for k in block)
+                         + ". Agent sprawdzi po meczu, czy blokada była słuszna. Zakład, który by postawił: " + an["why"])
+        noted = [k for k in flags if k in off]
+        if noted:
+            an["flags_off"] = noted
+
+    # ------------------------------------------------ skill "Kalibracja": are the agent's chances right?
+    def calibration(self):
+        if self._cal is not None:
+            return self._cal
+        out = {}
+        for sp in ("pilka", "nba"):
+            rows = []
+            for a in self.A.values():
+                if a["sp"] != sp or not a.get("res") or a.get("p") is None or a.get("pk") is None or a.get("line") is None:
+                    continue
+                tot = sum(a["res"])
+                if abs(tot - a["line"]) < 1e-9:
+                    continue  # push: no outcome
+                rows.append((a, 1 if tot > a["line"] else 0))
+            if not rows:
+                continue
+
+            def ll(key, rs):
+                v = [r for r in rs if r[0].get(key) is not None]
+                if not v:
+                    return None
+                return sum(-math.log(max(a[key] if y else 1 - a[key], 1e-9)) for a, y in v) / len(v)
+
+            n = len(rows)
+            rate = sum(y for _, y in rows) / n
+            bk = []
+            for lo, hi in ((0, 0.35), (0.35, 0.45), (0.45, 0.55), (0.55, 0.65), (0.65, 1.01)):
+                rs = [(a, y) for a, y in rows if lo <= a["p"] < hi]
+                if rs:
+                    bk.append({"lo": lo, "hi": min(hi, 1.0), "n": len(rs), "p": r4(sum(a["p"] for a, _ in rs) / len(rs)),
+                               "hit": r4(sum(y for _, y in rs) / len(rs))})
+            pm_rows = [(a, y) for a, y in rows if a.get("pm") is not None]
+            c = {"n": n, "rate": r4(rate), "ll_agent": r4(ll("p", rows)), "ll_market": r4(ll("pk", rows)), "ll_model": r4(ll("pm", rows)),
+                 "bias": r4(sum(a["p"] for a, _ in rows) / n - rate),
+                 "bias_model": r4(sum(a["pm"] for a, _ in pm_rows) / len(pm_rows) - sum(y for _, y in pm_rows) / len(pm_rows)) if pm_rows else None,
+                 "buckets": bk}
+            if sp == "pilka":
+                by = {}
+                for a, y in rows:
+                    by.setdefault(a["lg"], []).append((a, y))
+                c["by_league"] = {lg: {"n": len(rs), "ll_agent": r4(ll("p", rs)), "ll_market": r4(ll("pk", rs))} for lg, rs in sorted(by.items())}
+            out[sp] = c
+        self._cal = out
+        return out
+
+    # ------------------------------------------------ skill "Analiza po meczu": luck, a bad price or a deserved win?
+    def post_mortem(self, b):
+        if b.get("status") not in ("won", "lost"):
+            return
+        clv = b.get("clv")
+        if clv is None:
+            cat = "bez_porownania"
+        elif b["status"] == "won":
+            cat = "zasluzona" if clv > 0 else "szczescie"
+        else:
+            cat = "pech" if clv > 0 else "zla_cena"
+        title, text = POSTMORTEM[cat]
+        parts = [f"{title}: {text}"]
+        try:
+            if b["sp"] == "pilka":
+                a = self.A.get(b["id"].rsplit("|", 1)[0]) or {}
+                xg = a.get("xg")
+                if xg and b.get("score"):
+                    hg, ag = (int(x) for x in b["score"].split(":"))
+                    parts.append(f"Model spodziewał się {xg[0] + xg[1]:.1f} gola, padło {hg + ag}.")
+            elif b.get("mu") is not None and b.get("total") is not None:
+                parts.append(f"Prognoza sumy {b['mu']:.0f} pkt, padło {b['total']}.")
+        except (ValueError, TypeError, KeyError):
+            pass
+        b["pm_cat"] = cat
+        b["lesson"] = " ".join(parts)
+
+    def luck(self):
+        """How much of the result is skill and how much luck (fair value = closing price, Pinnacle without margin)."""
+        settled = [b for b in self.s["bets"] if b["status"] in ("won", "lost", "push")]
+        wc = [b for b in settled if b.get("clv") is not None]
+        cats = {}
+        for b in settled:
+            if b.get("pm_cat"):
+                cats[b["pm_cat"]] = cats.get(b["pm_cat"], 0) + 1
+        return {"n": len(settled), "profit": r2(sum(b["profit"] for b in settled)),
+                "exp_agent": r2(sum(b["stake"] * b["edge"] for b in settled)),
+                "n_clv": len(wc), "profit_clv": r2(sum(b["profit"] for b in wc)),
+                "exp_close": r2(sum(b["stake"] * b["clv"] for b in wc)), "cats": cats}
+
+    # ------------------------------------------------ skill "Wnioski": what the agent learned, in plain words
+    @staticmethod
+    def insights(by, cal, luck, critic):
+        out = []
+        MIN = 10
+        labels = {"league": "ligi", "side": "strony zakładu", "odds": "kursy", "book": "bukmacherzy"}
+        for key, label in labels.items():
+            rows = [r for r in by.get(key, []) if r["bets"] >= MIN and r["roi"] is not None]
+            if len(rows) < 2:
+                continue
+            best, worst = max(rows, key=lambda r: r["roi"]), min(rows, key=lambda r: r["roi"])
+            if best["roi"] > 0:
+                out.append(f"{label.capitalize()}: najlepiej idzie {best['name'].replace(' · ', ', ')} "
+                           f"({best['bets']} zakł., wynik {pctf(best['roi'], True)}).")
+            if worst["roi"] < 0 and worst is not best:
+                out.append(f"{label.capitalize()}: najsłabiej {worst['name'].replace(' · ', ', ')} "
+                           f"({worst['bets']} zakł., wynik {pctf(worst['roi'], True)}).")
+        c = cal.get("pilka")
+        if c and c["n"] >= 50:
+            if c.get("bias_model") is not None and abs(c["bias_model"]) >= 0.03:
+                out.append(f"Sam model goli {'zawyża' if c['bias_model'] > 0 else 'zaniża'} szansę na over 2.5 średnio o "
+                           f"{abs(c['bias_model']) * 100:.0f} pkt proc. ({c['n']} meczów) – dlatego agent łączy go z kursami rynku.")
+            if c["ll_agent"] is not None and c["ll_market"] is not None:
+                better = c["ll_agent"] < c["ll_market"]
+                out.append(f"Na {c['n']} rozliczonych meczach szanse agenta były {'trafniejsze' if better else 'mniej trafne'} niż sam rynek"
+                           + (" – widzi coś, czego bukmacherzy nie widzą." if better else " – przewagi szuka głównie w różnicach między bukmacherami."))
+        if luck["n_clv"] >= 20:
+            d = (luck["profit_clv"] or 0) - (luck["exp_close"] or 0)
+            out.append(f"Na {luck['n_clv']} zakładach: wynik {'lepszy' if d >= 0 else 'gorszy'} o £{abs(d):.2f} niż „uczciwy” według kursów zamknięcia "
+                       f"– to {'szczęście' if d >= 0 else 'pech'}, które z czasem się wyrównuje.")
+        cats, n = luck["cats"], sum(luck["cats"].values())
+        if n >= 20:
+            good = cats.get("zasluzona", 0) + cats.get("pech", 0)
+            out.append(f"{good} z {n} zakładów miało kurs lepszy niż zamknięcie (dobra decyzja, niezależnie od wyniku).")
+        for sp, rows in critic.items():
+            for r in rows:
+                if r["n"] >= 15:
+                    out.append(f"Krytyk ({SPORT_LABEL[sp]}), blokada „{r['name']}”: {r['n']} zablokowanych typów dałoby wynik {pctf(r['roi'], True)}"
+                               + (" – blokada chroni portfel." if (r["roi"] or 0) < 0 else " – blokada chyba przeszkadza."))
+        return out[:8]
+
+    def critic_stats(self):
+        out = {}
+        for sp in ("pilka", "nba"):
+            off = self.s["rules"][sp].get("critic_off") or []
+            settled = self.paper_rows(sp)
+            rows = []
+            for k, v in CRITIC.items():
+                if sp not in v["sp"]:
+                    continue
+                s = stats_of([r for r in settled if k in (r["a"].get("veto") or [])])
+                waiting = sum(1 for a in self.A.values() if a["sp"] == sp and "res" not in a and k in (a.get("veto") or []))
+                placed = stats_of([{"u": b["profit"] / b["stake"], "clv": b.get("clv")} for b in self.s["bets"]
+                                   if b["sp"] == sp and b["status"] in ("won", "lost", "push") and k in (b.get("flags") or [])])
+                rows.append({"key": k, "name": v["name"], "desc": v["desc"], "on": k not in off, "open": waiting,
+                             **pub(s), "placed": pub(placed)})
+            out[sp] = rows
+        return out
+
+    def skills(self, cal, luck, critic, ins, upcoming=0):
+        n_cal = sum((c or {}).get("n", 0) for c in cal.values())
+        blocked = sum(r["n"] + r["open"] for rows in critic.values() for r in rows)
+        n_ch = sum(1 for c in self.s["changes"] if c.get("sport") != "all")
+        learn = [f"{SPORT_LABEL[sp]} {len(self.bet_rows(sp))}/{LEARN_MIN}" for sp in ("pilka", "nba")]
+        status = {
+            "dane": "aktualizacja co 4 godziny (GitHub Actions)",
+            "model": f"ocenia {upcoming} najbliższych meczów",
+            "taktyki": f"{len(TACTICS['pilka'])} taktyk w piłce, {len(TACTICS['nba'])} w NBA – pieniędzmi gra jedna",
+            "nauka": f"zmiany zasad w dzienniku: {n_ch}" if n_ch else "rozliczone zakłady do pierwszych zmian: " + ", ".join(learn),
+            "krytyk": (f"zablokował {blocked} typów, czeka na wynik: {sum(r['open'] for rows in critic.values() for r in rows)}" if blocked
+                       else "sprawdza każdy zakład; jeszcze niczego nie zablokował")
+                      + (", wyłączone blokady: " + ", ".join(r["name"] for rows in critic.values() for r in rows if not r["on"])
+                         if any(not r["on"] for rows in critic.values() for r in rows) else ""),
+            "po_meczu": f"ocenionych zakładów: {sum(luck['cats'].values())}",
+            "kalibracja": f"sprawdzone na {n_cal} rozliczonych meczach" if n_cal else "czeka na pierwsze rozliczone mecze",
+            "wnioski": f"wniosków: {len(ins)}" if ins else "pierwsze wnioski po 10+ zakładach w grupie",
+        }
+        return [dict(s, status=status.get(s["key"], "działa")) for s in SKILLS]
+
     # ------------------------------------------------ placing the bets
     def place(self):
         self.cands.sort(key=lambda c: -c[0])
@@ -616,6 +911,8 @@ class Agent:
                 b["mu"] = an.get("mu")
             if an.get("stats_against"):
                 b["stats_against"] = True
+            if an.get("flags_off"):  # the critic warned, but these warnings are switched off: remembered for learning
+                b["flags"] = list(an["flags_off"])
             self.s["cash"] = round(self.s["cash"] - stake, 2)
             self.s["bets"].append(b)
             self.by_id[bid] = b
@@ -656,8 +953,8 @@ class Agent:
             last = self.s["last_change"].get(sp)
             if last and (self.now.date() - dt.date.fromisoformat(last)).days < CHANGE_GAP_DAYS:
                 continue
-            for step in (self.step_tactic, self.step_league_off, self.step_league_on, self.step_side, self.step_edge_up,
-                         self.step_edge_down, self.step_odds_max, self.step_stats, self.step_weight):
+            for step in (self.step_tactic, self.step_critic, self.step_league_off, self.step_league_on, self.step_side,
+                         self.step_edge_up, self.step_edge_down, self.step_odds_max, self.step_stats, self.step_weight):
                 if step(sp, bets):
                     break
 
@@ -685,6 +982,34 @@ class Agent:
                     + (f", kurs vs zamknięcie {pctf(s['clv'], True)}" if s["clv"] is not None else "")
                     + f". „{names[act]['name']}”: {a['n']} typów, wynik {pctf(a['roi'], True)}.")
         return True
+
+    def step_critic(self, sp, bets):
+        """The critic learns: a warning whose blocked picks would have made money is switched off,
+        a switched-off warning whose bets lose is switched back on."""
+        R = self.s["rules"][sp]
+        off = R.setdefault("critic_off", [])
+        settled = self.paper_rows(sp)
+        for k, v in CRITIC.items():
+            if sp not in v["sp"]:
+                continue
+            if k not in off:
+                s = stats_of([r for r in settled if k in (r["a"].get("veto") or [])])
+                if s["n"] >= 20 and s["roi"] > 0 and (s["clv"] is None or s["clv"] > 0):
+                    off.append(k)
+                    self.change(sp, f"Krytyk przestaje blokować zakłady z powodu: „{v['name']}”.",
+                                f"{s['n']} zablokowanych w ten sposób typów dałoby wynik {pctf(s['roi'], True)}"
+                                + (f", kurs vs zamknięcie {pctf(s['clv'], True)}" if s["clv"] is not None else "")
+                                + " – ta blokada przeszkadzała. Krytyk dalej będzie o tym ostrzegał, a agent sprawdzi, czy słusznie.")
+                    return True
+            else:
+                s = stats_of([r for r in bets if k in (r["b"].get("flags") or [])])
+                if self.bad(s, 15, -0.10):
+                    off.remove(k)
+                    self.change(sp, f"Krytyk znów blokuje zakłady z powodu: „{v['name']}”.",
+                                f"{s['n']} zakładów postawionych mimo tego ostrzeżenia: wynik {pctf(s['roi'], True)}"
+                                + (f", kurs vs zamknięcie {pctf(s['clv'], True)}." if s["clv"] is not None else "."))
+                    return True
+        return False
 
     def step_league_off(self, sp, bets):
         if sp != "pilka":
@@ -870,6 +1195,15 @@ class Agent:
                  "profit": eq > S["start_balance"], "clv": a["clv"] is not None and a["clv"] > 0}
         ready["ok"] = days >= READY["days"] and len(settled) >= READY["bets"] and ready["profit"] and ready["clv"]
         up = [x for x in self.A.values() if dt.datetime.fromisoformat(x["ko"]) > self.now]
+        # new skills (18.10.2026): post-match verdicts, calibration, the critic's record, plain-language conclusions
+        for b in settled:
+            if not b.get("pm_cat"):
+                self.post_mortem(b)
+        self._cal = None
+        cal = self.calibration()
+        lk = self.luck()
+        crit = self.critic_stats()
+        ins = self.insights(out["by"], cal, lk, crit)
         return {"equity": r2(eq), "cash": r2(S["cash"]), "open": self.open_stakes(),
                 "n_open": sum(1 for b in S["bets"] if b["status"] == "open"),
                 "profit": r2(eq - S["start_balance"]), "stats": out, "tactics": tact, "ready": ready,
@@ -877,7 +1211,8 @@ class Agent:
                              "settled": sum(1 for x in self.A.values() if "res" in x), "total": len(self.A),
                              "pilka": sum(1 for x in self.A.values() if x["sp"] == "pilka"),
                              "nba": sum(1 for x in self.A.values() if x["sp"] == "nba")},
-                "learning": {sp: {"settled": len(self.bet_rows(sp)), "need": LEARN_MIN} for sp in ("pilka", "nba")}}
+                "learning": {sp: {"settled": len(self.bet_rows(sp)), "need": LEARN_MIN} for sp in ("pilka", "nba")},
+                "calib": cal, "luck": lk, "critic": crit, "insights": ins, "skills": self.skills(cal, lk, crit, ins, len(up))}
 
     def finish(self, extra_status=None):
         self.place()
@@ -902,8 +1237,9 @@ class Agent:
         S["summary"] = self.summary()
         S["upcoming"] = [{k: a.get(k) for k in ("id", "sp", "lg", "lgn", "ko", "home", "away", "line", "p", "pm", "pk", "mu", "mu_inj",
                                                  "best", "dec", "why", "stake", "tx", "b2b", "elo", "inj", "p_inj", "pk0", "mv",
-                                                 "lmed", "line0", "xg", "tactic", "odds_age_h", "gp")}
+                                                 "lmed", "line0", "xg", "tactic", "odds_age_h", "gp", "veto", "flags_off")}
                          for a in upcoming]
+        S["critic_names"] = {k: v["name"] for k, v in CRITIC.items()}
         S["status"] = dict(extra_status or {}, errors=self.errors)
         S["leagues"] = LEAGUES
         S["elo_src"] = self.elo_src

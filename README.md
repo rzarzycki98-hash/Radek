@@ -111,6 +111,22 @@ Agent działa sam, razem z resztą aplikacji (co 4 godziny, GitHub Actions). Gra
   Najwyżej jedna zmiana na tydzień. Każda zmiana trafia do dziennika z powodem – można się uczyć razem z agentem.
 - **Gotowość na prawdziwe pieniądze** (tylko informacja): 3+ miesiące gry, 200+ rozliczonych zakładów, portfel na plusie i kursy lepsze niż zamknięcie.
 
+### Skille agenta (od 18.10.2026)
+
+Lista wszystkich umiejętności agenta jest na stronie: zakładka **Nauka → Skille agenta**. Nowe:
+
+- **Krytyk** – drugi, niezależny „agent” sprawdza każdy zakład przed postawieniem i blokuje podejrzane: gdy model i rynek
+  bardzo się różnią, gdy kursy ruszyły przeciwko, gdy kontuzje wskazują drugą stronę, na początku sezonu i w lidze, której
+  agent słabo zna. Zablokowane typy śledzi na sucho i sam wyłącza blokady, które przeszkadzają (i włącza je z powrotem).
+- **Analiza po meczu** – każdy rozliczony zakład dostaje ocenę: zasłużona wygrana, szczęście, pech albo błąd ceny, oraz krótką
+  lekcję. Karta „Szczęście czy umiejętność?” porównuje wynik z „uczciwym” wynikiem według kursów zamknięcia.
+- **Kalibracja** – czy szanse agenta się sprawdzają: gdy mówi 60%, czy over wchodzi mniej więcej w 6 meczach na 10;
+  porównanie z rynkiem, też w każdej lidze.
+- **Wnioski** – agent sam wypisuje prostym językiem, gdzie zarabia, a gdzie traci.
+
+Testy skilli (na kopiach, nie ruszają prawdziwego stanu): `python3 gole/testy/test_skills.py`, strona:
+`gole/testy/test_page.py` (Playwright).
+
 | Plik | Do czego służy |
 | --- | --- |
 | `gole/agent.py` | agent: portfel, decyzje, rozliczanie, taktyki, nauka |

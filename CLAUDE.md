@@ -4,7 +4,39 @@ Ten plik Claude czyta na początku każdej rozmowy z tym repozytorium. Mówi, co
 i na czym skończyliśmy. **Na koniec każdej sesji pracy zaktualizuj sekcję „Na czym skończyliśmy”** (data, co zrobione,
 co sprawdzić) i wypchnij zmianę.
 
-## Na czym skończyliśmy – 17.10.2026 (wieczór)
+## Na czym skończyliśmy – 18.10.2026
+
+18.10.2026 Radek poprosił o **skille** (umiejętności) dla agenta – zainspirowane grafiką „AI Agent Skills You Must Learn”
+(tool calling, memory, RAG, multi-agent). Dodaliśmy cztery, wszystkie w `gole/agent.py`, widoczne na stronie (Nauka → Skille agenta):
+
+- **Krytyk** (multi-agent): drugi, niezależny przegląd każdego zakładu przed postawieniem (`Agent.warnings`/`review`).
+  5 ostrzeżeń, każde blokuje zakład: `rozjazd` (model i rynek różnią się o 12+ pkt proc., NBA 20+), `rynek_przeciw`
+  (kursy ruszyły w drugą stronę o 3+ pkt proc., NBA linia o 1.5+ pkt), `kontuzje_przeciw`, `poczatek_sezonu` (drużyna < 4 mecze),
+  `slaba_liga` (na 60+ rozliczonych ocenach ligi agent gorszy od rynku). Zablokowane mecze mają `veto` w ocenie i są śledzone
+  na sucho (`cf`). Krok nauki `step_critic` (zaraz po zmianie taktyki): 20+ zablokowanych z zyskiem i CLV > 0 → blokada
+  wyłączona (`rules.<sport>.critic_off`); zakłady postawione mimo wyłączonego ostrzeżenia (`bet.flags`) przegrywają
+  (15+, wynik < −10%, CLV < 0) → blokada wraca.
+- **Analiza po meczu** (memory): każdy rozliczony zakład dostaje `pm_cat` (zasluzona, szczescie, pech, zla_cena,
+  bez_porownania – z wyniku i CLV) i `lesson` (z xG albo prognozą sumy NBA). `summary.luck`: zysk vs „uczciwy” wynik
+  według kursów zamknięcia (szczęście czy umiejętność).
+- **Kalibracja** (evaluation): `summary.calib` – na wszystkich rozliczonych ocenach: błąd (log loss) agenta, rynku i modelu,
+  przedziały „agent daje X% → weszło Y%”, skrzywienie, osobno każda liga (z tego korzysta krytyk).
+- **Wnioski** (memory): `summary.insights` – do 8 prostych zdań (najlepsza/najsłabsza liga, strona, kurs, bukmacher od 10+
+  zakładów, kalibracja od 50+ meczów, szczęście od 20+ zakładów, blokady krytyka od 15+).
+
+Testy (wszystko na kopiach) są w `gole/testy/`: `python3 gole/testy/test_skills.py` (prawdziwy `agent.json` i mecze
+z `gole/liga/*.json`, rozliczenie na wynikach symulowanych, nauka krytyka w obie strony) i `test_page.py` (Playwright, 390 px,
+jasny i ciemny motyw; sposób użycia na górze pliku) – oba przeszły 18.10.
+
+**Do sprawdzenia po 18.10:**
+
+1. Czy pierwsze rozliczone zakłady (19–20.10) mają `pm_cat` i `lesson`, a na stronie pod zakładem jest ocena.
+2. Czy krytyk coś blokuje (`python3 gole/stan.py` → sekcja „Krytyk”) i czy blokady wyglądają rozsądnie. Na danych z 18.10
+   próg `rozjazd` 12 pkt proc. zatrzymałby ok. 3% meczów; gdyby blokował za dużo albo za mało – progi w `GAP_MAX`.
+3. `summary.calib.pilka`: już na pierwszych 118 ocenach model sam zaniżał szansę na over 2.5 – obserwuj, czy blend (agent)
+   dogania rynek.
+
+## Na czym skończyliśmy wcześniej – 17.10.2026 (wieczór)
 
 17.10.2026 zbudowaliśmy **agenta**, który sam obstawia wirtualnymi pieniędzmi i uczy się na swoich zakładach,
 i przebudowaliśmy stronę Linii Goli wokół niego.
@@ -52,6 +84,7 @@ i przebudowaliśmy stronę Linii Goli wokół niego.
 | `gole/nba.py` | NBA: wyniki, terminarz, najlepsi strzelcy i raport kontuzji z ESPN, model sumy punktów, kursy |
 | `gole/zrodla.py` | siła drużyn z ClubElo, dopasowanie nazw drużyn, zastępcze Elo z wyników ligi |
 | `gole/stan.py` | stan agenta w kilku linijkach (tylko czyta `agent.json`) |
+| `gole/testy/` | testy skilli agenta i strony (na kopiach, nigdy na prawdziwym stanie) |
 | `gole/index.html` | cała strona (HTML + CSS + JS w jednym pliku) |
 | `gole/agent.json` | stan agenta: portfel, zakłady, zasady, dziennik zmian, podsumowanie, oceny meczów na 7 dni, status źródeł |
 | `gole/agent_analizy.json` | ocena każdego meczu i jej wynik po meczu – dane do nauki (400 dni) |
@@ -85,6 +118,7 @@ i przebudowaliśmy stronę Linii Goli wokół niego.
 | Nauka | sam zmienia zasady po 30 rozliczonych zakładach (osobno piłka i NBA), najwyżej raz na 7 dni, każda zmiana z powodem w dzienniku |
 | Taktyki | wszystkie typują na sucho; pieniądze idą na aktywną; przejście na inną po 50+ (piłka) / 80+ (NBA) typach, przy zysku, kursie lepszym niż zamknięcie i wyniku o 3+ pkt proc. lepszym od aktywnej |
 | Gotowość na prawdziwe pieniądze | tylko informacja: 90+ dni, 200+ zakładów, portfel na plusie, kursy lepsze niż zamknięcie |
+| Skille (18.10.2026) | krytyk przed każdym zakładem, analiza po meczu, kalibracja, wnioski – „wszystkie przydatne”, budowane od razu |
 | Dane | tylko darmowe; bez płatnej AI do czytania newsów i składów |
 | Raport | tylko na stronie (bez powiadomień na telefon) |
 | Strona | zbudowana wokół agenta: Agent (start: portfel i dzisiejsze zakłady), Mecze, Nauka, Wyniki, Ligi; zostały tabela drużyn (w Ligach) i analiza meczu; usunięte „Moje zakłady” i stary dziennik „Typy” |
@@ -103,7 +137,8 @@ Przewaga = szansa × kurs − 1. „Vs zamknięcie” (CLV) = nasz kurs × uczci
 
 ### Kroki nauki (`Agent.adapt`, w tej kolejności, najwyżej jedna zmiana naraz)
 
-zmiana taktyki → wyłączenie ligi (15+ zakładów, wynik poniżej −10%, CLV poniżej 0) → włączenie ligi (20+ typów na sucho
+zmiana taktyki → krytyk (wyłączenie albo włączenie blokady, patrz „Na czym skończyliśmy – 18.10.2026”) →
+wyłączenie ligi (15+ zakładów, wynik poniżej −10%, CLV poniżej 0) → włączenie ligi (20+ typów na sucho
 od wyłączenia, zysk) → wyłączenie strony Over/Under (20+ zakładów, wynik poniżej −15%) → wyższa przewaga (ostatnie 50 zakładów
 na minusie: +1 pkt proc., max 10%) → niższa przewaga (50+ zakładów na plusie, a pominięte tuż pod progiem też by zarobiły:
 −0.5 pkt proc., min 1%) → niższy najwyższy kurs → filtr statystyk włącz/wyłącz → NBA: waga własnego modelu (100+ meczów).
@@ -171,3 +206,4 @@ na minusie: +1 pkt proc., max 10%) → niższa przewaga (50+ zakładów na plusi
   dziennik typów, kalkulator na żywo, kontuzje w Premier League, „Moje zakłady”.
 - 17.10.2026: agent (`agent.py`), NBA (`nba.py`), strona wokół agenta, dodatkowe dane – ClubElo, kontuzje, ruchy kursów
   (`zrodla.py`), zastępcze Elo z wyników, `stan.py` i ten plik.
+- 18.10.2026: skille agenta – krytyk, analiza po meczu, kalibracja, wnioski (strona: Nauka → Skille agenta; `stan.py` je pokazuje).
