@@ -1090,6 +1090,7 @@ ALIASES = {  # normalised feed name -> football-data name
     "psv eindhoven": "PSV Eindhoven", "az alkmaar": "AZ Alkmaar", "sporting lisbon": "Sp Lisbon", "sporting cp": "Sp Lisbon",
     "sporting braga": "Sp Braga", "braga": "Sp Braga", "vitoria guimaraes": "Guimaraes", "fc porto": "Porto",
     "royal antwerp": "Antwerp", "club brugge": "Club Brugge", "union saint gilloise": "St. Gilloise",
+    "sint truiden": "St Truiden", "sint truidense": "St Truiden", "sint truidense vv": "St Truiden", "stvv": "St Truiden",
     "olympiacos": "Olympiakos", "olympiacos piraeus": "Olympiakos", "paok": "PAOK", "aek athens": "AEK",
     "fenerbahce": "Fenerbahce", "galatasaray": "Galatasaray", "besiktas": "Besiktas",
 }
