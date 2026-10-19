@@ -17,8 +17,12 @@ w `gole/HISTORIA.md`.
 - Stan 18.10 21:44: portfel £1000, 7 otwartych zakładów po £10 (3 mecze już rozegrane, czekają na wyniki), nic jeszcze
   nierozliczone, krytyk niczego nie zablokował, wszystkie aktualizacje na GitHubie bez błędów. ClubElo dalej nie odpowiada
   (agent liczy Elo z wyników lig).
-- 19.10 o 8:00 (czas UK) jednorazowe sprawdzenie „Sprawdzenie rozliczeń Linii Goli” w rozmowie sprzed projektu. Jego wynik
-  ma trafić do tej sekcji – po `git pull` przeczytaj go tutaj.
+- **19.10 rano – sprawdzenie rozliczeń (rozmowa sprzed projektu):** wszystkie 22 aktualizacje z weekendu (17–19.10)
+  przeszły bez błędów. Wyników meczów z 17–18.10 jeszcze nie było w football-data.co.uk (ostatnie wyniki lig z 10–16.10),
+  więc rozliczył się tylko 1 mecz z prognoz (Argentyna, 16.10) i 0 zakładów agenta – to opóźnienie po stronie źródła,
+  nie błąd (pliki pobierają się przy każdej aktualizacji). Poprawka: alias Sint Truiden → St Truiden (Belgia, B1);
+  po niej lista niedopasowanych nazw jest pusta. Testy `test_skills.py` i `test_page.py` – OK. Ponowne sprawdzenie
+  trafności ocen po aktualizacji 19.10 ok. 13:17 (UK) w tej samej rozmowie.
 - Aktualny stan (liczby zmieniają się co 4 godziny): `git pull && python3 gole/stan.py`.
 
 **Do sprawdzenia w najbliższych dniach:**
