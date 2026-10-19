@@ -21,8 +21,11 @@ w `gole/HISTORIA.md`.
   przeszły bez błędów. Wyników meczów z 17–18.10 jeszcze nie było w football-data.co.uk (ostatnie wyniki lig z 10–16.10),
   więc rozliczył się tylko 1 mecz z prognoz (Argentyna, 16.10) i 0 zakładów agenta – to opóźnienie po stronie źródła,
   nie błąd (pliki pobierają się przy każdej aktualizacji). Poprawka: alias Sint Truiden → St Truiden (Belgia, B1);
-  po niej lista niedopasowanych nazw jest pusta. Testy `test_skills.py` i `test_page.py` – OK. Ponowne sprawdzenie
-  trafności ocen po aktualizacji 19.10 ok. 13:17 (UK) w tej samej rozmowie.
+  po niej lista niedopasowanych nazw jest pusta. Testy `test_skills.py` i `test_page.py` – OK.
+  **19.10 14:04 (UK):** nadal brak wyników z 17–18.10 we wszystkich 38 ligach, mimo że pliki pobierają się poprawnie
+  (25–41 udanych pobrań na przebieg, bez błędów) – football-data jeszcze ich nie wrzuciło. Uwaga na przyszłość: gdy pobranie
+  się nie uda, `Source._cached` po cichu bierze starą kopię z pamięci podręcznej (bez wpisu w `errors`). Kolejne sprawdzenie
+  20.10 ok. 10:30 (UK) w tej samej rozmowie.
 - Aktualny stan (liczby zmieniają się co 4 godziny): `git pull && python3 gole/stan.py`.
 
 **Do sprawdzenia w najbliższych dniach:**
