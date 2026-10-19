@@ -8,7 +8,7 @@ w `gole/HISTORIA.md`.
 **Gdzie rozmawiamy:** od 18.10.2026 rozmowy o agencie do obstawiania (Linia Goli) toczą się w projekcie w Claude Code
 (claude.ai/code → Projects) na tym repozytorium. Agent Tradingowy (akcje) to osobny projekt Radka, poza tym repozytorium.
 
-**Historia wszystkich rozmów i ustaleń (14–18.10.2026), wczytywana automatycznie:** @gole/HISTORIA.md
+**Historia wszystkich rozmów i ustaleń (od 14.10.2026), wczytywana automatycznie:** @gole/HISTORIA.md
 
 ## Na czym skończyliśmy – 18.10.2026 (wieczór)
 
@@ -26,11 +26,15 @@ w `gole/HISTORIA.md`.
   (25–41 udanych pobrań na przebieg, bez błędów) – football-data jeszcze ich nie wrzuciło. Uwaga na przyszłość: gdy pobranie
   się nie uda, `Source._cached` po cichu bierze starą kopię z pamięci podręcznej (bez wpisu w `errors`). Kolejne sprawdzenie
   20.10 ok. 10:30 (UK) w tej samej rozmowie.
+- **19.10 wieczorem Radek poprosił o przeniesienie rozmowy sprzed projektu do projektu.** Jej ustalenia są w
+  `gole/HISTORIA.md` (19.10). Zostało w niej tylko automatyczne sprawdzenie 20.10 ok. 10:30 (UK), które dopisze wynik tutaj.
+  Jeśli po tej godzinie nie ma tu wpisu z 20.10, sprawdź rozliczenia sam (punkt 1 niżej).
 - Aktualny stan (liczby zmieniają się co 4 godziny): `git pull && python3 gole/stan.py`.
 
 **Do sprawdzenia w najbliższych dniach:**
 
-1. **Pierwsze rozliczenia (ok. 19–20.10).** Wyniki z football-data.co.uk przychodzą 1–2 dni po meczu. Sprawdź, czy zakłady
+1. **Pierwsze rozliczenia (ok. 20.10; 19.10 wieczorem wyników z 17–18.10 jeszcze nie było).** Wyniki z football-data.co.uk
+   przychodzą zwykle 1–2 dni po meczu. Sprawdź, czy zakłady
    rozliczyły się same, czy policzył się „vs zamknięcie” (CLV z kursów zamknięcia Pinnacle, kolumny PC>2.5 i PC<2.5) i czy
    mają ocenę po meczu (`pm_cat`, `lesson`) widoczną na stronie pod zakładem.
 2. **Krytyk.** Czy coś blokuje (`python3 gole/stan.py` → sekcja „Krytyk”) i czy blokady wyglądają rozsądnie. Na prawdziwych
@@ -91,8 +95,8 @@ w `gole/HISTORIA.md`.
   dla 11 lig agenta → `ag.nba(...)` → `ag.finish(...)` (stawia zakłady, uczy się, zapisuje oba pliki agenta).
 - Bot commituje dane („Linia Goli: aktualizacja danych …”), GitHub Pages publikuje stronę.
 - Agent nie może zatrzymać aplikacji: jego wywołania są w try/except, błędy trafiają do `agent.json` → `status.errors`.
-- Zadania zaplanowane w Claude: „Sprawdzenie rozliczeń Linii Goli” (jednorazowo 19.10, 8:00 czasu UK, w rozmowie sprzed
-  projektu) i wyłączone „Linia Goli: odświeżanie na żądanie” (stara wersja strony). Nowe sprawdzenia ustawiaj w projekcie
+- Zadania zaplanowane w Claude: dokończenie „Sprawdzenia rozliczeń Linii Goli” (jednorazowo 20.10 ok. 10:30 czasu UK,
+  w rozmowie sprzed projektu; potem nic) i wyłączone „Linia Goli: odświeżanie na żądanie” (stara wersja strony). Nowe sprawdzenia ustawiaj w projekcie
   (rutyny w zakładce Routines).
 
 ## Agent – decyzje Radka (17.10.2026)

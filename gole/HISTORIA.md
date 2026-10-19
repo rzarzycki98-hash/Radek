@@ -1,6 +1,6 @@
 # Linia Goli i agent do obstawiania – historia rozmów i ustaleń
 
-Ten plik zbiera rozmowy Radka z Claude o Linii Goli i agencie do obstawiania (14–18.10.2026): co zbudowaliśmy, co Radek
+Ten plik zbiera rozmowy Radka z Claude o Linii Goli i agencie do obstawiania (od 14.10.2026): co zbudowaliśmy, co Radek
 postanowił i dlaczego, co odłożyliśmy. Bieżący stan, zasady pracy i rzeczy do sprawdzenia są w `CLAUDE.md`.
 
 Od 18.10.2026 wieczorem rozmowy o agencie toczą się w **projekcie w Claude Code** (claude.ai/code → Projects) na tym
@@ -84,6 +84,20 @@ osi czasu.
 - Wieczorem Radek postanowił przenieść rozmowy o agencie do projektu w Claude Code. Wybrał: rozmowy w Claude Code na tym
   repozytorium, a w projekcie „ustalenia i historia” (ten plik), bez pełnego zapisu słowo w słowo.
 
+### 19.10.2026 – poniedziałkowe sprawdzenie, koniec rozmowy sprzed projektu
+
+- Rano i po południu (zadanie „Sprawdzenie rozliczeń Linii Goli” w rozmowie sprzed projektu): wszystkie aktualizacje
+  z weekendu bez błędów, ale football-data.co.uk do poniedziałku po południu nie wrzuciło wyników z 17–18.10 (pliki
+  pobierają się poprawnie, tylko bez nowych wyników), więc nic się jeszcze nie rozliczyło – ani prognozy, ani zakłady agenta.
+- Poprawka: bukmacher pisze „Sint Truiden”, football-data „St Truiden” – dodane dopasowanie nazwy (Belgia).
+- Wieczorem Radek poprosił o przeniesienie tej rozmowy do projektu. Ważne rzeczy z niej są w tym pliku i w `CLAUDE.md`;
+  dalsze rozmowy tylko w projekcie.
+- Wcześniej w tej rozmowie (15.10) Radek pytał też:
+  - czy aplikacja zbiera dane i uczy się na przyszłość – tak: przy każdej aktualizacji uczy się od nowa na wszystkich
+    zakończonych meczach z 6 ostatnich sezonów; z czasem będzie trochę lepsza, bez wielkich skoków, bo bukmacherów trudno
+    pobić. Wtedy też rozliczone prognozy zaczęły się zapisywać na stałe (archiwum, bilans sezon po sezonie);
+  - czy może wrzucać na stronę screeny meczów na żywo – patrz tabela pomysłów niżej.
+
 ## Pomysły Radka – co się z nimi stało
 
 | Pomysł | Co się stało |
@@ -97,13 +111,15 @@ osi czasu.
 | Zbieranie wyników i kursów w czasie | Zrobione: archiwum prognoz, oceny agenta z 400 dni, pamięć kursów |
 | Analiza przed, w trakcie i po meczu | Przed: tak. W trakcie: kalkulator na żywo (bez zakładów na żywo, bo nie ma darmowych kursów na żywo). Po: rozliczenie, porównanie z kursem zamknięcia, analiza po meczu (18.10) |
 | Uczenie się na błędach | Zrobione: nauka zasad (17.10), skille (18.10) |
+| Wrzucanie na stronę screenów meczów na żywo | Strona sama nie odczyta obrazka (potrzebna byłaby płatna AI, a klucza nie da się ukryć w publicznej stronie). Screeny można wysyłać do Claude w rozmowie: odczyta wynik, minutę, statystyki i kursy i oceni szanse. Do tego w karcie meczu jest kalkulator na żywo (15.10) – Radek nie był pewien, czy będzie z niego korzystał |
 | Wynik 1X2 dla agenta | Odrzucone – Radek wybrał gole |
 | Powiadomienia na telefon | Odrzucone – Radek wybrał raport tylko na stronie |
 
 ## Zadania zaplanowane związane z agentem
 
 - **GitHub Actions** „Linia Goli – aktualizacja danych”: co 4 godziny, sama pobiera dane, ocenia mecze i obstawia.
-- **„Sprawdzenie rozliczeń Linii Goli”** (Claude, jednorazowo 19.10.2026 o 8:00 czasu UK): uruchamia się w rozmowie
-  sprzed projektu. Sprawdza aktualizacje z weekendu, pierwsze rozliczenia i trafność ocen; wynik zapisuje w `CLAUDE.md`.
+- **„Sprawdzenie rozliczeń Linii Goli”** (Claude, 19.10.2026, w rozmowie sprzed projektu): zrobione, wyników z weekendu
+  jeszcze nie było. Zostało jedno dokończenie: **20.10.2026 ok. 10:30 czasu UK** – sprawdzi rozliczenia i trafność ocen,
+  napisze Radkowi i zapisze wynik w `CLAUDE.md`. Potem w tamtej rozmowie nie ma już żadnych zadań.
 - **„Linia Goli: odświeżanie na żądanie”**: stara wersja strony w Claude, wyłączona.
 - Nowe sprawdzenia lepiej ustawiać w projekcie (Claude w projekcie tworzy je jako rutyny, widoczne w zakładce Routines).
