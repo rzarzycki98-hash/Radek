@@ -119,7 +119,8 @@ osi czasu.
 
 - **GitHub Actions** „Linia Goli – aktualizacja danych”: co 4 godziny, sama pobiera dane, ocenia mecze i obstawia.
 - **„Sprawdzenie rozliczeń Linii Goli”** (Claude, 19.10.2026, w rozmowie sprzed projektu): zrobione, wyników z weekendu
-  jeszcze nie było. Zostało jedno dokończenie: **20.10.2026 ok. 10:30 czasu UK** – sprawdzi rozliczenia i trafność ocen,
-  napisze Radkowi i zapisze wynik w `CLAUDE.md`. Potem w tamtej rozmowie nie ma już żadnych zadań.
+  jeszcze nie było. Dokończenie 20.10.2026 ok. 10:30 czasu UK: wyników nadal brak (najpewniej przerwa po stronie
+  football-data); Radkowi zaproponowane zapasowe źródło wyników z ESPN i ostrzeżenie o starych wynikach na stronie – czeka
+  na jego decyzję (szczegóły w `CLAUDE.md`). W tamtej rozmowie nie ma już żadnych zadań.
 - **„Linia Goli: odświeżanie na żądanie”**: stara wersja strony w Claude, wyłączona.
 - Nowe sprawdzenia lepiej ustawiać w projekcie (Claude w projekcie tworzy je jako rutyny, widoczne w zakładce Routines).

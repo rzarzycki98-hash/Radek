@@ -24,16 +24,23 @@ w `gole/HISTORIA.md`.
   po niej lista niedopasowanych nazw jest pusta. Testy `test_skills.py` i `test_page.py` – OK.
   **19.10 14:04 (UK):** nadal brak wyników z 17–18.10 we wszystkich 38 ligach, mimo że pliki pobierają się poprawnie
   (25–41 udanych pobrań na przebieg, bez błędów) – football-data jeszcze ich nie wrzuciło. Uwaga na przyszłość: gdy pobranie
-  się nie uda, `Source._cached` po cichu bierze starą kopię z pamięci podręcznej (bez wpisu w `errors`). Kolejne sprawdzenie
-  20.10 ok. 10:30 (UK) w tej samej rozmowie.
+  się nie uda, `Source._cached` po cichu bierze starą kopię z pamięci podręcznej (bez wpisu w `errors`).
+  **20.10 10:30 (UK):** nadal nic – ostatnie wyniki we wszystkich 38 ligach z 10–16.10, ostatnia zmiana jakiegokolwiek
+  wyniku 16.10 ok. 14:05 (UK). Po naszej stronie nie widać błędu: każdy przebieg ma 25–41 udanych pobrań (licznik rośnie
+  tylko przy odpowiedzi serwera), pliki są poprawne, parser czyta daty w 3 formatach. Najpewniej przerwa po stronie
+  football-data (nie da się tego sprawdzić z chmury Claude – proxy blokuje stronę). Zakłady piłkarskie agenta czekają na wynik
+  do 21 dni (potem zwrot stawki), więc 17–18.10 są bezpieczne do ok. 7.11. Radkowi zaproponowane (czeka na jego decyzję):
+  zapasowe źródło wyników z ESPN (darmowe, bez klucza, już używane dla NBA; CLV dopisze się później z football-data)
+  i ostrzeżenie na stronie, gdy najnowsze wyniki są starsze niż 3 dni. Niedopasowana nazwa `PK-35` (Finlandia) to drużyna
+  spoza ligi w football-data (baraż) – alias niepotrzebny.
 - **19.10 wieczorem Radek poprosił o przeniesienie rozmowy sprzed projektu do projektu.** Jej ustalenia są w
   `gole/HISTORIA.md` (19.10). Zostało w niej tylko automatyczne sprawdzenie 20.10 ok. 10:30 (UK), które dopisze wynik tutaj.
-  Jeśli po tej godzinie nie ma tu wpisu z 20.10, sprawdź rozliczenia sam (punkt 1 niżej).
+  Sprawdzenie z 20.10 jest wpisane wyżej – w tamtej rozmowie nie ma już żadnych zadań.
 - Aktualny stan (liczby zmieniają się co 4 godziny): `git pull && python3 gole/stan.py`.
 
 **Do sprawdzenia w najbliższych dniach:**
 
-1. **Pierwsze rozliczenia (ok. 20.10; 19.10 wieczorem wyników z 17–18.10 jeszcze nie było).** Wyniki z football-data.co.uk
+1. **Pierwsze rozliczenia (20.10 rano wyników z 17–18.10 nadal nie było – patrz wyżej; czeka decyzja Radka o zapasowym źródle).** Wyniki z football-data.co.uk
    przychodzą zwykle 1–2 dni po meczu. Sprawdź, czy zakłady
    rozliczyły się same, czy policzył się „vs zamknięcie” (CLV z kursów zamknięcia Pinnacle, kolumny PC>2.5 i PC<2.5) i czy
    mają ocenę po meczu (`pm_cat`, `lesson`) widoczną na stronie pod zakładem.
@@ -95,7 +102,7 @@ w `gole/HISTORIA.md`.
   dla 11 lig agenta → `ag.nba(...)` → `ag.finish(...)` (stawia zakłady, uczy się, zapisuje oba pliki agenta).
 - Bot commituje dane („Linia Goli: aktualizacja danych …”), GitHub Pages publikuje stronę.
 - Agent nie może zatrzymać aplikacji: jego wywołania są w try/except, błędy trafiają do `agent.json` → `status.errors`.
-- Zadania zaplanowane w Claude: dokończenie „Sprawdzenia rozliczeń Linii Goli” (jednorazowo 20.10 ok. 10:30 czasu UK,
+- Zadania zaplanowane w Claude: brak aktywnych (dokończenie „Sprawdzenia rozliczeń Linii Goli” odbyło się 20.10 ok. 10:30 czasu UK,
   w rozmowie sprzed projektu; potem nic) i wyłączone „Linia Goli: odświeżanie na żądanie” (stara wersja strony). Nowe sprawdzenia ustawiaj w projekcie
   (rutyny w zakładce Routines).
 
