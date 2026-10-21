@@ -52,6 +52,7 @@ TACTICS = {
         "elo": {"name": "Siła drużyn (Elo)", "desc": "Ranking siły klubów ClubElo: przy dużej różnicy sił (150+ pkt) gra Over, przy wyrównanym meczu (do 40 pkt) Under – gdy model + rynek daje choć 1% przewagi."},
         "inj": {"name": "Kontuzje", "desc": "Szansa na gole poprawiona o brakujących zawodników (Premier League, dane Fantasy Premier League): bez kluczowych strzelców mniej goli, bez obrońców i bramkarza więcej."},
         "move": {"name": "Za ruchem rynku", "desc": "Gra stronę, w którą przesunęły się kursy od pierwszego odczytu (o 3+ punkty procentowe), gdy cena wciąż nie jest gorsza od uczciwej."},
+        "xg": {"name": "Model: 2.6+ goli → Over", "desc": "Pomysł Radka (21.10.2026): Over 2.5 zawsze, gdy model spodziewa się co najmniej 2.6 gola, bez patrzenia na przewagę. Na historii 11 lig traciła (−3.7% na stawkę), więc gra na sucho – pieniądze pójdą za nią tylko wtedy, gdy sama się sprawdzi."},
     },
     "nba": {
         "blend": {"name": "Model + rynek", "desc": "Prognoza sumy punktów z ataku i obrony drużyn połączona z linią bukmacherów."},
@@ -62,8 +63,9 @@ TACTICS = {
         "move": {"name": "Za ruchem linii", "desc": "Gra w kierunku, w którym linia punktów przesunęła się od pierwszego odczytu (o 1.5+ pkt)."},
     },
 }
-EDGES0 = {"pilka": {"blend": 0.03, "market": 0.02, "stats": 0.02, "model": 0.05, "big": 0.06, "elo": 0.01, "inj": 0.02, "move": 0.0},
+EDGES0 = {"pilka": {"blend": 0.03, "market": 0.02, "stats": 0.02, "model": 0.05, "big": 0.06, "elo": 0.01, "inj": 0.02, "move": 0.0, "xg": 0.0},
           "nba": {"blend": 0.03, "model": 0.05, "big": 0.06, "b2b": 0.01, "inj": 0.02, "move": 0.0}}
+XG_OVER = 2.6                    # tactic "xg": Over when the model expects this many goals or more
 ELO_BIG, ELO_CLOSE = 150, 40     # ClubElo gap: a mismatch / an even match
 MOVE_MIN = 0.03                  # market moved by 3+ percentage points since the first look
 LINE_MOVE_MIN = 1.5              # NBA line moved by 1.5+ points
@@ -407,17 +409,22 @@ class Agent:
             dif = abs(eh - ea)
             elo_side = 0 if dif >= ELO_BIG else 1 if dif <= ELO_CLOSE else None
         move_side = (0 if mv > 0 else 1) if mv is not None and abs(mv) >= MOVE_MIN else None
+        xg_sum = (f["xg"][0] + f["xg"][1]) if f.get("xg") else None
         tpick = {}
         for t in TACTICS["pilka"]:
             if t == "elo":
                 tpick[t] = pick(qs["blend"], elo_side) if elo_side is not None else None
             elif t == "move":
                 tpick[t] = pick(qs["blend"], move_side) if move_side is not None else None
+            elif t == "xg":
+                tpick[t] = pick(qs["blend"], 0) if xg_sum is not None and xg_sum >= XG_OVER else None
             else:
                 tpick[t] = pick(qs.get(t))
 
         def ok(t, b):
-            if not b or not fresh or b["edge"] < rules["edges"][t] or not rules["odds_min"] <= b["odds"] <= rules["odds_max"]:
+            if not b or not fresh or not rules["odds_min"] <= b["odds"] <= rules["odds_max"]:
+                return False
+            if t != "xg" and b["edge"] < rules["edges"][t]:  # "xg" plays its Over whatever the edge
                 return False
             if t == "stats" and not (st and (st.get("level") or 0) >= 1 and stats_side == b["side"]):
                 return False
@@ -442,8 +449,9 @@ class Agent:
             why = {"elo": (f"Taktyka „{tname}” gra tylko przy dużej różnicy sił (150+ pkt Elo) albo wyrównanym meczu (do 40 pkt); "
                            f"tu różnica {abs(eh - ea):.0f} pkt.") if an["elo"] else f"Brak rankingu ClubElo dla tych drużyn – taktyka „{tname}” nie typuje.",
                    "inj": f"Brak ważnych braków kadrowych – taktyka „{tname}” nie typuje (dane o kontuzjach są tylko dla Premier League).",
-                   "move": f"Kursy prawie się nie ruszyły od pierwszego odczytu – taktyka „{tname}” nie typuje."}.get(act, "Za mało danych.")
-        elif best["edge"] < rules["edges"][act]:
+                   "move": f"Kursy prawie się nie ruszyły od pierwszego odczytu – taktyka „{tname}” nie typuje.",
+                   "xg": f"Model spodziewa się mniej niż {numf(XG_OVER)} gola – taktyka „{tname}” nie typuje."}.get(act, "Za mało danych.")
+        elif act != "xg" and best["edge"] < rules["edges"][act]:
             why = (f"Brak przewagi: najlepiej {best['side']} 2.5 po {oddf(best['odds'])} u {best['book']} "
                    f"({pctf(best['edge'], True)}, taktyka „{tname}” wymaga {pctf(rules['edges'][act], True)}).")
         elif not rules["odds_min"] <= best["odds"] <= rules["odds_max"]:
@@ -859,7 +867,8 @@ class Agent:
                 xg = a.get("xg")
                 if xg and b.get("score"):
                     hg, ag = (int(x) for x in b["score"].split(":"))
-                    parts.append(f"Model spodziewał się {xg[0] + xg[1]:.1f} gola, padło {hg + ag}.")
+                    po = f" (szansa na over 2.5: {pctf(a['pm'])})" if a.get("pm") is not None else ""
+                    parts.append(f"Model spodziewał się {xg[0] + xg[1]:.1f} gola{po}, padło {hg + ag}.")
             elif b.get("mu") is not None and b.get("total") is not None:
                 parts.append(f"Prognoza sumy {b['mu']:.0f} pkt, padło {b['total']}.")
         except (ValueError, TypeError, KeyError):

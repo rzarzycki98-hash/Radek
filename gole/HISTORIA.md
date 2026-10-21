@@ -135,6 +135,10 @@ osi czasu.
   (sesja rutyny nie dostaje repozytorium z prawem zapisu, push 403) – usunięte; rutynę trzeba utworzyć w zakładce Routines,
   tekst polecenia w `.claude/rutyna-poniedzialkowa.md`.
 
+- Radek: „jeżeli model spodziewa się 2.6, niech stawia over”. Na historii 11 lig reguła traciła (−3.7% na stawkę, CLV
+  −4.7%): 2.6 oczekiwanego gola to tylko ok. 48–52% szans na over, a kurs ok. 1.90 wymaga 53%. **Decyzja Radka:** taktyka na
+  sucho „Model: 2.6+ goli → Over” – agent sam przejdzie na nią, jeśli po 50+ typach będzie zarabiać i bić kurs zamknięcia.
+
 ## Pomysły Radka – co się z nimi stało
 
 | Pomysł | Co się stało |
@@ -152,6 +156,7 @@ osi czasu.
 | Korekta (kalibracja) skrzywionego modelu | Sprawdzone 21.10 na historii – nie pomaga; zamiast tego uczciwa cena z Pinnacle i giełd oraz ostrożniejsza waga modelu |
 | Wrzucanie na stronę screenów meczów na żywo | Strona sama nie odczyta obrazka (potrzebna byłaby płatna AI, a klucza nie da się ukryć w publicznej stronie). Screeny można wysyłać do Claude w rozmowie: odczyta wynik, minutę, statystyki i kursy i oceni szanse. Do tego w karcie meczu jest kalkulator na żywo (15.10) – Radek nie był pewien, czy będzie z niego korzystał |
 | Skille z grafik o AI (21.10) | Zrobione: komendy-skille i bezpieczniki dla Claude, testy na GitHubie, cotygodniowa rutyna, zdrowie agenta, raport tygodnia. Pominięte: płatne i do dużych systemów; eksport CSV i fact checker – nie wybrane |
+| Over, gdy model spodziewa się 2.6+ gola (21.10) | Na historii traciło (−3.7%); dodane jako taktyka na sucho `xg` – pieniądze tylko, jeśli się sprawdzi |
 | Wynik 1X2 dla agenta | Odrzucone – Radek wybrał gole |
 | Powiadomienia na telefon | Odrzucone – Radek wybrał raport tylko na stronie |
 
