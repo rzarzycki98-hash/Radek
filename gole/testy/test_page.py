@@ -19,6 +19,12 @@ if a.get("upcoming"):
               "why": "Krytyk zablokował zakład: rynek ruszył przeciwko; model i rynek mocno się różnią. Agent sprawdzi po meczu, czy blokada była słuszna. Zakład, który by postawił: Under 2.5 po 2.40 u Grosvenor."})
     if not v.get("best"):
         v["best"] = {"side": "Under", "odds": 2.4, "book": "Grosvenor", "bk": "grosvenor", "edge": 0.034, "q": 0.43}
+# one league with old results (warning on the Agent tab), one fresh; ClubElo down with its reason
+a.setdefault("status", {})["results"] = {"B1": {"last": "2026-10-11", "age_d": 10, "waiting": 9, "stale": True},
+                                         "E0": {"last": "2026-10-19", "age_d": 2, "waiting": 0, "stale": False}}
+a["status"].setdefault("sources", {})["clubelo"] = {"errors": ["ClubElo: http: HTTP 502 Bad Gateway"], "clubs": 0, "matched": {},
+                                                    "tried": {"at": "2026-10-21 09:00", "why": "http: HTTP 502 Bad Gateway; https: URLError timed out"}}
+a["status"]["sources"].setdefault("football_data", {"leagues": 38, "errors": []}).update({"n_stale": 1, "stale": ["E0-2627.csv: HTTP Error 503 – użyta kopia sprzed 5 godz."]})
 json.dump(a, open(os.path.join(site, "gole", "agent.json"), "w", encoding="utf-8"), ensure_ascii=False)
 
 handler = lambda *x, **k: http.server.SimpleHTTPRequestHandler(*x, directory=site, **k)
@@ -48,6 +54,10 @@ with sync_playwright() as p:
                 for need in ("Skille agenta", "Krytyk – druga opinia", "Szczęście czy umiejętność", "Kalibracja", "Wnioski agenta", "Krytyk: wyłączone blokady"):
                     if need not in txt:
                         bad.append(f"{scheme}/nauka: missing '{need}'")
+            if tab == "agent" and "Stare wyniki:" not in pg.inner_text("#view"):
+                bad.append(f"{scheme}/agent: no warning about old results")
+            if tab == "nauka" and "HTTP 502" not in pg.inner_text("#view"):
+                bad.append(f"{scheme}/nauka: ClubElo error reason not shown")
             if tab == "wyniki":
                 if "Pech." not in pg.inner_text("#view") and "Zasłużona wygrana." not in pg.inner_text("#view"):
                     bad.append(f"{scheme}/wyniki: no post-match lesson under settled bets")
