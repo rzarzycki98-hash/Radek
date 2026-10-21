@@ -33,6 +33,9 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   poprawie log loss o 0.001+ (`TUNE_SEASONS`, `W_OU_MIN_GAIN`); bez kalibracji; ESPN jako zapas wyników piłki.
 - Przebieg diagnostyczny (tylko odczyt, nic nie zapisuje): `.github/workflows/linia-goli-diagnoza.yml` – uruchamia się
   przy pushu `gole/testy/historia.py` lub `diagnoza_zrodel.py` na gałęzi `claude/**` (albo ręcznie); wynik w logu przebiegu.
+- **Wdrożone do `main` 21.10 ok. 10:30 (UK)**; pierwsza aktualizacja z nowym kodem (09:30 UTC) bez błędów; strona na 390 px
+  bez błędów. Waga modelu (`w_ou`) po zmianie: 0 w 10 ligach, 0.5 w Premier League. Uczciwa cena „giełda” (Matchbook) już
+  w części meczów E0, SP1, I1; Pinnacle dojdzie przy najbliższym odświeżeniu kursów danej ligi (mecz w ciągu 54 h).
 - Aktualny stan (liczby zmieniają się co 4 godziny): `git pull && python3 gole/stan.py`.
 
 **Do sprawdzenia w najbliższych dniach:**
