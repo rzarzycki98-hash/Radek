@@ -876,6 +876,31 @@ def fit_logit(X, y, prior=None, lam=1.0, iters=30):
     return w
 
 
+CAL_MIN = 300      # settled matches before the model's over 2.5 chance gets a calibration
+CAL_LAM = 20.0     # pull of the calibration towards "no change" (a=0, b=1)
+
+
+def fit_platt(x, y, lam=CAL_LAM):
+    """(a, b) of logit p' = a + b * logit p, fitted by logistic regression, pulled towards (0, 1)."""
+    w = fit_logit(list(x), list(y), prior=[0.0, 1.0], lam=lam)
+    return float(w[0]), float(w[1])
+
+
+def calib_params(x, y):
+    """Calibration of the model's over 2.5 chance from earlier matches (x = logit of the model's chance, y = over)."""
+    if len(x) < CAL_MIN:
+        return None
+    a, b = fit_platt(x, y)
+    return {"a": round(a, 4), "b": round(b, 4), "n": len(x)}
+
+
+def apply_calib(p, c):
+    if not c:
+        return p
+    z = c["a"] + c["b"] * logit(p)
+    return 1 / (1 + math.exp(-max(-30.0, min(30.0, z))))
+
+
 def sig(w, x):
     z = w[0] + sum(wi * xi for wi, xi in zip(w[1:], x))
     return 1 / (1 + math.exp(-max(-30, min(30, z))))
