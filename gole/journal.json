@@ -1234,7 +1234,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 3.6
+   "last_odds": 3.45
   },
   {
    "id": "SP1|2026-10-24|Ath Madrid|La Coruna|model|1x2",
@@ -1258,7 +1258,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 11.0
+   "last_odds": 12.0
   },
   {
    "id": "SP1|2026-10-24|Ath Madrid|La Coruna|market|1x2",
@@ -1282,7 +1282,7 @@
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
    "status": "open",
-   "last_odds": 11.0
+   "last_odds": 12.0
   },
   {
    "id": "SP1|2026-10-25|Ath Bilbao|Getafe|market|1x2",
@@ -5857,7 +5857,7 @@
    "grade": "watch",
    "added": "2026-10-19T01:02+00:00",
    "status": "open",
-   "last_odds": 8.5
+   "last_odds": 9.0
   },
   {
    "id": "SP1|2026-10-31|Barcelona|Alaves|market|1x2",
@@ -5881,7 +5881,7 @@
    "grade": "watch",
    "added": "2026-10-19T01:02+00:00",
    "status": "open",
-   "last_odds": 8.5
+   "last_odds": 9.0
   },
   {
    "id": "SP1|2026-11-01|Santander|Real Madrid|model|1x2",
@@ -5905,7 +5905,7 @@
    "grade": "watch",
    "added": "2026-10-19T01:02+00:00",
    "status": "open",
-   "last_odds": 10.0
+   "last_odds": 9.5
   },
   {
    "id": "SP1|2026-11-01|Santander|Real Madrid|market|1x2",
@@ -5929,7 +5929,7 @@
    "grade": "watch",
    "added": "2026-10-19T01:02+00:00",
    "status": "open",
-   "last_odds": 10.0
+   "last_odds": 9.5
   },
   {
    "id": "P1|2026-10-19|Sp Braga|Gil Vicente|model|1x2",
@@ -6636,7 +6636,7 @@
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
    "status": "open",
-   "last_odds": 2.8
+   "last_odds": 2.3
   },
   {
    "id": "E2|2026-10-24|Doncaster|Sheffield Weds|market|1x2",
@@ -6660,7 +6660,7 @@
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
    "status": "open",
-   "last_odds": 2.8
+   "last_odds": 2.3
   },
   {
    "id": "E3|2026-10-20|Barnet|Swindon|market|1x2",
@@ -7044,7 +7044,7 @@
    "grade": null,
    "added": "2026-10-20T01:03+00:00",
    "status": "open",
-   "last_odds": 2.3
+   "last_odds": 2.16
   },
   {
    "id": "USA|2026-10-26|Los Angeles FC|Los Angeles Galaxy|market|1x2",
@@ -7068,7 +7068,7 @@
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
    "status": "open",
-   "last_odds": 5.5
+   "last_odds": 5.0
   },
   {
    "id": "E0|2026-10-25|Hull|Brentford|model",
@@ -7621,6 +7621,246 @@
    "added": "2026-10-20T13:04+00:00",
    "status": "open",
    "last_odds": 2.3
+  },
+  {
+   "id": "E2|2026-10-21|Reading|Leyton Orient|model|1x2",
+   "match": "E2|2026-10-21|Reading|Leyton Orient",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E2",
+   "league_name": "Anglia · League One",
+   "date": "2026-10-21",
+   "time": "20:00",
+   "ko": "2026-10-21T19:00+00:00",
+   "home": "Reading",
+   "away": "Leyton Orient",
+   "side": "2",
+   "prob": 0.1694,
+   "odds": 6.5,
+   "book": "Paddy Power",
+   "book_key": "paddypower",
+   "user_book": false,
+   "edge": 0.1012,
+   "grade": "no",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 6.5
+  },
+  {
+   "id": "E2|2026-10-21|Reading|Leyton Orient|market|1x2",
+   "match": "E2|2026-10-21|Reading|Leyton Orient",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E2",
+   "league_name": "Anglia · League One",
+   "date": "2026-10-21",
+   "time": "20:00",
+   "ko": "2026-10-21T19:00+00:00",
+   "home": "Reading",
+   "away": "Leyton Orient",
+   "side": "2",
+   "prob": 0.1694,
+   "odds": 6.5,
+   "book": "Paddy Power",
+   "book_key": "paddypower",
+   "user_book": false,
+   "edge": 0.1012,
+   "grade": "no",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 6.5
+  },
+  {
+   "id": "E2|2026-10-24|AFC Wimbledon|Wycombe|model|1x2",
+   "match": "E2|2026-10-24|AFC Wimbledon|Wycombe",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E2",
+   "league_name": "Anglia · League One",
+   "date": "2026-10-24",
+   "time": "15:00",
+   "ko": "2026-10-24T14:00+00:00",
+   "home": "AFC Wimbledon",
+   "away": "Wycombe",
+   "side": "2",
+   "prob": 0.4902,
+   "odds": 2.15,
+   "book": "Betway",
+   "book_key": "betway",
+   "user_book": false,
+   "edge": 0.054,
+   "grade": "no",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 2.15
+  },
+  {
+   "id": "E2|2026-10-24|AFC Wimbledon|Wycombe|market|1x2",
+   "match": "E2|2026-10-24|AFC Wimbledon|Wycombe",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E2",
+   "league_name": "Anglia · League One",
+   "date": "2026-10-24",
+   "time": "15:00",
+   "ko": "2026-10-24T14:00+00:00",
+   "home": "AFC Wimbledon",
+   "away": "Wycombe",
+   "side": "2",
+   "prob": 0.4902,
+   "odds": 2.15,
+   "book": "Betway",
+   "book_key": "betway",
+   "user_book": false,
+   "edge": 0.054,
+   "grade": "no",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 2.15
+  },
+  {
+   "id": "SP1|2026-10-31|Levante|Ath Madrid|model|1x2",
+   "match": "SP1|2026-10-31|Levante|Ath Madrid",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "SP1",
+   "league_name": "Hiszpania · LaLiga",
+   "date": "2026-10-31",
+   "time": "13:00",
+   "ko": "2026-10-31T13:00+00:00",
+   "home": "Levante",
+   "away": "Ath Madrid",
+   "side": "1",
+   "prob": 0.1851,
+   "odds": 6.0,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.1109,
+   "grade": "watch",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 6.0
+  },
+  {
+   "id": "SP1|2026-10-31|Levante|Ath Madrid|market|1x2",
+   "match": "SP1|2026-10-31|Levante|Ath Madrid",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "SP1",
+   "league_name": "Hiszpania · LaLiga",
+   "date": "2026-10-31",
+   "time": "13:00",
+   "ko": "2026-10-31T13:00+00:00",
+   "home": "Levante",
+   "away": "Ath Madrid",
+   "side": "1",
+   "prob": 0.1851,
+   "odds": 6.0,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.1109,
+   "grade": "watch",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 6.0
+  },
+  {
+   "id": "MEX|2026-10-21|Tigres UANL|Club Leon|model|1x2",
+   "match": "MEX|2026-10-21|Tigres UANL|Club Leon",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-10-21",
+   "time": "04:00",
+   "ko": "2026-10-21T03:00+00:00",
+   "home": "Tigres UANL",
+   "away": "Club Leon",
+   "side": "2",
+   "prob": 0.2738,
+   "odds": 3.8,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0406,
+   "grade": "no",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 3.8
+  },
+  {
+   "id": "MEX|2026-10-21|Tigres UANL|Club Leon|market|1x2",
+   "match": "MEX|2026-10-21|Tigres UANL|Club Leon",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-10-21",
+   "time": "04:00",
+   "ko": "2026-10-21T03:00+00:00",
+   "home": "Tigres UANL",
+   "away": "Club Leon",
+   "side": "2",
+   "prob": 0.2738,
+   "odds": 3.8,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0406,
+   "grade": "no",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 3.8
+  },
+  {
+   "id": "MEX|2026-10-22|Toluca|Club Tijuana|model|1x2",
+   "match": "MEX|2026-10-22|Toluca|Club Tijuana",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-10-22",
+   "time": "02:00",
+   "ko": "2026-10-22T01:00+00:00",
+   "home": "Toluca",
+   "away": "Club Tijuana",
+   "side": "2",
+   "prob": 0.1384,
+   "odds": 7.5,
+   "book": "Bet Victor",
+   "book_key": "betvictor",
+   "user_book": true,
+   "edge": 0.0381,
+   "grade": "no",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 7.5
+  },
+  {
+   "id": "MEX|2026-10-22|Toluca|Club Tijuana|market|1x2",
+   "match": "MEX|2026-10-22|Toluca|Club Tijuana",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-10-22",
+   "time": "02:00",
+   "ko": "2026-10-22T01:00+00:00",
+   "home": "Toluca",
+   "away": "Club Tijuana",
+   "side": "2",
+   "prob": 0.1384,
+   "odds": 7.5,
+   "book": "Bet Victor",
+   "book_key": "betvictor",
+   "user_book": true,
+   "edge": 0.0381,
+   "grade": "no",
+   "added": "2026-10-21T01:03+00:00",
+   "status": "open",
+   "last_odds": 7.5
   }
  ],
  "summary": {
@@ -7635,7 +7875,7 @@
   "model_x": {
    "settled": 55,
    "won": 13,
-   "open": 62,
+   "open": 67,
    "profit": 10.95,
    "roi": 0.1991,
    "clv": 0.0169
@@ -7651,11 +7891,11 @@
   "market_x": {
    "settled": 68,
    "won": 13,
-   "open": 54,
+   "open": 59,
    "profit": 4.0,
    "roi": 0.0588,
    "clv": 0.0307
   }
  },
- "updated": "2026-10-20T13:04+00:00"
+ "updated": "2026-10-21T01:03+00:00"
 }
