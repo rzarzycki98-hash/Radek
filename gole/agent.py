@@ -31,6 +31,7 @@ LEARN_MIN = 30             # zmiany zasad dopiero po tylu rozliczonych zakładac
 CHANGE_GAP_DAYS = 7        # najwyżej jedna zmiana zasad na tydzień (osobno piłka i NBA)
 READY = {"days": 90, "bets": 200}
 KEEP_ANALYSES_DAYS = 400
+RESULTS_STALE_DAYS = 3     # warning on the page: the newest result of a league is older than this while matches wait
 
 LEAGUES = ["E0", "SP1", "I1", "D1", "F1", "N1", "P1", "B1", "T1", "SC0", "G1"]
 FOOT_BOOKS = {"williamhill": "William Hill", "grosvenor": "Grosvenor", "casumo": "Casumo", "leovegas": "LeoVegas"}
@@ -260,6 +261,7 @@ class Agent:
         self.errors = []
         self.elo = None   # zrodla.ClubElo, set by the engine
         self.elo_src = {}
+        self.res_info = {}  # per league: newest result and matches still waiting for one (warning on the page)
         self.by_id = {b["id"]: b for b in s["bets"]}
         self._cal = None  # calibration on settled analyses, computed once per run
 
@@ -318,6 +320,17 @@ class Agent:
             if an["dec"] == "cand" and not b:
                 self.cands.append((an["best"]["edge"], an))
         self.settle_football(code, results)
+        self.results_info(code, results)
+
+    def results_info(self, code, results):
+        """Newest result of a league and how many analysed matches, played 2+ days ago, still have none."""
+        last = max((m["d"] for m in results or [] if m.get("hg") is not None), default=None)
+        old = self.now - dt.timedelta(days=2)
+        waiting = sum(1 for a in self.A.values() if a["sp"] == "pilka" and a["lg"] == code and "res" not in a
+                      and dt.datetime.fromisoformat(a["ko"]) < old)
+        age = (self.now.date() - last).days if last else None
+        self.res_info[code] = {"last": last.isoformat() if last else None, "age_d": age, "waiting": waiting,
+                               "stale": bool(waiting and (age is None or age > RESULTS_STALE_DAYS))}
 
     def analyze_football(self, f, code, league_name, rules, elo=None):
         pm = f["over"]["2.5"]
@@ -1240,7 +1253,7 @@ class Agent:
                                                  "lmed", "line0", "xg", "tactic", "odds_age_h", "gp", "veto", "flags_off")}
                          for a in upcoming]
         S["critic_names"] = {k: v["name"] for k, v in CRITIC.items()}
-        S["status"] = dict(extra_status or {}, errors=self.errors)
+        S["status"] = dict(extra_status or {}, errors=self.errors, results=self.res_info)
         S["leagues"] = LEAGUES
         S["elo_src"] = self.elo_src
         S["books"] = {"pilka": list(FOOT_BOOKS.values()), "nba": list(NBA_PREF.values())}

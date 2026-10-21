@@ -148,7 +148,17 @@ def main(path):
     err = lambda d: f" – błędy: {'; '.join(d['errors'])}" if d.get("errors") else ""
     print("\nŹródła danych (ostatnia aktualizacja):")
     fd = src.get("football_data") or {}
-    print(f"  football-data.co.uk: {fd.get('leagues', '?')} lig{err(fd)}")
+    print(f"  football-data.co.uk: {fd.get('leagues', '?')} lig"
+          + (f", udanych pobrań {fd['downloads']}" if fd.get("downloads") is not None else "") + err(fd))
+    for x in fd.get("stale") or []:
+        print(f"    nie pobrało się, użyta starsza kopia: {x}")
+    res = st.get("results") or {}
+    old_res = [(c, r) for c, r in sorted(res.items()) if r.get("stale")]
+    if res:
+        newest = max((r["last"] for r in res.values() if r.get("last")), default=None)
+        print(f"    wyniki lig agenta: najnowszy {newest or '—'}"
+              + ("; STARE (3+ dni, a mecze czekają): " + ", ".join(f"{c} ostatni {r['last']}, czeka {r['waiting']}" for c, r in old_res)
+                 if old_res else "; wszystkie świeże"))
     od = src.get("odds") or {}
     print(f"  The Odds API: zapytania do końca miesiąca: {od.get('remaining', '?')}; ligi agenta z kursami: "
           f"{', '.join(od.get('leagues') or []) or 'brak'}{err(od)}")
@@ -160,7 +170,8 @@ def main(path):
     fp = src.get("fpl") or {}
     print(f"  Fantasy Premier League: zawodnicy z kontuzją lub zawieszeniem: {fp.get('players', 0)}")
     es = src.get("espn") or {}
-    print(f"  ESPN (NBA): mecze w bazie {es.get('games', 0)}, kontuzje w raporcie {es.get('injuries', 0)}{err(es)}")
+    print(f"  ESPN (NBA): mecze w bazie {es.get('games', 0)}, kontuzje w raporcie {es.get('injuries', 0)}{err(es)}"
+          + (f"; starsze kopie zamiast pobrania: {len(es['stale'])}" if es.get("stale") else ""))
     nb = st.get("nba") or {}
     if nb:
         nx = nb.get("next")

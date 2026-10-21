@@ -3,9 +3,10 @@
 ClubElo rates every European club after each match (like chess Elo). The agent uses it as an
 independent opinion on how strong the two teams are; the tactic built on it is tested on paper first.
 """
-import csv, difflib, io, os, time, unicodedata, urllib.request
+import csv, difflib, io, os, time, unicodedata, urllib.error, urllib.request
 
 ELO_URLS = ["https://api.clubelo.com/{day}", "http://api.clubelo.com/{day}"]
+RETRY_H = 6   # after a failed download, try again after this many hours (meanwhile: Elo from league results)
 COUNTRY = {"E0": "ENG", "SP1": "ESP", "I1": "ITA", "D1": "GER", "F1": "FRA", "N1": "NED", "P1": "POR",
            "B1": "BEL", "T1": "TUR", "SC0": "SCO", "G1": "GRE"}
 # football-data name -> how ClubElo usually writes it (a hint for the matcher, not a hard rule)
@@ -46,6 +47,7 @@ class ClubElo:
         self.errors = []
         self.rows = None
         self.maps = {}
+        self.tried = None   # last download attempt today: when and what the server answered
 
     def load(self):
         if self.rows is not None:
@@ -56,26 +58,40 @@ class ClubElo:
         if path and os.path.exists(path) and (time.time() - os.path.getmtime(path)) / 3600 < 12:
             text = open(path, encoding="utf-8").read()
         fail_mark = os.path.join(self.dir, f"clubelo-fail-{day}") if self.dir else None
-        if text is None and fail_mark and os.path.exists(fail_mark):
-            self.errors.append("ClubElo: dziś nie odpowiadało – spróbuje jutro")
+        if text is None and fail_mark and os.path.exists(fail_mark) and (time.time() - os.path.getmtime(fail_mark)) / 3600 < RETRY_H:
+            why = open(fail_mark, encoding="utf-8").read().strip()
+            again = time.strftime("%H:%M", time.gmtime(os.path.getmtime(fail_mark) + RETRY_H * 3600))
+            self.errors.append(f"ClubElo: nie odpowiadało ({why or 'brak szczegółów'}) – kolejna próba po {again} UTC")
+            self.tried = {"at": time.strftime("%Y-%m-%d %H:%M", time.gmtime(os.path.getmtime(fail_mark))), "why": why}
             text = ""  # do not wait on a source that is down; the backup Elo from results is used
         if text is None:
-            last = None
+            last, tries = None, []
             for attempt in range(2):
                 for url in ELO_URLS:
+                    u = url.format(day=day)
                     try:
-                        req = urllib.request.Request(url.format(day=day), headers={"User-Agent": "linia-goli-agent/1 (+github actions)"})
+                        req = urllib.request.Request(u, headers={"User-Agent": "linia-goli-agent/1 (+github actions)", "Accept": "text/csv,*/*"})
                         with urllib.request.urlopen(req, timeout=20) as r:
                             got = r.read().decode("utf-8", errors="replace")
                         if got.startswith("Rank") or "Club," in got[:200]:
                             text = got
                             break
-                        last = "nieoczekiwana odpowiedź"
+                        last = f"{u.split(':')[0]}: nieoczekiwana odpowiedź {got[:60]!r}"
+                    except urllib.error.HTTPError as e:
+                        body = ""
+                        try:
+                            body = e.read()[:60].decode("utf-8", "replace").strip()
+                        except Exception:
+                            pass
+                        last = f"{u.split(':')[0]}: HTTP {e.code} {e.reason}" + (f" ({body})" if body else "")
                     except Exception as e:
-                        last = str(e)[:100]
+                        last = f"{u.split(':')[0]}: {type(e).__name__} {str(e)[:80]}"
+                    tries.append(last)
                 if text is not None:
                     break
                 time.sleep(5)
+            self.tried = {"at": time.strftime("%Y-%m-%d %H:%M", time.gmtime()), "why": "; ".join(dict.fromkeys(tries))[:300]}
+            last = self.tried["why"] or last
             if text is not None and path:
                 os.makedirs(self.dir, exist_ok=True)
                 open(path, "w", encoding="utf-8").write(text)
@@ -84,7 +100,7 @@ class ClubElo:
                 if fail_mark:
                     os.makedirs(self.dir, exist_ok=True)
                     open(fail_mark, "w").write(last or "")
-                old = sorted(f for f in os.listdir(self.dir) if f.startswith("clubelo-")) if self.dir and os.path.isdir(self.dir) else []
+                old = sorted(f for f in os.listdir(self.dir) if f.startswith("clubelo-") and f.endswith(".csv")) if self.dir and os.path.isdir(self.dir) else []
                 if old:  # source down: yesterday's ratings are still good
                     text = open(os.path.join(self.dir, old[-1]), encoding="utf-8").read()
         rows = {}
@@ -120,7 +136,7 @@ class ClubElo:
         return out
 
     def status(self):
-        return {"errors": self.errors, "clubs": sum(len(v) for v in (self.rows or {}).values()),
+        return {"errors": self.errors, "clubs": sum(len(v) for v in (self.rows or {}).values()), "tried": self.tried,
                 "matched": {c: {t: [v[0], round(v[1]), v[2]] for t, v in m.items()} for c, m in self.maps.items()}}
 
 

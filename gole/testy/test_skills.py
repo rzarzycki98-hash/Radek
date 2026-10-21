@@ -103,13 +103,19 @@ for a in list(ag3.A.values()):
 for code, res in by_lg.items():
     ag3.football(code, code, [], res)
 s3 = ag3.finish({})
-done = [b for b in ag3.s["bets"] if b["status"] in ("won", "lost")]
+# only the bets that were open before this run: bets settled for real earlier keep their own verdicts
+open_ids = {b["id"] for b in open_bets}
+done = [b for b in ag3.s["bets"] if b["id"] in open_ids and b["status"] in ("won", "lost")]
 check(len(done) == len(open_bets) and len(done) > 0, f"all {len(open_bets)} open football bets settle")
+earlier = [b for b in ag3.s["bets"] if b["id"] not in open_ids]
+check(all(b["status"] == "open" or b.get("settled") != later.isoformat(timespec="minutes") for b in earlier),
+      "bets settled earlier are not settled again")
 check(all(b.get("pm_cat") in AG.POSTMORTEM and b.get("lesson") for b in done), "every settled bet has a verdict and a lesson")
 for b in done[:3]:
     print("     lekcja:", b["home"], "–", b["away"], b["score"], b["status"], "|", b["lesson"])
 lk = s3["luck"]
-check(lk["n"] == len(done) and sum(lk["cats"].values()) == len(done), f"luck summary counts every bet ({lk})")
+n_settled = sum(1 for b in ag3.s["bets"] if b["status"] in ("won", "lost", "push"))
+check(lk["n"] == n_settled and sum(lk["cats"].values()) == n_settled, f"luck summary counts every settled bet ({lk})")
 c = s3["calib"].get("pilka") or {}
 check(c.get("n", 0) > 50 and c.get("ll_agent") and c.get("buckets"), f"calibration on {c.get('n')} settled matches, buckets {len(c.get('buckets', []))}")
 check(sum(bk["n"] for bk in c.get("buckets", [])) == c.get("n"), "calibration buckets add up")

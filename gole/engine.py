@@ -143,8 +143,10 @@ def pool(pm, pk, w):
 
 # ---------------------------------------------------------------- data
 
-OU_PRE = {"B365": ("B365>2.5", "B365<2.5"), "P": ("P>2.5", "P<2.5"), "Max": ("Max>2.5", "Max<2.5"), "Avg": ("Avg>2.5", "Avg<2.5")}
-OU_CLOSE = {"B365": ("B365C>2.5", "B365C<2.5"), "P": ("PC>2.5", "PC<2.5"), "Max": ("MaxC>2.5", "MaxC<2.5"), "Avg": ("AvgC>2.5", "AvgC<2.5")}
+OU_PRE = {"B365": ("B365>2.5", "B365<2.5"), "P": ("P>2.5", "P<2.5"), "Max": ("Max>2.5", "Max<2.5"), "Avg": ("Avg>2.5", "Avg<2.5"),
+          "BFE": ("BFE>2.5", "BFE<2.5")}   # BFE = Betfair Exchange (football-data has no Pinnacle since 2025/26)
+OU_CLOSE = {"B365": ("B365C>2.5", "B365C<2.5"), "P": ("PC>2.5", "PC<2.5"), "Max": ("MaxC>2.5", "MaxC<2.5"), "Avg": ("AvgC>2.5", "AvgC<2.5"),
+            "BFE": ("BFEC>2.5", "BFEC<2.5")}
 X_PRE = {"B365": "B365", "P": "PS", "Max": "Max", "Avg": "Avg"}
 X_CLOSE = {"B365": "B365C", "P": "PSC", "Max": "MaxC", "Avg": "AvgC"}
 
@@ -198,6 +200,7 @@ class Source:
     def __init__(self, local=None, cache_dir=None):
         self.local, self.cache_dir = local, cache_dir
         self.errors, self.downloads = [], 0
+        self.stale = []  # files that failed to download, replaced by an older copy from the cache
         if cache_dir:
             os.makedirs(cache_dir, exist_ok=True)
 
@@ -223,8 +226,10 @@ class Source:
                 return open(path, encoding="utf-8").read()
         try:
             text = self._get(url)
-        except Exception:
-            if path and os.path.exists(path):  # source down: use the stale copy
+        except Exception as e:
+            if path and os.path.exists(path):  # source down: use the stale copy, and say so in the status
+                age = (time.time() - os.path.getmtime(path)) / 3600
+                self.stale.append(f"{name}: {str(e)[:80]} – użyta kopia sprzed {age:.0f} godz.")
                 return open(path, encoding="utf-8").read()
             raise
         if path:
@@ -315,8 +320,9 @@ class Rater:
     Equivalent to re-fitting on all matches strictly before the query date, but O(1) per match,
     which makes tuning every league on every run cheap."""
 
-    def __init__(self, half_life, prior, sot_w):
+    def __init__(self, half_life, prior, sot_w, base_half_life=None):
         self.lam = 0.5 ** (1 / half_life)
+        self.lam_g = 0.5 ** (1 / base_half_life) if base_half_life else self.lam   # league scoring level
         self.prior, self.sot_w = prior, sot_w
         self.ref = None
         self.g = [0.0] * 5  # SW, SH, SA, SG(sot matches), SS
@@ -326,7 +332,7 @@ class Rater:
         if self.ref is None:
             self.ref = d
         elif d > self.ref:
-            f = self.lam ** (d - self.ref).days
+            f = self.lam_g ** (d - self.ref).days
             self.g = [x * f for x in self.g]
             self.ref = d
 
@@ -345,12 +351,13 @@ class Rater:
         """Add a finished match as seen from date d (d > match date)."""
         self._decay_global(d)
         w = self.lam ** (d - m["d"]).days
+        wg = self.lam_g ** (d - m["d"]).days
         hg, ag = m["hg"], m["ag"]
         sot = self.sot_w and m["hst"] is not None and m["ast"] is not None
         g = self.g
-        g[0] += w; g[1] += w * hg; g[2] += w * ag
+        g[0] += wg; g[1] += wg * hg; g[2] += wg * ag
         if sot:
-            g[3] += w * (hg + ag); g[4] += w * (m["hst"] + m["ast"])
+            g[3] += wg * (hg + ag); g[4] += wg * (m["hst"] + m["ast"])
         for team, home, gf, ga, sf, sa in ((m["h"], True, hg, ag, m["hst"], m["ast"]), (m["a"], False, ag, hg, m["ast"], m["hst"])):
             a = self._team(team, d)
             a[1 if home else 2] += w
@@ -444,9 +451,9 @@ def markets(lh, la, rho=RHO):
             "dist": dist, "scores": [[s, round(p, 4)] for p, s in scores]}
 
 
-def run_rater(seasons, half_life, prior, sot_w, upto=None):
+def run_rater(seasons, half_life, prior, sot_w, upto=None, base_half_life=None):
     """One chronological pass. Returns (predictions per match id(m), rater at `upto`)."""
-    r = Rater(half_life, prior, sot_w)
+    r = Rater(half_life, prior, sot_w, base_half_life)
     preds = {}
     pending, cur = [], None
     for si, rows in enumerate(seasons):
@@ -1872,12 +1879,13 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
             ag.errors.append(f"NBA agent: {str(e)[:160]}")
         try:
             sources = {
-                "football_data": {"errors": src.errors[:5], "leagues": len(data)},
+                "football_data": {"errors": src.errors[:5], "leagues": len(data), "downloads": src.downloads,
+                                  "stale": src.stale[:8], "n_stale": len(src.stale)},
                 "odds": {"remaining": oa.c.get("remaining"), "leagues": sorted(d for d, s in oa.c["sports"].items() if s.get("odds") and d in AG.LEAGUES),
                          "errors": (oa.status.get("errors") or [])[:3]},
                 "fpl": {"teams": len(absences), "players": sum(len(v) for v in absences.values())},
                 "clubelo": ag.elo.status() if ag.elo is not None else None,
-                "espn": {k: nba_ctx["status"].get(k) for k in ("games", "injuries", "errors")} if nba_ctx else None,
+                "espn": {k: nba_ctx["status"].get(k) for k in ("games", "injuries", "errors", "stale")} if nba_ctx else None,
             }
             agent_summary = ag.finish({"nba": nba_ctx["status"] if nba_ctx else None, "odds_remaining": oa.c.get("remaining"),
                                        "sources": sources})

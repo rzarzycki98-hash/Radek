@@ -118,6 +118,7 @@ class ESPNSource:
         os.makedirs(self.dir, exist_ok=True)
         self.now = now
         self.errors, self.downloads = [], 0
+        self.stale = []  # downloads that failed and were replaced by an older cached copy
 
     def _get(self, params, base=ESPN):
         url = base + ("?" + params if params else "")
@@ -148,6 +149,7 @@ class ESPNSource:
             data = build(self._get(params, base))
         except Exception as e:
             if old is not None:
+                self.stale.append(f"{name}: {str(e)[:80]}")
                 return old
             raise e
         json.dump(data, open(path, "w", encoding="utf-8"), separators=(",", ":"))
@@ -380,6 +382,7 @@ def prepare(cache_dir, now, oa):
     games, season_start, src = load_games(cache_dir, now)
     status["errors"] += src.errors[:20]
     status["downloads"] = src.downloads
+    status["stale"] = src.stale   # the same list: the injury report below can still add to it
     played = [g for g in games if g["done"] and g["type"] in REAL]
     status["games"] = len(played)
     best = tune(played) if len(played) > WARMUP + 50 else None
