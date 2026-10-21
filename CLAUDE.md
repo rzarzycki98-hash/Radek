@@ -52,8 +52,8 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 
 **Do sprawdzenia w najbliższych dniach:**
 
-0. **Nowe skille:** w poniedziałek 26.10 pierwszy „Raport tygodnia” (karta na stronie Agent, `agent.json` → `weekly`) i pierwsza
-   cotygodniowa rutyna Claude; „Zdrowie agenta” (Nauka) – paski powinny być zielone, złote = źródło nie odpowiedziało.
+0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
+   czy Radek utworzył rutynę w Routines (tekst w `.claude/rutyna-poniedzialkowa.md`); „Zdrowie agenta” (Nauka) – paski powinny być zielone, złote = źródło nie odpowiedziało.
    Przebieg „Linia Goli – testy” przy każdej zmianie kodu powinien być zielony.
 0. **Over/Under:** czy w liczniku pojawiają się zakłady na Over, gdy kursy mają przewagę (licznik w `stan.py`).
 1. **Nowa uczciwa cena.** Po pierwszej aktualizacji z nowym kodem: w `gole/liga/<kod>.json` pole `fair.ou_src` powinno
@@ -117,8 +117,8 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 - „Linia Goli – testy” (`linia-goli-testy.yml`): przy pushu kodu (`gole/*.py`, `gole/index.html`, `gole/testy/`) na `main`
   i `claude/**` oraz przy PR – `test_skills.py` i `test_page.py` (Chromium, 390 px); zrzuty strony w artefaktach przebiegu.
 - Agent nie może zatrzymać aplikacji: jego wywołania są w try/except, błędy trafiają do `agent.json` → `status.errors`.
-- Zadania zaplanowane w Claude: „Linia Goli: poniedziałkowe sprawdzenie” (od 21.10.2026, co poniedziałek rano czasu UK,
-  patrz „Skille i bezpieczniki Claude”). Wcześniej: brak aktywnych (dokończenie „Sprawdzenia rozliczeń Linii Goli” odbyło się 20.10 ok. 10:30 czasu UK,
+- Zadania zaplanowane w Claude: brak aktywnych – „Linia Goli: poniedziałkowe sprawdzenie” czeka, aż Radek utworzy ją
+  w zakładce Routines (patrz „Skille i bezpieczniki Claude”). Wcześniej: brak aktywnych (dokończenie „Sprawdzenia rozliczeń Linii Goli” odbyło się 20.10 ok. 10:30 czasu UK,
   w rozmowie sprzed projektu; potem nic) i wyłączone „Linia Goli: odświeżanie na żądanie” (stara wersja strony). Nowe sprawdzenia ustawiaj w projekcie
   (rutyny w zakładce Routines).
 
@@ -202,8 +202,11 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   `cp` na nie) i force push. Czytanie i kopiowanie tych plików do folderu tymczasowego działa. Uwaga: blokuje też polecenia,
   które tylko zawierają taki tekst (np. test z napisem force push) – takie rzeczy rób przez plik ze skryptem.
 - **Testy automatyczne**: „Linia Goli – testy” na GitHubie (wyżej, „Jak to działa automatycznie”).
-- **Cotygodniowa rutyna Claude**: w poniedziałek rano (czas UK) Claude sam sprawdza agenta (`/stan-agenta`,
-  `/sprawdz-rozliczenia`) i zapisuje wynik w „Na czym skończyliśmy”; widoczna w zakładce Routines (claude.ai/code).
+- **Cotygodniowa rutyna Claude – jeszcze nieaktywna.** Rutyny utworzone narzędziem z rozmowy dostają sesję bez podpiętego
+  repozytorium: dwa testy 21.10 sprawdziły stan, ale push dostał 403 (i poszło powiadomienie). Obie usunięte. Rutynę musi
+  utworzyć Radek w claude.ai/code → Routines (repozytorium `rzarzycki98-hash/Radek` z prawem zapisu, poniedziałek ok. 7:45
+  czasu UK, bez powiadomień); gotowy tekst polecenia: `.claude/rutyna-poniedzialkowa.md`. Zostaje pusta sesja
+  „Linia Goli – rutyna poniedziałkowa” (nieużywana, można ją zarchiwizować).
 
 ## Źródła danych (wszystkie darmowe)
 

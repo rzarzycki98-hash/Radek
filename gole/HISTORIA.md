@@ -131,6 +131,9 @@ osi czasu.
   dla agenta – „Zdrowie agenta” (monitoring każdej aktualizacji) i „Raport tygodnia” (podsumowanie prostymi słowami).
   Pominięte: AWS, Docker, Kubernetes, bazy wektorowe, LangChain/CrewAI, płatne modele AI, posty na LinkedIn i Instagram,
   eksport do Excela i „fact checker” wyników (Radek ich nie wybrał).
+- Rutyna poniedziałkowa: Radek poprosił, żeby Claude utworzył ją sam. Dwie próby z rozmowy działały tylko do odczytu
+  (sesja rutyny nie dostaje repozytorium z prawem zapisu, push 403) – usunięte; rutynę trzeba utworzyć w zakładce Routines,
+  tekst polecenia w `.claude/rutyna-poniedzialkowa.md`.
 
 ## Pomysły Radka – co się z nimi stało
 
