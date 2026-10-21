@@ -124,6 +124,14 @@ osi czasu.
   wskazują częściej Over (10 do 3). Wymuszania równowagi nie robimy (gra bez przewagi = strata). **Decyzja Radka:** licznik
   Over/Under (oceny i zakłady z 7 i 30 dni) na stronie i w `stan.py`, żeby było widać, czy równowaga się trzyma.
 
+- Wieczorem Radek przysłał 4 grafiki („Claude Mastery Map”, „AI Dev Skills You Must Learn”, „The AI Engineer's Stack”,
+  „26 Claude Skill Ideas”) z prośbą „zastosuj te skille”. Z grafik wybrane to, co darmowe i przydatne; Radek wybrał
+  z opcji: dla Claude – komendy-skille (`/stan-agenta`, `/sprawdz-rozliczenia`, `/diagnoza`, `/przekazanie`), hooki-
+  bezpieczniki (pilnują zasad z `CLAUDE.md`), testy automatyczne na GitHubie i cotygodniową rutynę (poniedziałek rano);
+  dla agenta – „Zdrowie agenta” (monitoring każdej aktualizacji) i „Raport tygodnia” (podsumowanie prostymi słowami).
+  Pominięte: AWS, Docker, Kubernetes, bazy wektorowe, LangChain/CrewAI, płatne modele AI, posty na LinkedIn i Instagram,
+  eksport do Excela i „fact checker” wyników (Radek ich nie wybrał).
+
 ## Pomysły Radka – co się z nimi stało
 
 | Pomysł | Co się stało |
@@ -140,6 +148,7 @@ osi czasu.
 | Zapasowe źródło wyników, gdy football-data się spóźnia | Zrobione 21.10: ESPN (tylko do rozliczeń) i ostrzeżenie na stronie |
 | Korekta (kalibracja) skrzywionego modelu | Sprawdzone 21.10 na historii – nie pomaga; zamiast tego uczciwa cena z Pinnacle i giełd oraz ostrożniejsza waga modelu |
 | Wrzucanie na stronę screenów meczów na żywo | Strona sama nie odczyta obrazka (potrzebna byłaby płatna AI, a klucza nie da się ukryć w publicznej stronie). Screeny można wysyłać do Claude w rozmowie: odczyta wynik, minutę, statystyki i kursy i oceni szanse. Do tego w karcie meczu jest kalkulator na żywo (15.10) – Radek nie był pewien, czy będzie z niego korzystał |
+| Skille z grafik o AI (21.10) | Zrobione: komendy-skille i bezpieczniki dla Claude, testy na GitHubie, cotygodniowa rutyna, zdrowie agenta, raport tygodnia. Pominięte: płatne i do dużych systemów; eksport CSV i fact checker – nie wybrane |
 | Wynik 1X2 dla agenta | Odrzucone – Radek wybrał gole |
 | Powiadomienia na telefon | Odrzucone – Radek wybrał raport tylko na stronie |
 

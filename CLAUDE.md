@@ -44,8 +44,17 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   Radek wybrał licznik: `summary.sides` (oceny i zakłady Over/Under z 7 i 30 dni) – na stronie (Nauka → „Over czy
   Under?”) i w `stan.py`.
 
+- **21.10 wieczorem – skille z grafik** (Radek wysłał 4 grafiki: „Claude Mastery Map”, „AI Dev Skills”, „AI Engineer's
+  Stack”, „26 Claude Skill Ideas” i napisał „zastosuj te skille”). Wybrał (z opcji): komendy-skille, hooki-bezpieczniki,
+  testy automatyczne na GitHubie, cotygodniową rutynę Claude, „Zdrowie agenta” i „Raport tygodnia”. Pominięte: płatne
+  i do dużych systemów (AWS, Docker, bazy wektorowe, LangChain, płatne modele AI) oraz niezwiązane (posty na LinkedIn itp.).
+  Szczegóły w sekcji „Skille i bezpieczniki Claude” niżej.
+
 **Do sprawdzenia w najbliższych dniach:**
 
+0. **Nowe skille:** w poniedziałek 26.10 pierwszy „Raport tygodnia” (karta na stronie Agent, `agent.json` → `weekly`) i pierwsza
+   cotygodniowa rutyna Claude; „Zdrowie agenta” (Nauka) – paski powinny być zielone, złote = źródło nie odpowiedziało.
+   Przebieg „Linia Goli – testy” przy każdej zmianie kodu powinien być zielony.
 0. **Over/Under:** czy w liczniku pojawiają się zakłady na Over, gdy kursy mają przewagę (licznik w `stan.py`).
 1. **Nowa uczciwa cena.** Po pierwszej aktualizacji z nowym kodem: w `gole/liga/<kod>.json` pole `fair.ou_src` powinno
    mieć „Pinnacle” (albo „giełda”) zamiast „UK”; w `status.sources.odds` brak błędów; zapytań ubywa jak dotąd (2 na ligę).
@@ -92,6 +101,9 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 | `gole/journal.json`, `gole/predictions.json`, `gole/archiwum/` | stary dziennik typów i prognozy (silnik nadal liczy na nich oceny lig) |
 | `gole/odds_cache.json`, `gole/names.json` | pamięć kursów (oszczędza limit) i nazwy drużyn u bukmacherów |
 | `.github/workflows/linia-goli.yml` | automatyczna aktualizacja |
+| `.github/workflows/linia-goli-testy.yml` | testy przy każdej zmianie kodu (test_skills.py + strona 390 px w Chromium) |
+| `.github/workflows/linia-goli-diagnoza.yml` | diagnoza tylko do odczytu: model na historii i źródła danych |
+| `.claude/skills/`, `.claude/hooks/straznik.py`, `.claude/settings.json` | komendy-skille i bezpieczniki dla Claude (patrz „Skille i bezpieczniki Claude”) |
 
 ## Jak to działa automatycznie
 
@@ -102,8 +114,11 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   (`OddsAPI.refresh`, z rezerwą na NBA) → dla każdej ligi: test, ceny meczów, dziennik typów i `ag.football(...)`
   dla 11 lig agenta → `ag.nba(...)` → `ag.finish(...)` (stawia zakłady, uczy się, zapisuje oba pliki agenta).
 - Bot commituje dane („Linia Goli: aktualizacja danych …”), GitHub Pages publikuje stronę.
+- „Linia Goli – testy” (`linia-goli-testy.yml`): przy pushu kodu (`gole/*.py`, `gole/index.html`, `gole/testy/`) na `main`
+  i `claude/**` oraz przy PR – `test_skills.py` i `test_page.py` (Chromium, 390 px); zrzuty strony w artefaktach przebiegu.
 - Agent nie może zatrzymać aplikacji: jego wywołania są w try/except, błędy trafiają do `agent.json` → `status.errors`.
-- Zadania zaplanowane w Claude: brak aktywnych (dokończenie „Sprawdzenia rozliczeń Linii Goli” odbyło się 20.10 ok. 10:30 czasu UK,
+- Zadania zaplanowane w Claude: „Linia Goli: poniedziałkowe sprawdzenie” (od 21.10.2026, co poniedziałek rano czasu UK,
+  patrz „Skille i bezpieczniki Claude”). Wcześniej: brak aktywnych (dokończenie „Sprawdzenia rozliczeń Linii Goli” odbyło się 20.10 ok. 10:30 czasu UK,
   w rozmowie sprzed projektu; potem nic) i wyłączone „Linia Goli: odświeżanie na żądanie” (stara wersja strony). Nowe sprawdzenia ustawiaj w projekcie
   (rutyny w zakładce Routines).
 
@@ -167,6 +182,28 @@ Wszystkie w `gole/agent.py`, widoczne na stronie (Nauka → Skille agenta) i w `
   przedziały „agent daje X% → weszło Y%”, skrzywienie, osobno każda liga (z tego korzysta krytyk).
 - **Wnioski** (memory): `summary.insights` – do 8 prostych zdań (najlepsza/najsłabsza liga, strona, kurs, bukmacher od 10+
   zakładów, kalibracja od 50+ meczów, szczęście od 20+ zakładów, blokady krytyka od 15+).
+- **Zdrowie agenta** (monitoring, 21.10): `agent.json` → `runs` – każda aktualizacja (ok. 3 tygodnie): źródła `ok` (fd, odds,
+  elo, fpl, espn), liczba błędów, zapytania o kursy, oceny, nowe zakłady, portfel. Strona: Nauka → „Zdrowie agenta” (paski,
+  tabela dni, wykres „vs zamknięcie” narastająco). ClubElo nie liczy się do koloru (agent ma zastępcze Elo).
+- **Raport tygodnia** (podsumowanie, 21.10): `agent.json` → `weekly` (12 ostatnich) – pisany raz, w pierwszej aktualizacji
+  nowego tygodnia, o tygodniu pon–nd: portfel, rozliczone, vs zamknięcie, Over/Under, najlepszy/najsłabszy, krytyk, zmiany.
+  Strona: Agent → „Raport tygodnia”; `stan.py` na końcu.
+- **Over czy Under?** (licznik, 21.10): `summary.sides` – oceny i zakłady Over/Under z 7 i 30 dni (Nauka, `stan.py`).
+
+## Skille i bezpieczniki Claude (21.10.2026)
+
+Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
+
+- **Komendy-skille** (`.claude/skills/`): `/stan-agenta` (stan + przebiegi GitHuba, tylko czyta), `/sprawdz-rozliczenia`,
+  `/diagnoza` (model na historii i źródła przez „Linia Goli – diagnoza”), `/przekazanie` (na koniec rozmowy: „Na czym
+  skończyliśmy”, HISTORIA.md, bezpieczny push).
+- **Bezpiecznik** (`.claude/hooks/straznik.py`, hook PreToolUse w `.claude/settings.json`): blokuje `engine.py` bez `--out`
+  albo z `--out gole`, ręczne zmiany `gole/agent.json` / `gole/agent_analizy.json` (Edit/Write, `>`, `sed -i`, `rm`, `mv`,
+  `cp` na nie) i force push. Czytanie i kopiowanie tych plików do folderu tymczasowego działa. Uwaga: blokuje też polecenia,
+  które tylko zawierają taki tekst (np. test z napisem force push) – takie rzeczy rób przez plik ze skryptem.
+- **Testy automatyczne**: „Linia Goli – testy” na GitHubie (wyżej, „Jak to działa automatycznie”).
+- **Cotygodniowa rutyna Claude**: w poniedziałek rano (czas UK) Claude sam sprawdza agenta (`/stan-agenta`,
+  `/sprawdz-rozliczenia`) i zapisuje wynik w „Na czym skończyliśmy”; widoczna w zakładce Routines (claude.ai/code).
 
 ## Źródła danych (wszystkie darmowe)
 
