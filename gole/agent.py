@@ -1277,7 +1277,22 @@ class Agent:
                              "pilka": sum(1 for x in self.A.values() if x["sp"] == "pilka"),
                              "nba": sum(1 for x in self.A.values() if x["sp"] == "nba")},
                 "learning": {sp: {"settled": len(self.bet_rows(sp)), "need": LEARN_MIN} for sp in ("pilka", "nba")},
-                "calib": cal, "luck": lk, "critic": crit, "insights": ins, "skills": self.skills(cal, lk, crit, ins, len(up))}
+                "calib": cal, "luck": lk, "critic": crit, "insights": ins, "skills": self.skills(cal, lk, crit, ins, len(up)),
+                "sides": self.sides()}
+
+    def sides(self):
+        """Over vs Under (21.10.2026, for Radek): which side was the cheaper one in the agent's analyses (fresh prices,
+        matches from the last N days on) and which side its bets took (placed in the last N days)."""
+        out = {}
+        for sp in ("pilka", "nba"):
+            out[sp] = {}
+            for n in (7, 30):
+                since = (self.now - dt.timedelta(days=n)).date().isoformat()
+                an = [a["best"]["side"] for a in self.A.values()
+                      if a["sp"] == sp and a.get("fresh") and a.get("best") and a["date"] >= since]
+                bets = [b["side"] for b in self.s["bets"] if b["sp"] == sp and b.get("placed", "") >= since]
+                out[sp][str(n)] = {"an": [an.count("Over"), an.count("Under")], "bets": [bets.count("Over"), bets.count("Under")]}
+        return out
 
     def finish(self, extra_status=None):
         self.place()

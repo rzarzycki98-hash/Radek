@@ -51,7 +51,7 @@ with sync_playwright() as p:
             if tab == "nauka":
                 pg.evaluate("document.querySelectorAll('details.skill').forEach((d,i)=>{ if(i===4) d.open=true; })")
                 txt = pg.inner_text("#view")
-                for need in ("Skille agenta", "Krytyk – druga opinia", "Szczęście czy umiejętność", "Kalibracja", "Wnioski agenta", "Krytyk: wyłączone blokady"):
+                for need in ("Skille agenta", "Krytyk – druga opinia", "Szczęście czy umiejętność", "Kalibracja", "Wnioski agenta", "Krytyk: wyłączone blokady", "Over czy Under?"):
                     if need not in txt:
                         bad.append(f"{scheme}/nauka: missing '{need}'")
             if tab == "agent" and "Stare wyniki:" not in pg.inner_text("#view"):

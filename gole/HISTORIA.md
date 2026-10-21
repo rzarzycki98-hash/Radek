@@ -119,6 +119,10 @@ osi czasu.
   poprawie (na historii: 538 → 82 typy, Under 66% → 49%, CLV −4.7% → −2.2%); kalibracji nie dodawać; ESPN jako zapasowe
   źródło wyników (gdy football-data spóźnia się 3+ dni).
 - NBA sprawdzone tylko pod kątem błędów w kodzie (brak); strojenie później.
+- Później tego dnia Radek: „żeby agent nie tylko grał under, ale też over”. Sprawdzone: bukmacherzy agenta nie faworyzują
+  żadnej strony (marża ok. 7% po obu); Undery brały się ze skrzywionego modelu z za dużą wagą – po zmianie wag oceny
+  wskazują częściej Over (10 do 3). Wymuszania równowagi nie robimy (gra bez przewagi = strata). **Decyzja Radka:** licznik
+  Over/Under (oceny i zakłady z 7 i 30 dni) na stronie i w `stan.py`, żeby było widać, czy równowaga się trzyma.
 
 ## Pomysły Radka – co się z nimi stało
 
