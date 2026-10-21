@@ -54,6 +54,10 @@ with sync_playwright() as p:
                 for need in ("Skille agenta", "Krytyk – druga opinia", "Szczęście czy umiejętność", "Kalibracja", "Wnioski agenta", "Krytyk: wyłączone blokady", "Over czy Under?"):
                     if need not in txt:
                         bad.append(f"{scheme}/nauka: missing '{need}'")
+            if tab == "agent" and "Raport tygodnia" not in pg.inner_text("#view"):
+                bad.append(f"{scheme}/agent: no weekly report card")
+            if tab == "nauka" and "Zdrowie agenta" not in pg.inner_text("#view"):
+                bad.append(f"{scheme}/nauka: no health card")
             if tab == "agent" and "Stare wyniki:" not in pg.inner_text("#view"):
                 bad.append(f"{scheme}/agent: no warning about old results")
             if tab == "nauka" and "HTTP 502" not in pg.inner_text("#view"):

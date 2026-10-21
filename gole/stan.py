@@ -196,6 +196,18 @@ def main(path):
           f"portfel na plusie: {'tak' if Rd.get('profit') else 'nie'}, kursy lepsze niż zamknięcie: {'tak' if Rd.get('clv') else 'nie'}")
     errs = st.get("errors") or []
     print("Błędy agenta przy ostatniej aktualizacji: " + ("; ".join(errs) if errs else "brak"))
+    runs = a.get("runs") or []
+    if runs:
+        last = runs[-42:]   # about a week
+        bad = [r for r in last if r["err"] or not all(v for k, v in r["ok"].items() if k != "elo")]
+        fails = sorted({k for r in last for k, v in r["ok"].items() if v is False and k != "elo"})
+        print(f"Zdrowie agenta (ostatnie {len(last)} aktualizacji): z problemami {len(bad)}"
+              + (f" (źródła: {', '.join(fails)})" if fails else "") + f", z błędem agenta {sum(1 for r in last if r['err'])}")
+    wk = (a.get("weekly") or [None])[-1]
+    if wk:
+        print(f"\nRaport tygodnia {wk['from']} – {wk['to']}:")
+        for t in wk["lines"]:
+            print("  " + t)
     print("\nCzy automatyczne aktualizacje przechodzą: gh run list -R rzarzycki98-hash/Radek -L 5")
     return 0
 
