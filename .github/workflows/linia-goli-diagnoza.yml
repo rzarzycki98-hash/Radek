@@ -1,0 +1,33 @@
+name: Linia Goli – diagnoza (tylko odczyt)
+# Test modelu na historii i sprawdzenie źródeł danych, których chmura Claude nie widzi.
+# Niczego nie zapisuje w repozytorium – wynik jest w logu przebiegu.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["gole/testy/historia.py", "gole/testy/diagnoza_zrodel.py", ".github/workflows/linia-goli-diagnoza.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnoza:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # pliki z football-data z pamięci podręcznej głównej aktualizacji (tylko odczyt – nic nie wraca do pamięci)
+      - uses: actions/cache/restore@v4
+        with:
+          path: gole/.cache
+          key: fd-diagnoza-${{ github.run_id }}
+          restore-keys: fd-
+      - run: pip install --quiet numpy
+      - name: Źródła danych (ClubElo, football-data)
+        run: python gole/testy/diagnoza_zrodel.py
+      - name: Test modelu na historii (11 lig, 6 sezonów)
+        run: python gole/testy/historia.py

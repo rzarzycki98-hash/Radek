@@ -1,0 +1,243 @@
+"""Walk-forward check of the goals model on history: the agent's 11 leagues, 6 seasons (football-data.co.uk).
+
+Answers three questions without looking into the future:
+  1) how far the model's chance of over 2.5 is from what happened, per league and season (bias, calibration slope),
+  2) does a calibration of the model (fitted only on earlier matches) help: log loss vs the market,
+  3) paper bets like the agent's "Model + rynek": how many Over/Under, profit and value vs the closing price (CLV),
+     before and after the calibration, with the market taken from Pinnacle or from the average of bookmakers.
+
+Never writes into gole/. Needs the internet (GitHub Actions) or --local DIR with data/<code>/season-XXYY.csv files.
+Usage: python3 gole/testy/historia.py [--local DIR] [--cache DIR] [--today 2026-10-21] [--only E0,SP1]
+"""
+import argparse, datetime as dt, json, math, os, sys
+
+GOLE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, GOLE)
+import engine as E  # noqa: E402
+import agent as AG  # noqa: E402
+
+EDGE = 0.03            # the agent's "Model + rynek" threshold
+ODDS = (1.5, 3.2)      # the agent's odds range
+
+
+def ll(p, y):
+    return -math.log(max(p if y else 1 - p, 1e-9))
+
+
+def summ(rows, key):
+    """Log loss, mean probability, bias and calibration slope of rows[key] against the result."""
+    rs = [r for r in rows if r.get(key) is not None]
+    if not rs:
+        return None
+    n = len(rs)
+    rate = sum(r["y"] for r in rs) / n
+    mp = sum(r[key] for r in rs) / n
+    a, b = E.fit_platt([E.logit(r[key]) for r in rs], [r["y"] for r in rs], lam=0.0) if n >= 50 else (None, None)
+    return {"n": n, "ll": sum(ll(r[key], r["y"]) for r in rs) / n, "mean": mp, "rate": rate, "bias": mp - rate, "slope": b}
+
+
+def bets(rows, pkey, book, fair_key="qc"):
+    """Paper bets at one bookmaker: the side with the biggest edge over pkey, if above EDGE."""
+    acc = {"n": 0, "over": 0, "under": 0, "profit": 0.0, "clv": 0.0, "nc": 0}
+    for r in rows:
+        p, odds = r.get(pkey), r["odds"].get(book)
+        if p is None or not odds:
+            continue
+        best = None
+        for i, (q, o) in enumerate(zip([p, 1 - p], odds)):
+            e = q * o - 1
+            if best is None or e > best[0]:
+                best = (e, i, o)
+        e, i, o = best
+        if e < EDGE or not ODDS[0] <= o <= ODDS[1]:
+            continue
+        won = (i == 0) == bool(r["y"])
+        acc["n"] += 1
+        acc["over" if i == 0 else "under"] += 1
+        acc["profit"] += o - 1 if won else -1
+        if r.get(fair_key):
+            q = r[fair_key] if i == 0 else 1 - r[fair_key]
+            acc["clv"] += o * q - 1
+            acc["nc"] += 1
+    n = acc["n"]
+    return {"n": n, "over": acc["over"], "under": acc["under"], "roi": acc["profit"] / n if n else None,
+            "clv": acc["clv"] / acc["nc"] if acc["nc"] else None}
+
+
+def pct(x, sign=True):
+    return "   –  " if x is None else (f"{x * 100:+5.1f}%" if sign else f"{x * 100:5.1f}%")
+
+
+def league_rows(src, code, years):
+    ys = list(reversed(years))  # oldest first
+    seasons = [sorted(src.season(code, y, y == years[0]), key=lambda m: m["d"]) for y in ys]
+    while seasons and not seasons[0]:
+        seasons.pop(0)
+        ys.pop(0)
+    if len(seasons) < 3:
+        return [], None
+    played = [[m for m in s if m["hg"] is not None] for s in seasons]
+    use_sot = sum(1 for m in played[-1][-60:] + played[-2][-60:] if m["hst"] is not None) > 20
+    preds_by_combo = [E.run_rater(seasons, h, k, E.SOT_W if use_sot else 0.0)[0] for h, k in E.GRID]
+    out = []
+    for i in range(2, len(seasons)):
+        if len(played[i]) < 30:
+            continue
+        prm = E.choose_params(played[i - 1], preds_by_combo, False)
+        if not prm:
+            continue
+        preds = preds_by_combo[prm["combo"]]
+        # every earlier match with this season's model settings, for the calibration (fitted on the past only)
+        hist = [(m["d"], E.logit(preds[id(m)][0]), int(m["hg"] + m["ag"] > 2)) for s in played[1:i + 1] for m in s if id(m) in preds]
+        for m in played[i]:
+            p = preds.get(id(m))
+            if p is None:
+                continue
+            qo = E.demargin(m["ou"].get("P"))
+            qa = E.demargin(m["ou"].get("Avg"))
+            qc = E.demargin(m["ouc"].get("P") or m["ouc"].get("Avg"))
+            out.append({"lg": code, "si": E.season_code(ys[i]), "d": m["d"], "pm": p[0], "y": int(m["hg"] + m["ag"] > 2), "qo": qo[0] if qo else None,
+                        "qa": qa[0] if qa else None, "qc": qc[0] if qc else None,
+                        "odds": {b: m["ou"].get(b) for b in ("B365", "Max", "Avg", "P")}, "_hist": hist, "_w": prm["w_ou"]})
+    return out, seasons
+
+
+def calibrate(rows):
+    """Adds pmc: the model's chance after a calibration fitted on matches before the first day of the row's month."""
+    cache = {}
+    for r in rows:
+        month = r["d"].replace(day=1)
+        key = (r["lg"], r["si"], month)
+        if key not in cache:
+            past = [(x, y) for d, x, y in r["_hist"] if d < month]
+            cache[key] = E.calib_params([x for x, _ in past], [y for _, y in past])
+        r["pmc"] = E.apply_calib(r["pm"], cache[key])
+
+
+def blends(rows, all_rows):
+    """Walk-forward model weight per league and season: chosen on the previous season, as the engine does."""
+    by = {}
+    for r in all_rows:
+        by.setdefault((r["lg"], r["si"]), []).append(r)
+
+    def best_w(prev, pkey, mkey):
+        sc = []
+        for w in E.W_GRID:
+            s = n = 0
+            for r in prev:
+                if r.get(mkey) is None:
+                    continue
+                s += ll(E.pool([r[pkey], 1 - r[pkey]], [r[mkey], 1 - r[mkey]], w)[0], r["y"]); n += 1
+            if n >= 40:
+                sc.append((s / n, w))
+        return min(sc)[1] if sc else prev[0]["_w"]
+
+    for (lg, si), rs in by.items():
+        prev = by.get((lg, E.season_code(int("20" + si[:2]) - 1)), [])
+        for pkey, mkey, out in (("pm", "qo", "b_raw"), ("pmc", "qo", "b_cal"), ("pm", "qa", "a_raw"), ("pmc", "qa", "a_cal")):
+            w = best_w(prev, pkey, mkey) if prev else rs[0]["_w"]   # first test season: the engine's own choice
+            for r in rs:
+                r[out] = E.pool([r[pkey], 1 - r[pkey]], [r[mkey], 1 - r[mkey]], w)[0] if r.get(mkey) is not None else None
+                r["w_" + out] = w
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--local")
+    ap.add_argument("--cache", default=os.path.join(GOLE, ".cache"))
+    ap.add_argument("--today")
+    ap.add_argument("--only")
+    ap.add_argument("--json", help="also write the numbers to this file")
+    a = ap.parse_args()
+    today = dt.date.fromisoformat(a.today) if a.today else dt.date.today()
+    src = E.Source(a.local, a.cache)
+    years = E.season_years(today, E.N_SEASONS)
+    codes = a.only.split(",") if a.only else AG.LEAGUES
+    rows, n_season = [], {}
+    for code in codes:
+        rs, seasons = league_rows(src, code, years)
+        rows += rs
+        if seasons:
+            n_season[code] = [len([m for m in s if m["hg"] is not None]) for s in seasons]
+    if src.errors:
+        print("błędy pobierania:", src.errors[:10])
+    if not rows:
+        raise SystemExit("brak danych")
+    calibrate(rows)
+    blends(rows, rows)
+    seasons_ = sorted({r["si"] for r in rows})
+
+    print(f"\nTEST NA HISTORII – {len(rows)} meczów, ligi {', '.join(codes)}; sezony testowe = 3.–6. z 6 pobranych "
+          f"(model i waga dobierane na poprzednim sezonie, kalibracja na meczach sprzed danego miesiąca)\n")
+    print("1) SKRZYWIENIE MODELU: średnia szansa over 2.5 z modelu minus to, co się stało (pkt proc.), i nachylenie kalibracji")
+    print("   (nachylenie 1.0 = szanse dobrze rozłożone; powyżej 1 = model za ostrożny, ściska szanse w stronę 50%)")
+    hdr = "   liga  " + "".join(f"{s[:2] + '/' + s[2:]:>16}" for s in seasons_) + f"{'razem':>16}{'rynek(Pinn.)':>14}"
+    print(hdr)
+    for code in codes + ["RAZEM"]:
+        rs = rows if code == "RAZEM" else [r for r in rows if r["lg"] == code]
+        if not rs:
+            continue
+        cells = []
+        for s in seasons_ + [None]:
+            x = summ([r for r in rs if s is None or r["si"] == s], "pm")
+            cells.append(f"{x['bias'] * 100:+6.1f} / {x['slope']:.2f}".rjust(16) if x and x["slope"] else (f"{x['bias'] * 100:+6.1f}".rjust(16) if x else " " * 16))
+        mk = summ(rs, "qo")
+        cells.append(f"{mk['bias'] * 100:+6.1f} / {mk['slope']:.2f}".rjust(14) if mk and mk["slope"] else "")
+        print(f"   {code:6}" + "".join(cells))
+    print("\n   Skrzywienie w zależności od tego, co mówi rynek (Pinnacle przed meczem), wszystkie ligi:")
+    for lo, hi in ((0, 0.45), (0.45, 0.52), (0.52, 0.58), (0.58, 0.65), (0.65, 1.01)):
+        rs = [r for r in rows if r["qo"] is not None and lo <= r["qo"] < hi]
+        if rs:
+            n = len(rs)
+            print(f"     rynek {lo * 100:3.0f}–{min(hi, 1) * 100:3.0f}%: meczów {n:5}, weszło {sum(r['y'] for r in rs) / n * 100:5.1f}%, "
+                  f"rynek {sum(r['qo'] for r in rs) / n * 100:5.1f}%, model {sum(r['pm'] for r in rs) / n * 100:5.1f}%, "
+                  f"model po kalibracji {sum(r['pmc'] for r in rs) / n * 100:5.1f}%")
+    print("\n   Skrzywienie wg miesiąca sezonu (model − wynik, pkt proc.), wszystkie ligi:")
+    for mon in (8, 9, 10, 11, 12, 1, 2, 3, 4, 5):
+        rs = [r for r in rows if r["d"].month == mon]
+        if len(rs) >= 50:
+            x, y = summ(rs, "pm"), summ(rs, "pmc")
+            print(f"     miesiąc {mon:2}: meczów {len(rs):5}, model {x['bias'] * 100:+5.1f}, po kalibracji {y['bias'] * 100:+5.1f}, "
+                  f"nachylenie {x['slope'] or 0:.2f} → {y['slope'] or 0:.2f}")
+
+    print("\n2) LOG LOSS (mniej = lepiej) na meczach z kursami Pinnacle przed meczem i na zamknięcie")
+    print("   liga     meczów   model  model+kal  blend(P)  blend+kal(P)  blend(śr.)  blend+kal(śr.)  Pinnacle  zamknięcie   waga przed→po")
+    res = {}
+    for code in codes + ["RAZEM"]:
+        rs = rows if code == "RAZEM" else [r for r in rows if r["lg"] == code]
+        rs = [r for r in rs if r["qo"] is not None and r["qc"] is not None and r["qa"] is not None]
+        if not rs:
+            continue
+        n = len(rs)
+        L = {k: sum(ll(r[k], r["y"]) for r in rs) / n for k in ("pm", "pmc", "b_raw", "b_cal", "a_raw", "a_cal", "qo", "qc")}
+        w0 = sum(r["w_b_raw"] for r in rs) / n
+        w1 = sum(r["w_b_cal"] for r in rs) / n
+        res[code] = {"n": n, "ll": L, "w": [w0, w1]}
+        print(f"   {code:6} {n:7}  {L['pm']:.4f}   {L['pmc']:.4f}    {L['b_raw']:.4f}     {L['b_cal']:.4f}       {L['a_raw']:.4f}       "
+              f"{L['a_cal']:.4f}       {L['qo']:.4f}    {L['qc']:.4f}      {w0:.2f}→{w1:.2f}")
+
+    print("\n3) ZAKŁADY NA SUCHO jak „Model + rynek” (przewaga 3%+, kursy 1.50–3.20), CLV = vs zamknięcie Pinnacle")
+    print("   (Bet365 ≈ jeden bukmacher z UK; Max = najlepszy kurs na rynku, zawyżony przez pojedyncze stare ceny)")
+    out3 = {}
+    for label, key in (("rynek = Pinnacle, bez kalibracji", "b_raw"), ("rynek = Pinnacle, z kalibracją", "b_cal"),
+                       ("rynek = średnia bukm., bez kalibracji", "a_raw"), ("rynek = średnia bukm., z kalibracją", "a_cal"),
+                       ("sam model, bez kalibracji", "pm"), ("sam model, z kalibracją", "pmc"),
+                       ("bez modelu: Pinnacle jako uczciwa cena", "qo"), ("bez modelu: średnia jako uczciwa cena", "qa")):
+        line = f"   {label:40}"
+        for book in ("B365", "Max"):
+            b = bets(rows, key, book)
+            out3[f"{key}|{book}"] = b
+            line += f" | {book:4} typów {b['n']:5} (Over {b['over']:4}, Under {b['under']:4}) wynik {pct(b['roi'])} CLV {pct(b['clv'])}"
+        print(line)
+    print("\n   Na ligę (Bet365, rynek = Pinnacle): bez kalibracji → z kalibracją")
+    for code in codes:
+        rs = [r for r in rows if r["lg"] == code]
+        b0, b1 = bets(rs, "b_raw", "B365"), bets(rs, "b_cal", "B365")
+        print(f"     {code:5} typów {b0['n']:4} (O {b0['over']:3}/U {b0['under']:3}) wynik {pct(b0['roi'])} CLV {pct(b0['clv'])}"
+              f"  →  typów {b1['n']:4} (O {b1['over']:3}/U {b1['under']:3}) wynik {pct(b1['roi'])} CLV {pct(b1['clv'])}")
+    if a.json:
+        json.dump({"ll": res, "bets": out3, "seasons": n_season}, open(a.json, "w"), indent=1, default=str)
+
+
+if __name__ == "__main__":
+    main()
