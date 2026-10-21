@@ -1102,7 +1102,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
         <details><summary class="note">Opis taktyk</summary><div class="tdesc">${ts.map((t) => `<div><b>${esc(t.name)}</b><span class="note">${esc(t.desc)} Wymagana przewaga: ${pct1(t.edge)}.</span></div>`).join("")}</div></details>
       </div>`;
     };
-    out += (sp !== "nba" ? tactCard("pilka") : "") + (sp !== "pilka" ? tactCard("nba") : "");
+    out += (sp !== "nba" ? tactCard("pilka") : "") + (sp !== "pilka" ? tactCard("nba") : "") + sidesCard(S, sp);
     const by = (S.stats || {}).by || {};
     const keep = (r) => sp === "all" || (sp === "nba" ? r.name.startsWith("NBA") : !r.name.startsWith("NBA"));
     const byTbl = (title, rows, filt) => {
@@ -1202,6 +1202,18 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       <p class="note">Wszystkie ocenione mecze, nie tylko obstawione. Dobrze skalibrowany agent: gdy daje 60%, over wchodzi mniej więcej w 6 meczach na 10. Błąd (mniej = lepiej) porównuje agenta z samym rynkiem. W lidze, w której agent na 60+ meczach jest gorszy od rynku, krytyk blokuje zakłady.</p></div>`;
   }
 
+  // Over vs Under: which side was cheaper in the analyses and which side the bets took (last 7 and 30 days)
+  function sidesCard(S, sp) {
+    const X = S.sides;
+    if (!X) return "";
+    const share = (v) => v[0] + v[1] ? `${v[0]} / ${v[1]}<div class="meta">${pct(v[0] / (v[0] + v[1]))} Over</div>` : "—";
+    const rows = ["pilka", "nba"].filter((k) => sp === "all" || sp === k).flatMap((k) => ["7", "30"].map((n) => {
+      const x = (X[k] || {})[n] || { an: [0, 0], bets: [0, 0] };
+      return `<tr><td>${SPN[k]}, ${n} dni</td><td>${share(x.an)}</td><td>${share(x.bets)}</td></tr>`;
+    }));
+    return `<div class="card"><h3>Over czy Under?</h3><div class="scroll"><table class="num tt"><thead><tr><th></th><th>Oceny<div class="meta">Over / Under</div></th><th>Zakłady<div class="meta">Over / Under</div></th></tr></thead><tbody>${rows.join("")}</tbody></table></div>
+      <p class="note">Oceny: która strona miała lepszą cenę w ocenionych meczach (ze świeżymi kursami). Zakłady: co agent naprawdę postawił. Agent nie gra „po równo” – stawia tylko tam, gdzie kurs daje przewagę, ale przy zdrowym modelu obie strony powinny się pojawiać.</p></div>`;
+  }
   function sourcesCard(A) {
     const s = ((A.status || {}).sources) || {};
     const ok = (good, txt) => `<span class="${good ? "pos" : "neg"}">${good ? "✓" : "!"}</span> ${txt}`;

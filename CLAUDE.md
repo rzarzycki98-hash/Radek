@@ -38,8 +38,15 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   w części meczów E0, SP1, I1; Pinnacle dojdzie przy najbliższym odświeżeniu kursów danej ligi (mecz w ciągu 54 h).
 - Aktualny stan (liczby zmieniają się co 4 godziny): `git pull && python3 gole/stan.py`.
 
+- **21.10 później – Over i Under:** Radek chce, żeby agent grał nie tylko Under. Sprawdzone: bukmacherzy agenta wyceniają
+  Over i Under tak samo (marża ok. 7% po obu stronach vs giełda), Undery brały się z modelu – po zmianie wag oceny
+  wskazują Over 10 razy, Under 3 razy. Wymuszanie równowagi odradzone (zakład bez przewagi traci średnio ok. 7%);
+  Radek wybrał licznik: `summary.sides` (oceny i zakłady Over/Under z 7 i 30 dni) – na stronie (Nauka → „Over czy
+  Under?”) i w `stan.py`.
+
 **Do sprawdzenia w najbliższych dniach:**
 
+0. **Over/Under:** czy w liczniku pojawiają się zakłady na Over, gdy kursy mają przewagę (licznik w `stan.py`).
 1. **Nowa uczciwa cena.** Po pierwszej aktualizacji z nowym kodem: w `gole/liga/<kod>.json` pole `fair.ou_src` powinno
    mieć „Pinnacle” (albo „giełda”) zamiast „UK”; w `status.sources.odds` brak błędów; zapytań ubywa jak dotąd (2 na ligę).
    Pinnacle w The Odds API podaje zwykle linię 2.75 – silnik przelicza ją na 2.5 (`engine.over25_from_line`).

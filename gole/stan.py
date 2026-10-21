@@ -96,6 +96,12 @@ def main(path):
         tested = sorted((t for t in ts if t.get("n")), key=lambda t: -(t.get("roi") if t.get("roi") is not None else -9))
         best = ", ".join(f"{t['name']} (typy: {t['n']}, wynik {pct(t.get('roi'))})" for t in tested[:3]) or "jeszcze nic rozliczonego"
         print(f"Taktyki – {SPORT[sp]}: pieniędzmi gra „{act.get('name', '?')}”; na sucho najlepiej: {best}")
+    sides = S.get("sides") or {}
+    for sp in ("pilka", "nba"):
+        x = sides.get(sp) or {}
+        if x:
+            print(f"Over/Under – {SPORT[sp]}: " + "; ".join(
+                f"{n} dni: oceny {x[n]['an'][0]}/{x[n]['an'][1]}, zakłady {x[n]['bets'][0]}/{x[n]['bets'][1]}" for n in ("7", "30") if n in x))
     L = S.get("learning") or {}
     learn = []
     for sp in ("pilka", "nba"):
