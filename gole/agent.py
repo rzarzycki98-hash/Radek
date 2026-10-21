@@ -31,6 +31,8 @@ LEARN_MIN = 30             # zmiany zasad dopiero po tylu rozliczonych zakładac
 CHANGE_GAP_DAYS = 7        # najwyżej jedna zmiana zasad na tydzień (osobno piłka i NBA)
 READY = {"days": 90, "bets": 200}
 KEEP_ANALYSES_DAYS = 400
+HEALTH_RUNS = 126          # "Zdrowie agenta": the last ~3 weeks of runs (6 a day)
+WEEKLY_KEEP = 12           # "Raport tygodnia": the last 12 weekly reports
 RESULTS_STALE_DAYS = 3     # warning on the page: the newest result of a league is older than this while matches wait
 
 LEAGUES = ["E0", "SP1", "I1", "D1", "F1", "N1", "P1", "B1", "T1", "SC0", "G1"]
@@ -121,17 +123,23 @@ SKILLS = [
      "desc": "Kilka taktyk typuje równolegle każdy mecz; pieniądze idą na tę, która najlepiej się sprawdza."},
     {"key": "nauka", "name": "Nauka zasad", "cat": "Pamięć (memory)",
      "desc": "Po 30 rozliczonych zakładach sam zmienia zasady (najwyżej raz w tygodniu) i zapisuje w dzienniku, co i dlaczego."},
-    {"key": "krytyk", "name": "Krytyk", "cat": "Wiele agentów (multi-agent)", "new": True,
+    {"key": "krytyk", "name": "Krytyk", "cat": "Wiele agentów (multi-agent)",
      "desc": "Drugi, niezależny „agent” sprawdza każdy zakład przed postawieniem i blokuje podejrzane (5 rodzajów ostrzeżeń). "
              "Zablokowane typy śledzi na sucho i sam wyłącza blokady, które przeszkadzają."},
-    {"key": "po_meczu", "name": "Analiza po meczu", "cat": "Pamięć (memory)", "new": True,
+    {"key": "po_meczu", "name": "Analiza po meczu", "cat": "Pamięć (memory)",
      "desc": "Po każdym zakładzie ocenia, czy to był pech, błąd ceny, szczęście, czy zasłużona wygrana, "
              "i liczy, ile w wyniku jest szczęścia, a ile umiejętności."},
-    {"key": "kalibracja", "name": "Kalibracja", "cat": "Samoocena (evaluation)", "new": True,
+    {"key": "kalibracja", "name": "Kalibracja", "cat": "Samoocena (evaluation)",
      "desc": "Na wszystkich rozliczonych meczach sprawdza, czy jego szanse się sprawdzają (gdy mówi 60%, czy wchodzi 6 na 10), "
              "i porównuje się z rynkiem w każdej lidze. Krytyk korzysta z tego przy blokadzie „Agent słabo zna tę ligę”."},
-    {"key": "wnioski", "name": "Wnioski", "cat": "Pamięć (memory)", "new": True,
+    {"key": "wnioski", "name": "Wnioski", "cat": "Pamięć (memory)",
      "desc": "Z rozliczonych zakładów i ocen sam wypisuje prostym językiem, gdzie zarabia, gdzie traci i co z tego wynika."},
+    {"key": "zdrowie", "name": "Zdrowie agenta", "cat": "Monitoring (observability)", "new": True,
+     "desc": "Zapisuje każdą aktualizację: czy działały wszystkie źródła danych, czy były błędy, ile zostało zapytań o kursy, "
+             "ile meczów ocenił i ile zakładów postawił. Od razu widać, gdy coś zaczyna się psuć."},
+    {"key": "raport", "name": "Raport tygodnia", "cat": "Podsumowanie (summarizer)", "new": True,
+     "desc": "W pierwszej aktualizacji nowego tygodnia sam pisze krótkie podsumowanie poprzedniego: portfel, zakłady, "
+             "vs zamknięcie, Over/Under, najlepszy i najsłabszy zakład, blokady krytyka i zmiany zasad."},
 ]
 
 
@@ -948,6 +956,10 @@ class Agent:
             "po_meczu": f"ocenionych zakładów: {sum(luck['cats'].values())}",
             "kalibracja": f"sprawdzone na {n_cal} rozliczonych meczach" if n_cal else "czeka na pierwsze rozliczone mecze",
             "wnioski": f"wniosków: {len(ins)}" if ins else "pierwsze wnioski po 10+ zakładach w grupie",
+            "zdrowie": self.health_line(),
+            "raport": (f"ostatni: {(self.s.get('weekly') or [{}])[-1].get('from', '')[8:10]}.{(self.s.get('weekly') or [{}])[-1].get('from', '')[5:7]}"
+                       f"–{(self.s.get('weekly') or [{}])[-1].get('to', '')[8:10]}.{(self.s.get('weekly') or [{}])[-1].get('to', '')[5:7]}"
+                       if self.s.get("weekly") else "pierwszy raport w pierwszej aktualizacji nowego tygodnia"),
         }
         return [dict(s, status=status.get(s["key"], "działa")) for s in SKILLS]
 
@@ -1294,6 +1306,84 @@ class Agent:
                 out[sp][str(n)] = {"an": [an.count("Over"), an.count("Under")], "bets": [bets.count("Over"), bets.count("Under")]}
         return out
 
+    # ------------------------------------------------ skill "Zdrowie agenta" (21.10.2026): a log of every run
+    def health(self, extra_status):
+        """One line per run: did every data source work, errors, odds credits left, what the agent did."""
+        src = (extra_status or {}).get("sources") or {}
+        fd, od, ce, fp, es = (src.get(k) or {} for k in ("football_data", "odds", "clubelo", "fpl", "espn"))
+        ok = {"fd": bool(fd) and not fd.get("errors") and not fd.get("n_stale"),
+              "odds": bool(od) and not od.get("errors"),
+              "elo": bool(ce) and (ce.get("clubs") or 0) > 0,
+              "fpl": bool(fp) and (fp.get("players") or fp.get("teams") or 0) > 0,
+              "espn": bool(es) and not es.get("errors")}
+        run = {"at": self.now.isoformat(timespec="minutes"), "err": len(self.errors), "ok": ok,
+               "odds_left": od.get("remaining"), "late": sum(1 for r in self.res_info.values() if r.get("stale")),
+               "an": sum(1 for a in self.A.values() if dt.datetime.fromisoformat(a["ko"]) > self.now),
+               "new_bets": sum(1 for b in self.s["bets"] if b.get("placed") == self.now.isoformat(timespec="minutes")),
+               "eq": self.equity()}
+        runs = self.s.setdefault("runs", [])
+        if runs and runs[-1]["at"] == run["at"]:
+            runs[-1] = run
+        else:
+            runs.append(run)
+        del runs[:-HEALTH_RUNS]
+
+    def health_line(self):
+        runs = [r for r in self.s.get("runs", []) if r["at"] >= (self.now - dt.timedelta(days=1)).isoformat(timespec="minutes")]
+        if not runs:
+            return "zapisuje każdą aktualizację"
+        bad = sum(1 for r in runs if r["err"] or not all(v for k, v in r["ok"].items() if k != "elo"))
+        return f"ostatnia doba: {len(runs)} aktualizacji, " + (f"z problemami: {bad}" if bad else "wszystkie bez problemów")
+
+    # ------------------------------------------------ skill "Raport tygodnia" (21.10.2026): the week in plain words
+    def weekly(self):
+        """A short report on the last finished week (Monday to Sunday), written once, on the first run of a new week."""
+        reps = self.s.setdefault("weekly", [])
+        monday = self.now.date() - dt.timedelta(days=self.now.date().weekday())
+        w0, w1 = monday - dt.timedelta(days=7), monday - dt.timedelta(days=1)
+        if dt.date.fromisoformat(self.s["start"]) > w1 or any(r["from"] == w0.isoformat() for r in reps):
+            return
+        inweek = lambda iso: bool(iso) and w0.isoformat() <= iso[:10] <= w1.isoformat()
+        placed = [b for b in self.s["bets"] if inweek(b.get("placed"))]
+        done = [b for b in self.s["bets"] if b["status"] in ("won", "lost", "push") and inweek(b.get("settled"))]
+        staked = sum(b["stake"] for b in done)
+        profit = sum(b["profit"] for b in done)
+        clv = [b["clv"] for b in done if b.get("clv") is not None]
+        hist = dict(self.s.get("history") or [])
+        eq0 = next((hist[d] for d in sorted(hist, reverse=True) if d < w0.isoformat()), self.s["start_balance"])
+        eq1 = next((hist[d] for d in sorted(hist, reverse=True) if d <= w1.isoformat()), eq0)
+        changes = [c for c in self.s["changes"] if inweek(c["at"])]
+        vetoed = sum(1 for a in self.A.values() if a.get("veto") and inweek(a.get("date")))
+        side = [b["side"] for b in placed]
+        lines = [f"Portfel: £{eq0:,.2f} → £{eq1:,.2f} ({eq1 - eq0:+.2f} £)."]
+        if done:
+            lines.append(f"Rozliczone zakłady: {len(done)}, trafione {sum(1 for b in done if b['status'] == 'won')}, "
+                         f"zysk {profit:+.2f} £ ({pctf(profit / staked, True) if staked else '–'} na stawkę)"
+                         + (f", vs zamknięcie {pctf(sum(clv) / len(clv), True)}." if clv else "."))
+        else:
+            lines.append("W tym tygodniu nic się nie rozliczyło.")
+        lines.append(f"Nowe zakłady: {len(placed)}" + (f" (Over {side.count('Over')}, Under {side.count('Under')})." if placed else
+                     " – agent nie widział kursu z wystarczającą przewagą."))
+        if clv:
+            m = sum(clv) / len(clv)
+            lines.append("Kursy lepsze niż zamknięcie – dobry znak na dłuższą metę." if m > 0 else
+                         "Kursy gorsze niż zamknięcie – rynek przed meczem szedł przeciwko agentowi; sam wynik to na razie głównie szczęście albo pech.")
+        best = max(done, key=lambda b: b["profit"], default=None)
+        worst = min(done, key=lambda b: b["profit"], default=None)
+        if best and best["profit"] > 0:
+            lines.append(f"Najlepszy: {best['home']} – {best['away']} {best['side']} @ {oddf(best['odds'])} ({best.get('score', '')}).")
+        if worst and worst["profit"] < 0:
+            lines.append(f"Najsłabszy: {worst['home']} – {worst['away']} {worst['side']} @ {oddf(worst['odds'])} ({worst.get('score', '')})"
+                         + (f" – {worst['lesson'].split(':')[0].lower()}." if worst.get("lesson") else "."))
+        if vetoed:
+            lines.append(f"Krytyk zablokował {vetoed} zakładów.")
+        lines += [f"Zmiana zasad: {c['text']}" for c in changes] or ["Bez zmian w zasadach."]
+        reps.append({"from": w0.isoformat(), "to": w1.isoformat(), "written": self.now.isoformat(timespec="minutes"),
+                     "bets": len(done), "profit": r2(profit), "roi": r4(profit / staked) if staked else None,
+                     "clv": r4(sum(clv) / len(clv)) if clv else None, "placed": [side.count("Over"), side.count("Under")],
+                     "eq": [r2(eq0), r2(eq1)], "lines": lines})
+        del reps[:-WEEKLY_KEEP]
+
     def finish(self, extra_status=None):
         self.place()
         try:
@@ -1314,6 +1404,11 @@ class Agent:
         horizon = self.now + dt.timedelta(days=7)
         upcoming = sorted((a for a in self.A.values() if self.now < dt.datetime.fromisoformat(a["ko"]) <= horizon),
                           key=lambda a: (a["ko"], a["lg"], a["home"]))
+        for step in (lambda: self.health(extra_status), self.weekly):  # new skills must never break the run
+            try:
+                step()
+            except Exception as e:
+                self.errors.append(f"raport/zdrowie: {str(e)[:120]}")
         S["summary"] = self.summary()
         S["upcoming"] = [{k: a.get(k) for k in ("id", "sp", "lg", "lgn", "ko", "home", "away", "line", "p", "pm", "pk", "mu", "mu_inj",
                                                  "best", "dec", "why", "stake", "tx", "b2b", "elo", "inj", "p_inj", "pk0", "mv",

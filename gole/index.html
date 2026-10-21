@@ -84,6 +84,11 @@ button { cursor: pointer; }
 /* content */
 main .wrap { padding-block: 12px 20px; display: grid; gap: 12px; }
 .note { font-size: 13px; color: var(--muted); margin: 0; }
+.hstrip { display: flex; gap: 2px; margin: 8px 0 4px; }
+.hstrip i { flex: 1; height: 18px; border-radius: 2px; background: var(--win); }
+.hstrip i.bad { background: var(--loss); }
+.hstrip i.mid { background: var(--gold); }
+.wrep li { margin: 3px 0; }
 .warn { font-size: 13px; background: var(--gold-soft); border-radius: 10px; padding: 9px 12px; }
 .day { font-size: 15px; font-weight: 700; margin: 8px 2px -4px; font-stretch: 112%; }
 .day:first-letter { text-transform: uppercase; }
@@ -1051,6 +1056,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       ${chk(Rd.profit, "Portfel na plusie", gMoneyS(S.profit))}
       ${chk(Rd.clv, "Kursy lepsze niż kurs zamknięcia", pct1(((S.stats || {}).all || {}).clv))}
       <p class="note">${Rd.ok ? "Agent spełnia wszystkie warunki. To nadal nie gwarancja – zaczynaj od małych stawek." : "Jeszcze nie. Agent gra tylko wirtualnymi pieniędzmi – to informacja dla Ciebie, nic nie obstawia naprawdę."}</p></div>`;
+    out += weeklyCard(A);
     out += `<details class="card live"><summary><h3>Jak działa agent</h3></summary><div class="explain" style="display:grid;gap:8px">
       <p>Co 4 godziny agent sam ocenia każdy mecz 11 lig piłkarskich (gole over/under 2.5) i NBA (suma punktów). Bierze pod uwagę model goli i strzałów celnych, kursy wielu bukmacherów, tabelę, formę, mecze u siebie i na wyjeździe, mecze bezpośrednie, ranking siły ClubElo, kontuzje (Premier League i NBA), zmęczenie w NBA i to, jak ruszają się kursy.</p>
       <p>Stawia 1% portfela tylko wtedy, gdy kurs jest wyższy, niż wynika z szansy. Po meczu sam rozlicza zakład i sprawdza, czy wziął kurs lepszy niż kurs zamknięcia.</p>
@@ -1138,7 +1144,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       <p class="note">Piłka: gole over/under 2.5 w 11 ligach (Top 5, Holandia, Portugalia, Belgia, Turcja, Szkocja, Grecja), kursy ${esc(((A.books || {}).pilka || []).join(", "))}. NBA: suma punktów, kursy ${esc(((A.books || {}).nba || []).join(" i "))}, a gdy nie mają linii – inny bukmacher z UK.</p></div>`;
     const ch = (A.changes || []).filter((c) => c.sport === "all" || inSp({ sp: c.sport })).slice().reverse();
     out += `<div class="card"><h3>Dziennik zmian agenta</h3>${ch.map((c) => `<div class="chg"><span class="meta">${esc(stampFmt.format(new Date(c.at)))} · ${c.sport === "all" ? "agent" : SPN[c.sport]}</span><b>${esc(c.text)}</b><span class="note">${esc(c.why)}</span></div>`).join("")}</div>`;
-    out += sourcesCard(A);
+    out += healthCard(A) + sourcesCard(A);
     return out;
   }
   // ---------------- skills (18.10.2026)
@@ -1150,7 +1156,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
         <b>${esc(s.name)}</b>${s.new ? `<span class="g new">nowy</span>` : `<span></span>`}
         <span class="sk-cat">${esc(s.cat)}</span><span></span>
         <span class="sk-st">${esc(s.status || "")}</span></summary><p>${esc(s.desc)}</p></details>`).join("")}</div>
-      <p class="note">Skille to umiejętności agenta.${nNew ? ` ${nNew} nowe dodane 18.10.2026.` : ""} Dotknij skilla, żeby zobaczyć, co robi.</p></div>`;
+      <p class="note">Skille to umiejętności agenta.${nNew ? ` ${nNew} nowe dodane 21.10.2026 (zdrowie agenta i raport tygodnia).` : ""} Dotknij skilla, żeby zobaczyć, co robi.</p></div>`;
   }
   const critOff = (r) => { const CN = A_().critic_names || {}, off = r.critic_off || []; return off.length ? esc(off.map((k) => CN[k] || k).join(", ")) : "brak (krytyk blokuje wszystko)"; };
   function criticCard(S, sp) {
@@ -1200,6 +1206,53 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const body = (sp !== "nba" ? block("pilka") : "") + (sp !== "pilka" ? block("nba") : "");
     return `<div class="card"><h3>Kalibracja – czy szanse agenta się sprawdzają</h3>${body || `<p class="note">Pojawi się po rozliczeniu pierwszych ocenionych meczów.</p>`}
       <p class="note">Wszystkie ocenione mecze, nie tylko obstawione. Dobrze skalibrowany agent: gdy daje 60%, over wchodzi mniej więcej w 6 meczach na 10. Błąd (mniej = lepiej) porównuje agenta z samym rynkiem. W lidze, w której agent na 60+ meczach jest gorszy od rynku, krytyk blokuje zakłady.</p></div>`;
+  }
+
+  // skill "Raport tygodnia": the last finished week in plain words, older weeks folded
+  function weeklyCard(A) {
+    const W = (A.weekly || []).slice().reverse();
+    if (!W.length) return `<div class="card"><h3>Raport tygodnia</h3><p class="note">Pierwszy raport agent napisze w pierwszej aktualizacji nowego tygodnia (w poniedziałek), o tygodniu, który się skończył.</p></div>`;
+    const dm = (iso) => esc(shortFmt.format(d(iso)));
+    const one = (r) => `<ul class="ins wrep">${r.lines.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
+    return `<div class="card"><h3>Raport tygodnia: ${dm(W[0].from)} – ${dm(W[0].to)}</h3>${one(W[0])}
+      ${W.length > 1 ? `<details><summary class="note">Wcześniejsze tygodnie (${W.length - 1})</summary>${W.slice(1).map((r) => `<div class="lc-head"><b>${dm(r.from)} – ${dm(r.to)}</b></div>${one(r)}`).join("")}</details>` : ""}</div>`;
+  }
+
+  // skill "Zdrowie agenta": every run of the last weeks – sources, errors, odds credits; value vs the close over time
+  function healthCard(A) {
+    const R = A.runs || [];
+    if (!R.length) return "";
+    const SRC = { fd: "wyniki", odds: "kursy", elo: "ClubElo", fpl: "kontuzje", espn: "ESPN" };
+    const core = (r) => Object.entries(r.ok || {}).filter(([k]) => k !== "elo");
+    const cls = (r) => r.err ? "bad" : core(r).some(([, v]) => !v) || r.late ? "mid" : "";
+    const last = R.slice(-42);
+    const days = {};
+    for (const r of R) (days[r.at.slice(0, 10)] = days[r.at.slice(0, 10)] || []).push(r);
+    const dayRows = Object.entries(days).slice(-7).reverse().map(([day, rs]) => {
+      const fails = Object.keys(SRC).filter((k) => rs.some((r) => r.ok && r.ok[k] === false)).map((k) => SRC[k]);
+      const errs = rs.filter((r) => r.err).length;
+      return `<tr><td>${esc(shortFmt.format(d(day)))}</td><td>${rs.length}</td><td class="${errs ? "neg" : ""}">${errs || "—"}</td><td style="white-space:normal">${fails.length ? esc(fails.join(", ")) : "—"}</td></tr>`;
+    }).join("");
+    const lr = R[R.length - 1];
+    // value vs the close: running average of settled bets, in settling order
+    const cb = (A.bets || []).filter((b) => b.clv != null && b.settled).sort((x, y) => x.settled.localeCompare(y.settled));
+    let chart = `<p class="note">Wykres „vs zamknięcie” pojawi się po 3 rozliczonych zakładach.</p>`;
+    if (cb.length >= 3) {
+      let sum = 0;
+      const ys = cb.map((b, i) => (sum += b.clv) / (i + 1));
+      const lo = Math.min(0, ...ys) - 0.01, hi = Math.max(0, ...ys) + 0.01, Wd = 300, H = 80;
+      const x = (i) => (i / (ys.length - 1)) * Wd, y = (v) => H - 4 - ((v - lo) / (hi - lo)) * (H - 8);
+      const pts = ys.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+      chart = `<div class="lc-head"><b>Vs zamknięcie – średnia narastająco</b></div><div class="chart"><svg viewBox="0 0 ${Wd} ${H}" preserveAspectRatio="none" role="img" aria-label="Średnie vs zamknięcie po kolejnych zakładach">
+        <line class="bs" x1="0" x2="${Wd}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}"/><polyline class="ln" points="${pts}"/></svg>
+        <div class="chart-x"><span>1. zakład</span><span>przerywana: 0%</span><span>teraz ${pct1(ys[ys.length - 1])}</span></div></div>`;
+    }
+    return `<div class="card"><h3>Zdrowie agenta</h3>
+      <p class="note">Każdy pasek to jedna aktualizacja (ostatnie ${last.length}): zielony – wszystko działało, złoty – któreś źródło danych nie odpowiedziało albo wyniki się spóźniają, czerwony – błąd agenta. ClubElo nie liczy się do koloru (agent ma zastępcze Elo).</p>
+      <div class="hstrip">${last.map((r) => `<i class="${cls(r)}" title="${esc(r.at)}"></i>`).join("")}</div>
+      <div class="scroll"><table class="num tt"><thead><tr><th>Dzień</th><th>Aktual.</th><th>Błędy</th><th>Problem ze źródłem</th></tr></thead><tbody>${dayRows}</tbody></table></div>
+      <p class="note">Ostatnia aktualizacja: ${esc(stampFmt.format(new Date(lr.at)))} · ocenione mecze ${lr.an} · nowe zakłady ${lr.new_bets} · zapytań o kursy do końca miesiąca ${lr.odds_left ?? "?"}.</p>
+      ${chart}</div>`;
   }
 
   // Over vs Under: which side was cheaper in the analyses and which side the bets took (last 7 and 30 days)

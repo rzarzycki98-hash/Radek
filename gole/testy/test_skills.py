@@ -123,6 +123,18 @@ check(set(c.get("by_league", {})) <= set(AG.LEAGUES), "calibration per league us
 print("     kalibracja:", {k: c[k] for k in ("n", "rate", "ll_agent", "ll_market", "ll_model", "bias", "bias_model")})
 print("     wnioski:", s3["insights"])
 json.dumps(s3)  # serialisable
+# skills of 21.10.2026: the run log and the weekly report
+rep = (ag3.s.get("weekly") or [{}])[-1]
+check(rep.get("from") == "2026-10-19" and rep.get("to") == "2026-10-25" and rep.get("lines"), f"weekly report on the last finished week ({rep.get('from')}–{rep.get('to')})")
+print("     raport:", " | ".join(rep.get("lines", [])))
+n_rep = len(ag3.s["weekly"])
+ag3b = AG.Agent(tmp, later + dt.timedelta(hours=4))
+ag3b.finish({})
+check(len(ag3b.s["weekly"]) == n_rep, "the weekly report is written once a week")
+runs = ag3b.s.get("runs") or []
+check(len(runs) >= 2 and set(runs[-1]["ok"]) == {"fd", "odds", "elo", "fpl", "espn"} and runs[-1]["at"] > runs[-2]["at"], f"every run is logged ({len(runs)} runs)")
+sk = {x["key"]: x for x in ag3b.s["summary"]["skills"]}
+check("zdrowie" in sk and "raport" in sk and sk["raport"]["status"].startswith("ostatni"), f"new skills on the skills card ({sk.get('raport', {}).get('status')})")
 
 # ------------------------------------------------------------------ 4) the critic learns
 def learn_case(profitable_blocks):

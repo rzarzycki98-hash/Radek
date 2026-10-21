@@ -1,0 +1,40 @@
+name: Linia Goli – testy
+# Przy każdej zmianie kodu agenta, silnika albo strony: testy skilli agenta (na kopiach stanu) i test strony w Chromium
+# na szerokości telefonu (390 px). Niczego nie zapisuje w repozytorium; zrzuty strony są w artefaktach przebiegu.
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main, "claude/**"]
+    paths: ["gole/*.py", "gole/index.html", "gole/testy/**", ".github/workflows/linia-goli-testy.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  testy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Zainstaluj numpy i Playwright (Chromium)
+        run: |
+          pip install --quiet numpy playwright
+          python -m playwright install --with-deps chromium
+      - name: Testy skilli agenta (test_skills.py)
+        run: python gole/testy/test_skills.py
+      - name: Test strony na telefonie (test_page.py, 390 px, jasny i ciemny motyw)
+        run: |
+          T=$(ls -dt /tmp/lg-test-* | head -1)
+          python gole/testy/test_page.py gole "$T/agent.json" /tmp/zrzuty
+      - name: Zrzuty strony
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zrzuty-strony
+          path: /tmp/zrzuty
+          if-no-files-found: ignore
