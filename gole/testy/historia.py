@@ -22,6 +22,18 @@ EDGE = 0.03            # the agent's "Model + rynek" threshold
 ODDS = (1.5, 3.2)      # the agent's odds range
 
 
+def mean_goals(p_over):
+    """Poisson mean of total goals that gives this chance of over 2.5 (the model's expected goals, approximately)."""
+    lo, hi = 0.2, 8.0
+    for _ in range(50):
+        m = (lo + hi) / 2
+        if 1 - math.exp(-m) * (1 + m + m * m / 2) < p_over:
+            lo = m
+        else:
+            hi = m
+    return (lo + hi) / 2
+
+
 def ll(p, y):
     return -math.log(max(p if y else 1 - p, 1e-9))
 
@@ -297,6 +309,29 @@ def main():
         for book in ("B365", "Max"):
             b = bets(ok, "vb", book, "qsc")
             line += f" | {book:4} typów {b['n']:4} (O {b['over']:3}/U {b['under']:3}) wynik {pct(b['roi'])} CLV {pct(b['clv'])}"
+        print(line)
+    print("\n5) REGUŁA „OVER, GDY MODEL SPODZIEWA SIĘ CO NAJMNIEJ X GOLI” (Over zawsze, bez patrzenia na przewagę; kursy 1.50–3.20)")
+    print("   (oczekiwane gole odtworzone z szansy modelu na over: 2.5 gola = 46%, 2.6 = 48%, 2.7 = 51%, 3.0 = 58%)")
+    for r in rows:
+        r["mu"] = mean_goals(r["pm"])
+    for lo, hi in ((2.5, 2.6), (2.6, 2.7), (2.7, 2.8), (2.8, 3.0), (3.0, 9.0), (2.6, 9.0)):
+        rs = [r for r in rows if lo <= r["mu"] < hi]
+        line = f"   model {lo:.1f}–{hi:.1f} goli: meczów {len(rs):5}, over weszło {sum(r['y'] for r in rs) / max(1, len(rs)) * 100:5.1f}%" if hi < 9 else \
+               f"   model {lo:.1f}+ goli:     meczów {len(rs):5}, over weszło {sum(r['y'] for r in rs) / max(1, len(rs)) * 100:5.1f}%"
+        for book in ("B365", "Max"):
+            n = won = 0
+            profit = clv = nc = 0.0
+            for r in rs:
+                o = (r["odds"].get(book) or [None])[0]
+                if not o or not 1.5 <= o <= 3.2:
+                    continue
+                n += 1
+                won += r["y"]
+                profit += o - 1 if r["y"] else -1
+                if r.get("qsc") is not None:
+                    clv += o * r["qsc"] - 1
+                    nc += 1
+            line += f" | {book:4} zakładów {n:5}, wynik {pct(profit / n if n else None)}, CLV {pct(clv / nc if nc else None)}"
         print(line)
     if a.json:
         json.dump({"ll": res, "bets": out3, "seasons": n_season}, open(a.json, "w"), indent=1, default=str)

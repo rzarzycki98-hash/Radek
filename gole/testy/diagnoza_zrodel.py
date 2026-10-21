@@ -98,7 +98,9 @@ for code in ("B1", "E0", "G1"):
 
 print("\n=== The Odds API – czy Pinnacle i giełdy podają linię goli (1 zapytanie, 1 kredyt)")
 key = os.environ.get("ODDS_API_KEY", "").strip()
-if key:
+if not os.environ.get("DIAG_ODDS"):  # costs 1 credit of the monthly 500: only when asked for (DIAG_ODDS=1)
+    print("  pominięte (ustaw DIAG_ODDS=1, żeby sprawdzić)")
+elif key:
     import json  # noqa: E402
     url = (f"https://api.the-odds-api.com/v4/sports/soccer_epl/odds?apiKey={key}&dateFormat=iso&oddsFormat=decimal&markets=totals"
            f"&bookmakers={','.join(E.FOOT_BOOKMAKERS)}")
