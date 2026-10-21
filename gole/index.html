@@ -1033,6 +1033,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       ${agentChart(A)}</div>` + statTiles((S.stats || {}).all || {});
     const errs = ((A.status || {}).errors || []);
     if (errs.length) out += `<p class="warn">Problemy przy ostatniej aktualizacji: ${esc(errs.slice(0, 3).join("; "))}</p>`;
+    out += staleResults(A);
     const up = A.upcoming || [];
     const bets = up.filter((a) => a.dec === "bet");
     const an = S.analysed || {};
@@ -1058,6 +1059,15 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
       <p>Bezpieczniki: najwyżej 30% portfela w grze naraz, kursy nie starsze niż 12 godzin. Pomoc przy problemach z hazardem: BeGambleAware.org, GamCare 0808 8020 133.</p></div></details>`;
     if (A.updated) out += `<p class="note">Agent: ostatnia zmiana ${esc(stampFmt.format(new Date(A.updated)))}.</p>`;
     return out;
+  }
+  // leagues whose newest result is 3+ days old while matches already played wait for a result
+  function staleResults(A) {
+    const R = (A.status || {}).results || {};
+    const bad = Object.entries(R).filter(([, r]) => r && r.stale);
+    if (!bad.length) return "";
+    const nm = (c) => { const L = L_(c); return L ? `${flag(L)} ${L.name}` : c; };
+    const items = bad.map(([c, r]) => `${nm(c)} (ostatni wynik ${r.last ? esc(shortFmt.format(d(r.last))) : "—"}, czeka ${r.waiting} meczów)`);
+    return `<p class="warn">Stare wyniki: ${items.join("; ")}. Źródło wyników (football-data.co.uk) się spóźnia – zakłady z tych lig rozliczą się, gdy wyniki przyjdą (agent czeka do 21 dni, potem zwraca stawkę).</p>`;
   }
   const chk = (ok, label, val) => `<div class="chk ${ok ? "y" : "n"}"><span class="fi">${ok ? "✓" : "·"}</span><span>${label}</span><b class="num">${val}</b></div>`;
 
@@ -1197,8 +1207,10 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const ok = (good, txt) => `<span class="${good ? "pos" : "neg"}">${good ? "✓" : "!"}</span> ${txt}`;
     const ce = s.clubelo, es = s.espn, fp = s.fpl, od = s.odds, fd = s.football_data;
     const ceN = ce ? Object.values(ce.matched || {}).reduce((t, m) => t + Object.keys(m).length, 0) : 0;
+    const staleN = Object.values((A.status || {}).results || {}).filter((r) => r && r.stale).length;
     const rows = [
-      ["football-data.co.uk", "wyniki, gole, strzały celne, kursy zamknięcia (6 sezonów)", fd ? ok(!(fd.errors || []).length, `${fd.leagues} lig`) : "—"],
+      ["football-data.co.uk", "wyniki, gole, strzały celne, kursy zamknięcia (6 sezonów)", fd ? ok(!(fd.errors || []).length && !fd.n_stale && !staleN,
+        `${fd.leagues} lig${fd.n_stale ? ` · ${fd.n_stale} plików nie pobrało się – użyte starsze kopie` : ""}${staleN ? ` · stare wyniki w ${staleN} ligach` : ""}`) : "—"],
       ["The Odds API", "kursy bukmacherów z UK przed meczem", od ? ok(!(od.errors || []).length, `zostało ${od.remaining ?? "?"} zapytań w miesiącu`) : "—"],
       ["ClubElo", "siła drużyn (ranking Elo)", ce ? (ceN > 0 ? ok(true, `${ceN} drużyn dopasowanych`) : ok(false, "nie odpowiada – zastępczo Elo liczone z wyników lig")) : "—"],
       ["Fantasy Premier League", "kontuzje i zawieszenia w Premier League", fp ? ok(fp.teams > 0, `${fp.players} zawodników na liście`) : "—"],

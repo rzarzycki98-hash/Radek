@@ -16,6 +16,7 @@ sys.path.insert(0, GOLE)
 import engine as E  # noqa: E402
 import agent as AG  # noqa: E402
 
+BASE_HL = (60.0, 120.0, 240.0)   # tested half-lives (days) of the league scoring level
 EDGE = 0.03            # the agent's "Model + rynek" threshold
 ODDS = (1.5, 3.2)      # the agent's odds range
 
@@ -80,6 +81,7 @@ def league_rows(src, code, years):
     use_sot = sum(1 for m in played[-1][-60:] + played[-2][-60:] if m["hst"] is not None) > 20
     preds_by_combo = [E.run_rater(seasons, h, k, E.SOT_W if use_sot else 0.0)[0] for h, k in E.GRID]
     out = []
+    base_preds = {bh: {} for bh in BASE_HL}
     for i in range(2, len(seasons)):
         if len(played[i]) < 30:
             continue
@@ -87,6 +89,10 @@ def league_rows(src, code, years):
         if not prm:
             continue
         preds = preds_by_combo[prm["combo"]]
+        for bh in BASE_HL:  # variant: the league's scoring level follows recent matches faster than team strengths
+            if prm["combo"] not in base_preds[bh]:
+                h, k = E.GRID[prm["combo"]]
+                base_preds[bh][prm["combo"]] = E.run_rater(seasons, h, k, E.SOT_W if use_sot else 0.0, base_half_life=bh)[0]
         # every earlier match with this season's model settings, for the calibration (fitted on the past only)
         hist = [(m["d"], E.logit(preds[id(m)][0]), int(m["hg"] + m["ag"] > 2)) for s in played[1:i + 1] for m in s if id(m) in preds]
         for m in played[i]:
@@ -96,8 +102,12 @@ def league_rows(src, code, years):
             qo = E.demargin(m["ou"].get("P"))
             qa = E.demargin(m["ou"].get("Avg"))
             qc = E.demargin(m["ouc"].get("P") or m["ouc"].get("Avg"))
+            qb, qbc = E.demargin(m["ou"].get("BFE")), E.demargin(m["ouc"].get("BFE"))
+            qac = E.demargin(m["ouc"].get("Avg"))
             out.append({"lg": code, "si": E.season_code(ys[i]), "d": m["d"], "pm": p[0], "y": int(m["hg"] + m["ag"] > 2), "qo": qo[0] if qo else None,
-                        "qa": qa[0] if qa else None, "qc": qc[0] if qc else None,
+                        "qa": qa[0] if qa else None, "qc": qc[0] if qc else None, "qb": qb[0] if qb else None,
+                        "qbc": qbc[0] if qbc else None, "qac": qac[0] if qac else None, "hasP": bool(m["ou"].get("P")),
+                        "pv": {bh: base_preds[bh][prm["combo"]].get(id(m), (None,))[0] for bh in BASE_HL},
                         "odds": {b: m["ou"].get(b) for b in ("B365", "Max", "Avg", "P")}, "_hist": hist, "_w": prm["w_ou"]})
     return out, seasons
 
@@ -200,6 +210,25 @@ def main():
             print(f"     miesiąc {mon:2}: meczów {len(rs):5}, model {x['bias'] * 100:+5.1f}, po kalibracji {y['bias'] * 100:+5.1f}, "
                   f"nachylenie {x['slope'] or 0:.2f} → {y['slope'] or 0:.2f}")
 
+    print("\n   Czy rynek też się mylił? Średnia szansa minus wynik (pkt proc.) – model / Pinnacle / średnia bukm. / giełda Betfair:")
+    for s_ in seasons_:
+        rs = [r for r in rows if r["si"] == s_]
+        cells = []
+        for k in ("pm", "qo", "qa", "qb"):
+            x = summ(rs, k)
+            cells.append(f"{x['bias'] * 100:+5.1f} (n {x['n']})" if x else "   –      ")
+        print(f"     {s_[:2]}/{s_[2:]}: " + " / ".join(cells) + f"; mecze z Pinnacle: {sum(r['hasP'] for r in rs)}/{len(rs)}, over weszło {sum(r['y'] for r in rs) / len(rs) * 100:.1f}%")
+    print("\n   Wariant modelu: średnia goli w lidze liczona z krótszej pamięci (pół-okres w dniach) – skrzywienie i log loss")
+    for bh in (None,) + BASE_HL:
+        key = "pm" if bh is None else f"pv{int(bh)}"
+        if bh is not None:
+            for r in rows:
+                r[key] = r["pv"][bh]
+        line = f"     {'obecny model' if bh is None else f'pół-okres {int(bh):3} dni':18}"
+        for s_ in seasons_ + [None]:
+            x = summ([r for r in rows if (s_ is None or r["si"] == s_) and r.get(key) is not None], key)
+            line += f" | {('razem' if s_ is None else s_[:2] + '/' + s_[2:])} {x['bias'] * 100:+5.1f} ll {x['ll']:.4f}" if x else ""
+        print(line)
     print("\n2) LOG LOSS (mniej = lepiej) na meczach z kursami Pinnacle przed meczem i na zamknięcie")
     print("   liga     meczów   model  model+kal  blend(P)  blend+kal(P)  blend(śr.)  blend+kal(śr.)  Pinnacle  zamknięcie   waga przed→po")
     res = {}
@@ -222,13 +251,24 @@ def main():
     for label, key in (("rynek = Pinnacle, bez kalibracji", "b_raw"), ("rynek = Pinnacle, z kalibracją", "b_cal"),
                        ("rynek = średnia bukm., bez kalibracji", "a_raw"), ("rynek = średnia bukm., z kalibracją", "a_cal"),
                        ("sam model, bez kalibracji", "pm"), ("sam model, z kalibracją", "pmc"),
-                       ("bez modelu: Pinnacle jako uczciwa cena", "qo"), ("bez modelu: średnia jako uczciwa cena", "qa")):
+                       ("bez modelu: Pinnacle jako uczciwa cena", "qo"), ("bez modelu: średnia jako uczciwa cena", "qa"),
+                       ("bez modelu: giełda Betfair jako uczciwa cena", "qb")):
         line = f"   {label:40}"
         for book in ("B365", "Max"):
             b = bets(rows, key, book)
             out3[f"{key}|{book}"] = b
             line += f" | {book:4} typów {b['n']:5} (Over {b['over']:4}, Under {b['under']:4}) wynik {pct(b['roi'])} CLV {pct(b['clv'])}"
         print(line)
+    print("\n   „Kurs ponad rynek” z giełdą Betfair (przed meczem) jako uczciwą ceną, przy różnych progach przewagi; CLV vs zamknięcie giełdy / średniej:")
+    global EDGE
+    for e in (0.0, 0.01, 0.02, 0.03):
+        EDGE = e
+        line = f"     próg {e * 100:3.0f}%:"
+        for book in ("B365", "Avg", "Max"):
+            b, b2 = bets(rows, "qb", book, "qbc"), bets(rows, "qb", book, "qac")
+            line += f" | {book:4} typów {b['n']:4} (O {b['over']:3}/U {b['under']:3}) wynik {pct(b['roi'])} CLV {pct(b['clv'])} / {pct(b2['clv'])}"
+        print(line)
+    EDGE = 0.03
     print("\n   Na ligę (Bet365, rynek = Pinnacle): bez kalibracji → z kalibracją")
     for code in codes:
         rs = [r for r in rows if r["lg"] == code]

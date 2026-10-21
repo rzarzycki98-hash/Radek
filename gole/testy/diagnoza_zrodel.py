@@ -34,7 +34,7 @@ for host in ("api.clubelo.com", "clubelo.com", "www.clubelo.com"):
         print(f"  DNS {host}: {sorted({a[4][0] for a in socket.getaddrinfo(host, 80)})}")
     except Exception as e:
         print(f"  DNS {host}: {e}")
-for day in (today, today - dt.timedelta(days=1), today - dt.timedelta(days=7), dt.date(2025, 10, 1)):
+for day in (today, dt.date(2025, 10, 1)):
     for scheme in ("http", "https"):
         for ua in UAS:
             print(f"  {scheme}://api.clubelo.com/{day} [{ua}]: {probe(f'{scheme}://api.clubelo.com/{day}', ua)}")
@@ -42,6 +42,14 @@ for path in ("Fixtures", "Arsenal", ""):
     print(f"  http://api.clubelo.com/{path}: {probe('http://api.clubelo.com/' + path, 'browser')}")
 print(f"  http://clubelo.com/: {probe('http://clubelo.com/', 'browser')}")
 print(f"  http://www.clubelo.com/: {probe('http://www.clubelo.com/', 'browser')}")
+try:  # does the website itself carry the ratings (a possible way around the broken API)?
+    req = urllib.request.Request("http://clubelo.com/", headers={"User-Agent": UAS["browser"]})
+    html = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
+    for word in ("Arsenal", "Bayern", "Elo", ".csv", "api"):
+        i = html.find(word)
+        print(f"  clubelo.com '{word}': {html.count(word)} razy" + (f", np. {html[max(0, i - 120):i + 160]!r}" if i >= 0 else ""))
+except Exception as e:
+    print("  clubelo.com:", e)
 
 print("\n=== football-data.co.uk")
 print("  fixtures.csv:", probe(f"{E.BASE}/fixtures.csv", n=0))
@@ -70,6 +78,9 @@ for code in AG.LEAGUES:
             lm = r.headers.get("Last-Modified")
             rows = E.parse_rows(r.read().decode("utf-8-sig", "replace"), code)
         last = max((m["d"] for m in rows if m["hg"] is not None), default=None)
+        cnt = {b: sum(1 for m in rows if m["ou"].get(b)) for b in ("P", "BFE", "B365", "Avg")}
+        cntc = {b: sum(1 for m in rows if m["ouc"].get(b)) for b in ("P", "BFE", "B365", "Avg")}
+        print(f"       kursy o/u 2.5 przed meczem {cnt}, na zamknięcie {cntc}")
         print(f"  {code:4} wyników {sum(1 for m in rows if m['hg'] is not None):3}, ostatni {last}, Last-Modified: {lm}")
     except Exception as e:
         print(f"  {code:4} błąd: {e}")
