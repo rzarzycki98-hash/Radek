@@ -1105,7 +1105,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
         ${ts.map((t) => `<tr class="${t.active ? "act" : ""}"><td>${esc(t.name)}<div class="meta">${t.active ? "gra pieniędzmi" : "na sucho"}${t.open ? ` · ${t.open} czeka` : ""}</div></td><td>${t.n}</td><td>${t.n ? pct(t.won / t.n) : "—"}</td><td class="${pnc(t.roi)}">${pctS(t.roi)}</td>${k === "pilka" ? `<td class="${pnc(t.clv)}">${pctS(t.clv)}</td>` : ""}</tr>`).join("")}
         </tbody></table></div>
         <p class="note">Każda taktyka typuje na sucho każdy mecz, a po meczu agent sprawdza, jak wypadła. Pieniądze idą na taktykę zaznaczoną na złoto. Agent sam przechodzi na lepszą, gdy ma dość dowodów: ${k === "pilka" ? "50" : "80"}+ typów, zysk${k === "pilka" ? " i kurs lepszy niż zamknięcie" : ""}.</p>
-        <details><summary class="note">Opis taktyk</summary><div class="tdesc">${ts.map((t) => `<div><b>${esc(t.name)}</b><span class="note">${esc(t.desc)} Wymagana przewaga: ${pct1(t.edge)}.</span></div>`).join("")}</div></details>
+        <details><summary class="note">Opis taktyk</summary><div class="tdesc">${ts.map((t) => `<div><b>${esc(t.name)}</b><span class="note">${esc(t.desc)} ${t.key === "xg" ? "Gra bez wymogu przewagi." : `Wymagana przewaga: ${pct1(t.edge)}.`}</span></div>`).join("")}</div></details>
       </div>`;
     };
     out += (sp !== "nba" ? tactCard("pilka") : "") + (sp !== "pilka" ? tactCard("nba") : "") + sidesCard(S, sp);

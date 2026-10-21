@@ -50,6 +50,11 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   i do dużych systemów (AWS, Docker, bazy wektorowe, LangChain, płatne modele AI) oraz niezwiązane (posty na LinkedIn itp.).
   Szczegóły w sekcji „Skille i bezpieczniki Claude” niżej.
 
+- **21.10 – „jeżeli model spodziewa się 2.6, niech stawia Over”:** sprawdzone na historii (11 lig): przy 2.6–2.7 gola over
+  wchodzi w 51.6% meczów, a kurs ok. 1.90 wymaga 53%; reguła „2.6+ → Over” traciła (6247 zakładów, −3.7%, CLV −4.7%).
+  Radek wybrał: taktyka na sucho `xg` (agent przejdzie na nią sam, gdy się sprawdzi). Opis po meczu pokazuje teraz też
+  szansę na over („Model spodziewał się 2.6 gola (szansa na over 2.5: 48%)”).
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
@@ -146,7 +151,9 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 
 Piłka: `blend` Model + rynek 3% (aktywna na start) · `market` Kurs ponad rynek 2% · `stats` Statystyki potwierdzają 2% ·
 `model` Sam model 5% · `big` Duża przewaga 6% · `elo` Siła drużyn 1% (różnica Elo 150+ → Over, do 40 → Under) ·
-`inj` Kontuzje 2% (Premier League, dane FPL) · `move` Za ruchem rynku 0% (rynek przesunął się o 3+ pkt proc.).
+`inj` Kontuzje 2% (Premier League, dane FPL) · `move` Za ruchem rynku 0% (rynek przesunął się o 3+ pkt proc.) ·
+`xg` Model: 2.6+ goli → Over (pomysł Radka 21.10; Over zawsze, gdy model spodziewa się 2.6+ gola, bez wymogu przewagi;
+na historii −3.7% na stawkę, CLV −4.7%, więc tylko na sucho, dopóki sama się nie sprawdzi – `XG_OVER` w `agent.py`).
 
 NBA: `blend` Model + rynek 3% (aktywna na start) · `model` Sam model 5% · `big` Duża przewaga 6% · `b2b` Zmęczenie 1%
 (Under, gdy drużyna grała dzień wcześniej) · `inj` Kontuzje gwiazd 2% (ok. −3 pkt za brakującą gwiazdę) · `move` Za ruchem

@@ -66,6 +66,10 @@ for a in vet:
 check(all(a["dec"] == "skip" and a["why"].startswith("Krytyk zablokował") for a in vet), "vetoed matches are skipped with the critic's reason")
 check(all(not a.get("veto") for a in after["upcoming"] if a["dec"] == "bet"), "no placed bet carries a veto")
 check(after.get("critic_names", {}).get("rozjazd") == AG.CRITIC["rozjazd"]["name"], "critic names exported for the page")
+xa = [a for a in ag.A.values() if a["sp"] == "pilka" and (a.get("tx") or {}).get("xg")]
+check(all(a["tx"]["xg"][0] == 0 and sum(a["xg"]) >= AG.XG_OVER for a in xa), f"tactic „2.6+ goli → Over” picks only Overs with 2.6+ expected goals ({len(xa)} picks)")
+check(not any((a.get("tx") or {}).get("xg") for a in ag.A.values() if a["sp"] == "pilka" and a.get("xg") and sum(a["xg"]) < AG.XG_OVER),
+      "no „2.6+ → Over” pick below 2.6 expected goals")
 
 # ------------------------------------------------------------------ 2) critic: each warning on hand-made candidates
 base = {"id": "pilka|E0|x", "sp": "pilka", "lg": "E0", "pm": 0.50, "pk": 0.52, "mv": 0.0, "inj": None,
