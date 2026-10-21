@@ -43,7 +43,7 @@ SIDES = ["Over", "Under"]
 TACTICS = {
     "pilka": {
         "blend": {"name": "Model + rynek", "desc": "Szansa z modelu goli i strzałów połączona z kursami rynku (waga dobrana osobno dla każdej ligi). Gra, gdy kurs daje przewagę."},
-        "market": {"name": "Kurs ponad rynek", "desc": "Bez modelu: gra, gdy jeden bukmacher płaci więcej niż uczciwa cena wszystkich bukmacherów razem."},
+        "market": {"name": "Kurs ponad rynek", "desc": "Bez modelu: gra, gdy jeden z bukmacherów agenta płaci więcej niż uczciwa cena rynku (Pinnacle albo giełda bez marży)."},
         "stats": {"name": "Statystyki potwierdzają", "desc": "Model + rynek z mniejszą przewagą, ale tylko gdy tabela, forma, mecze u siebie/na wyjeździe i H2H wskazują tę samą stronę."},
         "model": {"name": "Sam model", "desc": "Tylko model goli i strzałów celnych, bez patrzenia na rynek. Wymaga dużej przewagi."},
         "big": {"name": "Duża przewaga", "desc": "Model + rynek, ale tylko przy przewadze 6% i więcej. Mniej zakładów, bardziej pewne okazje."},

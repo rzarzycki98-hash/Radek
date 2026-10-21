@@ -98,6 +98,28 @@ osi czasu.
     pobić. Wtedy też rozliczone prognozy zaczęły się zapisywać na stałe (archiwum, bilans sezon po sezonie);
   - czy może wrzucać na stronę screeny meczów na żywo – patrz tabela pomysłów niżej.
 
+### 21.10.2026 – naprawa błędów i skuteczność agenta (projekt w Claude Code)
+
+- Radek poprosił o dwie rzeczy: naprawić błędy i zwiększyć skuteczność agenta. Zasady: najpierw diagnoza z liczbami,
+  przy większych zmianach opcje do wyboru, nie dopasowywać niczego do kilku ostatnich wyników, progów i taktyk agenta nie
+  zmieniać ręcznie (to robi jego nauka) – poprawiać model i dane.
+- Stan na start: portfel £1001.60, 4 rozliczone zakłady, 7 z 8 zakładów na Under, „vs zamknięcie” −4.6%, „Sam model”
+  na sucho −21.6% (30 typów). Radek podejrzewał, że przewaga na Under bierze się ze skrzywienia modelu.
+- Błędy: test skilli liczył też zakłady rozliczone naprawdę (błąd testu); ClubElo – serwer ich API odpowiada HTTP 502 na
+  każde zapytanie (awaria po ich stronie, nie blokada GitHuba); nieudane pobrania zastępowane starą kopią były niewidoczne;
+  zapasowa wczorajsza kopia ClubElo nigdy się nie wczytywała. Wszystko poprawione; doszło ostrzeżenie o starych wynikach.
+- Odkrycie: football-data od połowy sezonu 2025/26 nie podaje kursów Pinnacle (są kursy giełdy Betfair). Na żywo „uczciwa
+  cena” była medianą tych samych 4 bukmacherów, u których agent gra (inni z UK nie podają over/under 2.5 w darmowych danych).
+- Test na historii (11 lig, ok. 11 tys. meczów): skrzywienie modelu w pełnych sezonach małe (−0.4 do −2.4 pkt proc.);
+  w tym sezonie −7, ale rynek też −4.5 (sezon bramkowy). Model w meczach, w których rynek daje overowi 58%+, daje 2–4 pkt
+  mniej – stąd „przewagi” na Under. Kalibracja nie pomogła; model nie dodaje informacji ponad rynek; taktyka „Model + rynek”
+  na historii −14%, CLV −3.9%. Waga modelu na żywo (0.6–0.8 w kilku ligach) była dużo wyższa niż w teście (0.11).
+- **Decyzje Radka:** uczciwa cena z Pinnacle i giełd (The Odds API, 10 wybranych bukmacherów za tę samą liczbę zapytań;
+  ze strony znikają kursy 1X2 innych bukmacherów z UK); waga modelu dobierana na dłuższej historii i tylko przy realnej
+  poprawie (na historii: 538 → 82 typy, Under 66% → 49%, CLV −4.7% → −2.2%); kalibracji nie dodawać; ESPN jako zapasowe
+  źródło wyników (gdy football-data spóźnia się 3+ dni).
+- NBA sprawdzone tylko pod kątem błędów w kodzie (brak); strojenie później.
+
 ## Pomysły Radka – co się z nimi stało
 
 | Pomysł | Co się stało |
@@ -111,6 +133,8 @@ osi czasu.
 | Zbieranie wyników i kursów w czasie | Zrobione: archiwum prognoz, oceny agenta z 400 dni, pamięć kursów |
 | Analiza przed, w trakcie i po meczu | Przed: tak. W trakcie: kalkulator na żywo (bez zakładów na żywo, bo nie ma darmowych kursów na żywo). Po: rozliczenie, porównanie z kursem zamknięcia, analiza po meczu (18.10) |
 | Uczenie się na błędach | Zrobione: nauka zasad (17.10), skille (18.10) |
+| Zapasowe źródło wyników, gdy football-data się spóźnia | Zrobione 21.10: ESPN (tylko do rozliczeń) i ostrzeżenie na stronie |
+| Korekta (kalibracja) skrzywionego modelu | Sprawdzone 21.10 na historii – nie pomaga; zamiast tego uczciwa cena z Pinnacle i giełd oraz ostrożniejsza waga modelu |
 | Wrzucanie na stronę screenów meczów na żywo | Strona sama nie odczyta obrazka (potrzebna byłaby płatna AI, a klucza nie da się ukryć w publicznej stronie). Screeny można wysyłać do Claude w rozmowie: odczyta wynik, minutę, statystyki i kursy i oceni szanse. Do tego w karcie meczu jest kalkulator na żywo (15.10) – Radek nie był pewien, czy będzie z niego korzystał |
 | Wynik 1X2 dla agenta | Odrzucone – Radek wybrał gole |
 | Powiadomienia na telefon | Odrzucone – Radek wybrał raport tylko na stronie |

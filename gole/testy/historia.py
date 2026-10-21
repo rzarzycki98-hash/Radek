@@ -186,7 +186,7 @@ def main():
     seasons_ = sorted({r["si"] for r in rows})
 
     print(f"\nTEST NA HISTORII – {len(rows)} meczów, ligi {', '.join(codes)}; sezony testowe = 3.–6. z 6 pobranych "
-          f"(model i waga dobierane na poprzednim sezonie, kalibracja na meczach sprzed danego miesiąca)\n")
+          f"(model i waga dobierane na {E.TUNE_SEASONS} poprzednich sezonach, kalibracja na meczach sprzed danego miesiąca)\n")
     print("1) SKRZYWIENIE MODELU: średnia szansa over 2.5 z modelu minus to, co się stało (pkt proc.), i nachylenie kalibracji")
     print("   (nachylenie 1.0 = szanse dobrze rozłożone; powyżej 1 = model za ostrożny, ściska szanse w stronę 50%)")
     hdr = "   liga  " + "".join(f"{s[:2] + '/' + s[2:]:>16}" for s in seasons_) + f"{'razem':>16}{'rynek(Pinn.)':>14}"
