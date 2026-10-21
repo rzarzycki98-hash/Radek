@@ -10,57 +10,48 @@ w `gole/HISTORIA.md`.
 
 **Historia wszystkich rozmów i ustaleń (od 14.10.2026), wczytywana automatycznie:** @gole/HISTORIA.md
 
-## Na czym skończyliśmy – 18.10.2026 (wieczór)
+## Na czym skończyliśmy – 21.10.2026
 
-- Rano: agent dostał 4 skille – krytyk, analiza po meczu, kalibracja, wnioski (szczegóły niżej, w „Skille agenta”).
-- Wieczorem: Radek przeniósł rozmowy o agencie do projektu w Claude Code; historia rozmów jest w `gole/HISTORIA.md`.
-- Stan 18.10 21:44: portfel £1000, 7 otwartych zakładów po £10 (3 mecze już rozegrane, czekają na wyniki), nic jeszcze
-  nierozliczone, krytyk niczego nie zablokował, wszystkie aktualizacje na GitHubie bez błędów. ClubElo dalej nie odpowiada
-  (agent liczy Elo z wyników lig).
-- **19.10 rano – sprawdzenie rozliczeń (rozmowa sprzed projektu):** wszystkie 22 aktualizacje z weekendu (17–19.10)
-  przeszły bez błędów. Wyników meczów z 17–18.10 jeszcze nie było w football-data.co.uk (ostatnie wyniki lig z 10–16.10),
-  więc rozliczył się tylko 1 mecz z prognoz (Argentyna, 16.10) i 0 zakładów agenta – to opóźnienie po stronie źródła,
-  nie błąd (pliki pobierają się przy każdej aktualizacji). Poprawka: alias Sint Truiden → St Truiden (Belgia, B1);
-  po niej lista niedopasowanych nazw jest pusta. Testy `test_skills.py` i `test_page.py` – OK.
-  **19.10 14:04 (UK):** nadal brak wyników z 17–18.10 we wszystkich 38 ligach, mimo że pliki pobierają się poprawnie
-  (25–41 udanych pobrań na przebieg, bez błędów) – football-data jeszcze ich nie wrzuciło. Uwaga na przyszłość: gdy pobranie
-  się nie uda, `Source._cached` po cichu bierze starą kopię z pamięci podręcznej (bez wpisu w `errors`).
-  **20.10 10:30 (UK):** nadal nic – ostatnie wyniki we wszystkich 38 ligach z 10–16.10, ostatnia zmiana jakiegokolwiek
-  wyniku 16.10 ok. 14:05 (UK). Po naszej stronie nie widać błędu: każdy przebieg ma 25–41 udanych pobrań (licznik rośnie
-  tylko przy odpowiedzi serwera), pliki są poprawne, parser czyta daty w 3 formatach. Najpewniej przerwa po stronie
-  football-data (nie da się tego sprawdzić z chmury Claude – proxy blokuje stronę). Zakłady piłkarskie agenta czekają na wynik
-  do 21 dni (potem zwrot stawki), więc 17–18.10 są bezpieczne do ok. 7.11. Radkowi zaproponowane (czeka na jego decyzję):
-  zapasowe źródło wyników z ESPN (darmowe, bez klucza, już używane dla NBA; CLV dopisze się później z football-data)
-  i ostrzeżenie na stronie, gdy najnowsze wyniki są starsze niż 3 dni. Niedopasowana nazwa `PK-35` (Finlandia) to drużyna
-  spoza ligi w football-data (baraż) – alias niepotrzebny.
-- **19.10 wieczorem Radek poprosił o przeniesienie rozmowy sprzed projektu do projektu.** Jej ustalenia są w
-  `gole/HISTORIA.md` (19.10). Zostało w niej tylko automatyczne sprawdzenie 20.10 ok. 10:30 (UK), które dopisze wynik tutaj.
-  Sprawdzenie z 20.10 jest wpisane wyżej – w tamtej rozmowie nie ma już żadnych zadań.
+Sesja „naprawa błędów i skuteczność agenta” (szczegóły i liczby: `gole/HISTORIA.md`, 21.10). Stan przed zmianami:
+portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakładów na Under, „vs zamknięcie” −4.6%.
+
+- **Naprawione:** test `test_skills.py` (liczył też zakłady rozliczone wcześniej naprawdę – błąd testu, nie agenta);
+  ClubElo zapisuje prawdziwą przyczynę błędu (`status.sources.clubelo.tried`) i próbuje co 6 h; zapasowa wczorajsza kopia
+  ClubElo znów się wczytuje; nieudane pobranie zastąpione starą kopią widać w `status.sources.football_data.stale`
+  (i `espn.stale`); na stronie i w `stan.py` ostrzeżenie, gdy najnowszy wynik ligi ma 3+ dni, a rozegrane mecze czekają
+  (`status.results`).
+- **ClubElo:** serwer API (api.clubelo.com) odpowiada HTTP 502 na każde zapytanie, także o stare daty; https nie działa;
+  strona clubelo.com działa. Awaria po ich stronie – agent liczy Elo z wyników lig. Nic do naprawy po naszej stronie.
+- **Pinnacle zniknął z football-data** w połowie sezonu 2025/26 (26/27: 0 meczów). Są kursy giełdy Betfair (BFE, BFEC).
+  „Vs zamknięcie” liczy się teraz z Pinnacle → giełdy Betfair (gdy rynek nie jest płytki) → średniej (`agent.fair_ou`).
+- **Test na historii** (`gole/testy/historia.py`, 11 lig, ok. 11 tys. meczów, bez zaglądania w przyszłość): skrzywienie
+  modelu w over 2.5 w pełnych sezonach −0.4 do −2.4 pkt proc.; w 26/27 −7.4, ale rynek też −4.5 (sezon bramkowy, 60% overów).
+  Kalibracja nie poprawia log loss (0.6784 → 0.6787) – Radek: nie dodawać. Model nie dodaje informacji ponad rynek.
+  Stary dobór wagi modelu: 538 typów (66% Under), CLV −4.7%; nowy: 82 typy (42 Over / 40 Under), CLV −2.2%.
+- **Decyzje Radka 21.10** (wszystkie wdrożone w kodzie): uczciwa cena z Pinnacle i giełd (The Odds API, parametr
+  `bookmakers`, ten sam koszt); waga modelu dobierana na 2 pełnych sezonach + bieżącym, model dostaje wagę tylko przy
+  poprawie log loss o 0.001+ (`TUNE_SEASONS`, `W_OU_MIN_GAIN`); bez kalibracji; ESPN jako zapas wyników piłki.
+- Przebieg diagnostyczny (tylko odczyt, nic nie zapisuje): `.github/workflows/linia-goli-diagnoza.yml` – uruchamia się
+  przy pushu `gole/testy/historia.py` lub `diagnoza_zrodel.py` na gałęzi `claude/**` (albo ręcznie); wynik w logu przebiegu.
 - Aktualny stan (liczby zmieniają się co 4 godziny): `git pull && python3 gole/stan.py`.
 
 **Do sprawdzenia w najbliższych dniach:**
 
-1. **Pierwsze rozliczenia (20.10 rano wyników z 17–18.10 nadal nie było – patrz wyżej; czeka decyzja Radka o zapasowym źródle).** Wyniki z football-data.co.uk
-   przychodzą zwykle 1–2 dni po meczu. Sprawdź, czy zakłady
-   rozliczyły się same, czy policzył się „vs zamknięcie” (CLV z kursów zamknięcia Pinnacle, kolumny PC>2.5 i PC<2.5) i czy
-   mają ocenę po meczu (`pm_cat`, `lesson`) widoczną na stronie pod zakładem.
-2. **Krytyk.** Czy coś blokuje (`python3 gole/stan.py` → sekcja „Krytyk”) i czy blokady wyglądają rozsądnie. Na prawdziwych
-   meczach z 18.10 próg `rozjazd` (12 pkt proc.) zatrzymałby ok. 3% meczów; gdyby blokował za dużo albo za mało – progi
-   w `GAP_MAX`.
-3. **Kalibracja.** Pojawi się po pierwszych rozliczonych ocenach (`summary.calib`). Liczby z testu 18.10 pochodziły z wyników
-   losowych i nic nie mówią o modelu.
-4. **ClubElo nie działało 17–18.10** (błąd po ich stronie). Agent liczy wtedy zastępczo Elo z wyników lig
-   (`zrodla.results_elo`) i próbuje ClubElo raz dziennie. Dopasowania nazw drużyn do ClubElo (`zrodla.HINT`) nie
-   sprawdziliśmy jeszcze na prawdziwych danych – po pierwszym udanym pobraniu przejrzyj `status.sources.clubelo.matched`
-   w `gole/agent.json` (wynik dopasowania poniżej 0.8 = podejrzane).
-5. **NBA rusza 20.10** (pierwszy mecz Pistons – Celtics). Kod NBA testowaliśmy na danych symulowanych oraz na prawdziwym
-   kalendarzu i raporcie kontuzji ESPN, ale nie na meczach w trakcie sezonu. Po starcie sprawdź w `status.nba`:
-   `upcoming > 0`, `with_odds > 0`, brak błędów i czy czytają się najlepsi strzelcy (pole `leaders` z ESPN). Agent zacznie
-   obstawiać NBA, gdy każda drużyna rozegra 5 meczów (ok. początek listopada).
-6. **Limit kursów (The Odds API, darmowe 500 zapytań na miesiąc).** Przydział to ok. 26 zapytań dziennie; ligi agenta mają
-   pierwszeństwo, NBA ma zarezerwowane 2 zapytania dziennie (październik–czerwiec). 18.10 zostało 385 zapytań do końca miesiąca.
-7. **Pierwsza nauka:** po 30 rozliczonych zakładach w danym sporcie agent zacznie sam zmieniać zasady – sprawdź,
-   czy wpisy w dzienniku zmian są sensowne.
+1. **Nowa uczciwa cena.** Po pierwszej aktualizacji z nowym kodem: w `gole/liga/<kod>.json` pole `fair.ou_src` powinno
+   mieć „Pinnacle” (albo „giełda”) zamiast „UK”; w `status.sources.odds` brak błędów; zapytań ubywa jak dotąd (2 na ligę).
+   Pinnacle w The Odds API podaje zwykle linię 2.75 – silnik przelicza ją na 2.5 (`engine.over25_from_line`).
+2. **Mniej zakładów.** Waga modelu w większości lig spadnie do 0 (`data.json` → `leagues[].params.w_ou`), więc „Model + rynek”
+   gra tylko, gdy bukmacher agenta płaci 3%+ ponad Pinnacle. Kilka zakładów tygodniowo albo mniej jest w porządku.
+   Patrz, czy „vs zamknięcie” nowych zakładów jest bliżej zera albo na plusie.
+3. **ESPN jako zapas:** mecz bez wyniku w football-data 72 h po pierwszym gwizdku rozlicza się z ESPN (`res_src: "ESPN"`);
+   gdy football-data go opublikuje, dopisuje się CLV, a przy innym wyniku zakład jest poprawiany (`note` „Poprawka”).
+   Dopasowanie nazw drużyn ESPN ↔ football-data (`engine.team_sim`, próg 1.3) sprawdzone tylko na Anglii i Grecji.
+4. **Krytyk:** zmiana źródła uczciwej ceny (UK → Pinnacle) nie liczy się jako ruch rynku (`pk_src`); sprawdź, czy
+   `rynek_przeciw` nie blokuje nagle wielu meczów.
+5. **NBA:** 21.10 rozegrane 3 mecze; kod bez błędów. Agent zacznie obstawiać, gdy każda drużyna rozegra 5 meczów.
+   Strojenie modelu NBA (np. Pinnacle jako uczciwa linia) – później.
+6. **Limit kursów:** 21.10 zostało 318 zapytań do końca miesiąca (ok. 26 dziennie).
+7. **Pierwsza nauka:** po 30 rozliczonych zakładach w danym sporcie agent zacznie sam zmieniać zasady.
 
 ## Szybki start w nowej rozmowie
 
@@ -83,7 +74,7 @@ w `gole/HISTORIA.md`.
 | `gole/zrodla.py` | siła drużyn z ClubElo, dopasowanie nazw drużyn, zastępcze Elo z wyników ligi |
 | `gole/stan.py` | stan agenta w kilku linijkach (tylko czyta `agent.json`) |
 | `gole/HISTORIA.md` | historia rozmów z Radkiem i jego decyzji (14–18.10.2026), pomysły i co się z nimi stało |
-| `gole/testy/` | testy skilli agenta i strony (na kopiach, nigdy na prawdziwym stanie) |
+| `gole/testy/` | testy skilli agenta i strony (na kopiach, nigdy na prawdziwym stanie), test modelu na historii, diagnoza źródeł |
 | `gole/index.html` | cała strona (HTML + CSS + JS w jednym pliku) |
 | `gole/agent.json` | stan agenta: portfel, zakłady, zasady, dziennik zmian, podsumowanie, oceny meczów na 7 dni, status źródeł |
 | `gole/agent_analizy.json` | ocena każdego meczu i jej wynik po meczu – dane do nauki (400 dni) |
@@ -114,6 +105,7 @@ w `gole/HISTORIA.md`.
 | Stawka | 1% aktualnego portfela; najwyżej 30% portfela w otwartych zakładach |
 | Piłka | gole over/under 2.5 w 11 ligach: E0, SP1, I1, D1, F1 (Top 5), N1, P1, B1, T1, SC0, G1 |
 | Bukmacherzy – piłka | William Hill, Grosvenor, Casumo, LeoVegas: w darmowych danych tylko oni mają over/under 2.5 (Ladbrokes i BetVictor mają tam tylko 1X2) |
+| Uczciwa cena – piłka (21.10) | Pinnacle i giełdy (Betfair, Matchbook) z The Odds API, za tę samą liczbę zapytań; agent dalej gra tylko u 4 bukmacherów wyżej |
 | NBA | suma punktów over/under; Ladbrokes i BetVictor, a gdy nie mają linii – inny bukmacher z UK (bez giełd) |
 | Które mecze | ocenia każdy mecz swoich lig; stawia tylko wtedy, gdy kurs daje przewagę wymaganą przez aktywną taktykę |
 | Kursy | nie starsze niż 12 h; piłka 1.50–3.20, NBA 1.60–2.40 |
@@ -135,7 +127,9 @@ NBA: `blend` Model + rynek 3% (aktywna na start) · `model` Sam model 5% · `big
 (Under, gdy drużyna grała dzień wcześniej) · `inj` Kontuzje gwiazd 2% (ok. −3 pkt za brakującą gwiazdę) · `move` Za ruchem
 linii 0% (linia przesunęła się o 1.5+ pkt).
 
-Przewaga = szansa × kurs − 1. „Vs zamknięcie” (CLV) = nasz kurs × uczciwa szansa tuż przed meczem − 1 (Pinnacle bez marży).
+Przewaga = szansa × kurs − 1. „Vs zamknięcie” (CLV) = nasz kurs × uczciwa szansa tuż przed meczem − 1 (Pinnacle bez marży,
+a od 2025/26, gdy football-data go nie ma, giełda Betfair bez marży; ostatecznie średnia rynku). Uczciwa cena przed meczem
+(od niej przewaga): Pinnacle z The Odds API → giełdy → football-data → mediana bukmacherów z UK (decyzja 21.10.2026).
 
 ### Kroki nauki (`Agent.adapt`, w tej kolejności, najwyżej jedna zmiana naraz)
 
@@ -166,12 +160,18 @@ Wszystkie w `gole/agent.py`, widoczne na stronie (Nauka → Skille agenta) i w `
 
 ## Źródła danych (wszystkie darmowe)
 
-- **football-data.co.uk** – wyniki, gole, strzały celne, kursy zamknięcia; zakończone sezony pobierane raz.
-- **The Odds API** – kursy z UK; 500 zapytań na miesiąc; piłka 2 zapytania na ligę (1X2 + gole), NBA 1; kursy tylko dla lig
+- **football-data.co.uk** – wyniki, gole, strzały celne, kursy zamknięcia; zakończone sezony pobierane raz. Od połowy
+  2025/26 bez Pinnacle – są kursy giełdy Betfair (BFE przed meczem, BFEC na zamknięcie).
+- **The Odds API** – 500 zapytań na miesiąc; piłka: 10 wybranych bukmacherów (`engine.FOOT_BOOKMAKERS`: Pinnacle, Betfair,
+  Matchbook, 4 bukmacherów agenta, Ladbrokes, BetVictor) – kosztuje tyle co cały region UK, 2 zapytania na ligę (1X2 + gole);
+  NBA 1 (region UK); kursy tylko dla lig
   z meczem w ciągu 54 h, odświeżane co 10 h; przydział dzienny = (zostało − 10 − rezerwa NBA) / dni do końca miesiąca.
-- **ClubElo** – ranking siły klubów (CSV raz dziennie); gdy nie działa → Elo z wyników ligi.
+- **ClubElo** – ranking siły klubów (CSV raz dziennie, po błędzie kolejna próba po 6 h); gdy nie działa → Elo z wyników
+  ligi. Od 17.10.2026 API ClubElo odpowiada HTTP 502 (awaria po ich stronie).
 - **Fantasy Premier League** – kontuzje i zawieszenia w Premier League.
 - **ESPN** – NBA: wyniki i terminarz (dzień po dniu, zakończone dni z pamięci), najlepsi strzelcy, raport kontuzji (co 3 h).
+  Piłka (od 21.10.2026): zapasowe wyniki (`zrodla.ESPNScores`) dla meczów, których football-data nie ma 72 h po meczu – tylko
+  do rozliczeń, model uczy się wyłącznie na football-data.
 
 ## Zasady pracy w tym repozytorium
 
@@ -201,6 +201,9 @@ Wszystkie w `gole/agent.py`, widoczne na stronie (Nauka → Skille agenta) i w `
 - Skille: `python3 gole/testy/test_skills.py` (prawdziwy `agent.json` i mecze z `gole/liga/*.json`, rozliczenie na wynikach
   symulowanych, nauka krytyka w obie strony) i `gole/testy/test_page.py` (strona; sposób użycia na górze pliku).
 - NBA: podmieniony `ESPNSource._get` (symulowany sezon) i prosty obiekt zamiast `OddsAPI` (pola `key`, `c`, metoda `_get`).
+- Model na historii: `python3 gole/testy/historia.py` (tylko z internetem, czyli na GitHub Actions – przebieg „Linia Goli –
+  diagnoza”; lokalnie `--local DIR` na danych symulowanych). Źródła danych z GitHuba: `gole/testy/diagnoza_zrodel.py`.
+- Playwright w chmurze Claude: `pip install playwright==1.56.0` (pasuje do Chromium w `/opt/pw-browsers`).
 - Strona: kopia `gole/` w folderze tymczasowym, `python3 -m http.server`, Playwright + Chromium na szerokości 390 px
   (w chmurze Claude: `PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers`); bez błędów JS i bez poziomego przewijania.
 
