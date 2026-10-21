@@ -77,6 +77,8 @@ PROMOTED = (0.82, 1.18)                       # prior attack/defence of a newly 
 GRID = [(h, k) for h in (180.0, 360.0, 720.0, 1200.0) for k in (3.0, 6.0, 12.0, 25.0)]   # half-life days x prior matches
 W_GRID = [i / 10 for i in range(11)]          # model weight in the blend with the market (0 = market only)
 DEFAULT = {"half_life": 360.0, "prior": 12.0, "w_ou": 0.3, "w_x": 0.3}
+TUNE_SEASONS = 2                              # completed seasons (plus the current one) used to pick the parameters
+W_OU_MIN_GAIN = 0.001                         # the model must beat the market alone by this much (log loss per match)
 EDGE_MIN = 0.03                               # model+market tip: probability x odds - 1 above 3%
 MARKET_EDGE_MIN = 0.02                        # market tip: a bookmaker beats the fair price by 2%
 MIN_BOOKS_FAIR = 3
@@ -492,17 +494,21 @@ def result_idx(m):
 
 
 def mkt_ref(m, extra):
-    """Market probabilities used for the blend: pre-match Pinnacle (main) or closing Pinnacle (extra)."""
+    """Market probabilities used for the blend: pre-match Pinnacle or Betfair exchange (main), closing prices (extra)."""
     if extra:
         x = demargin(m["xc"].get("P") or m["xc"].get("Avg"))
         return None, x
-    o = demargin(m["ou"].get("P") or m["ou"].get("Avg"))
+    o = AG.fair_ou(m["ou"])[0]
     x = demargin(m["x"].get("P") or m["x"].get("Avg"))
     return (o[0] if o else None), x
 
 
-def choose_params(sample, preds_by_combo, extra):
-    """Pick (half_life, prior) by model log-loss, then the blend weights by blended log-loss."""
+def choose_params(sample, preds_by_combo, extra, min_gain=None):
+    """Pick (half_life, prior) by model log-loss, then the blend weights by blended log-loss.
+
+    The model gets a weight in the over/under blend only when it beats the market alone by min_gain (log loss per
+    match): a weight that helps only by chance turns the model's noise into false edges (test 21.10.2026)."""
+    min_gain = W_OU_MIN_GAIN if min_gain is None else min_gain
     best, best_ll = None, None
     for ci, preds in enumerate(preds_by_combo):
         ll = n = 0
@@ -539,6 +545,10 @@ def choose_params(sample, preds_by_combo, extra):
                 scores.append((ll / n, w))
         if scores:
             out[key] = min(scores)[1]
+            if key == "w_ou":
+                ll0 = next(l for l, w in scores if w == 0)
+                if ll0 - min(scores)[0] < min_gain:
+                    out[key] = 0.0
     return out
 
 
@@ -594,14 +604,14 @@ def grade(a, extra):
 def evaluate_league(seasons, extra, use_sot):
     """Walk-forward test and live parameters for one league.
 
-    For each tested season the parameters are picked on the season before it only, so the
+    For each tested season the parameters are picked on the TUNE_SEASONS seasons before it only, so the
     reported numbers are what the self-tuning model would really have done."""
     preds_by_combo = [run_rater(seasons, h, k, SOT_W if use_sot else 0.0)[0] for h, k in GRID]
     played = [[m for m in s if m["hg"] is not None] for s in seasons]
     S = len(seasons)
     out = {"tested_seasons": 0, "matches": 0}
-    # live parameters: tuned on the last completed season plus the current one so far
-    recent = (played[-2] if S >= 2 else []) + played[-1]
+    # live parameters: tuned on the last TUNE_SEASONS completed seasons plus the current one so far
+    recent = [m for s in played[-1 - TUNE_SEASONS:] for m in s]
     live = choose_params(recent, preds_by_combo, extra) if S >= 2 else None
     out["params"] = {k: v for k, v in (live or DEFAULT).items() if k != "combo"}
     out["live_combo"] = live["combo"] if live else None
@@ -609,7 +619,7 @@ def evaluate_league(seasons, extra, use_sot):
     accs = {k: new_acc() for k in ("ou_one", "ou_best", "x_one", "x_best", "mk_ou", "mk_x")}
     ll = {"ou_model": 0.0, "ou_blend": 0.0, "ou_close": 0.0, "n_ou": 0, "x_model": 0.0, "x_blend": 0.0, "x_close": 0.0, "n_x": 0}
     for i in test_idx:
-        prm = choose_params(played[i - 1], preds_by_combo, extra)
+        prm = choose_params([m for s in played[max(0, i - TUNE_SEASONS):i] for m in s], preds_by_combo, extra)
         if not prm:
             continue
         preds = preds_by_combo[prm["combo"]]
@@ -624,7 +634,7 @@ def evaluate_league(seasons, extra, use_sot):
             # over/under 2.5 (main leagues have the odds)
             if not extra and qo is not None:
                 po = pool([p[0], 1 - p[0]], [qo, 1 - qo], prm["w_ou"])
-                qc = demargin(m["ouc"].get("P") or m["ouc"].get("Avg"))
+                qc = AG.fair_ou(m["ouc"])[0]
                 if qc:
                     ll["ou_model"] += ll_ou(p[0], over); ll["ou_blend"] += ll_ou(po[0], over)
                     ll["ou_close"] += ll_ou(qc[0], over); ll["n_ou"] += 1
@@ -854,7 +864,7 @@ def build_rows(seasons, preds):
                 rows.append({"off": S_ - 1 - si, "fx": feat_x(m["h"], m["a"], S, meet, p[1]), "fo": feat_ou(m["h"], m["a"], S, meet, p[0]),
                              "res": res, "over": m["hg"] + m["ag"] > 2, "px": p[1], "po": p[0],
                              "qx": demargin(m["xc"].get("P") or m["xc"].get("Avg")),
-                             "qo": demargin(m["ouc"].get("P") or m["ouc"].get("Avg"))})
+                             "qo": AG.fair_ou(m["ouc"])[0]})
             for m in day:
                 S.add(m)
                 meetings.setdefault(h2h_key(m["h"], m["a"]), []).append(m)
@@ -1083,6 +1093,11 @@ def team_stats(played, team, r, d, prev):
 
 ODDS_URL = "https://api.the-odds-api.com/v4/sports/{sport}/{what}"
 USER_BOOKS = {"ladbrokes_uk": "Ladbrokes", "betvictor": "BetVictor"}
+# Football prices: 10 named bookmakers cost the same as the whole UK region (The Odds API counts every 10 books as one
+# region). Pinnacle and the exchanges give the fair price; the agent bets at its four UK books (decision 21.10.2026).
+SHARP = ("pinnacle", "betfair_ex_uk", "betfair_ex_eu", "matchbook")
+EXCHANGE_MAX_OVERROUND = 1.06   # a thin exchange market (wide gap between back prices) is no fair price
+FOOT_BOOKMAKERS = list(SHARP) + ["williamhill", "grosvenor", "casumo", "leovegas", "ladbrokes_uk", "betvictor"]
 EXCHANGES = {"betfair_ex_uk", "betfair_ex_eu", "matchbook", "smarkets", "betdaq"}  # commission eats small edges
 EVENTS_REFRESH_H = 11
 ODDS_REFRESH_H = 10
@@ -1259,7 +1274,7 @@ class OddsAPI:
             if led["spent"] + 2 > allowance:
                 break
             try:
-                evs = self._get(sport, "odds", ["regions=uk", "markets=h2h,totals", "oddsFormat=decimal"])
+                evs = self._get(sport, "odds", ["bookmakers=" + ",".join(FOOT_BOOKMAKERS), "markets=h2h,totals", "oddsFormat=decimal"])
                 S[div]["odds"] = [compact_event(e) for e in evs]
                 S[div]["odds_at"] = self.now.isoformat(timespec="minutes")
                 led["spent"] += 2
@@ -1296,30 +1311,32 @@ def compact_event(ev):
     books = {}
     home, away = ev.get("home_team", ""), ev.get("away_team", "")
     for bm in ev.get("bookmakers", []) or []:
-        ou = x = None
+        ou = x = alt = None
         for mk in bm.get("markets", []):
             if mk.get("key") == "totals":
-                o = u = None
+                lines = {}
                 for oc in mk.get("outcomes", []):
                     try:
                         pt = float(oc.get("point", 0))
                     except (TypeError, ValueError):
                         continue
-                    if abs(pt - 2.5) > 1e-9:
-                        continue
-                    if oc.get("name") == "Over":
-                        o = fnum(oc.get("price"))
-                    elif oc.get("name") == "Under":
-                        u = fnum(oc.get("price"))
-                if o and u:
-                    ou = [o, u]
+                    if oc.get("name") in ("Over", "Under"):
+                        lines.setdefault(pt, {})[oc["name"]] = fnum(oc.get("price"))
+                full = {pt: [v.get("Over"), v.get("Under")] for pt, v in lines.items() if v.get("Over") and v.get("Under")}
+                if 2.5 in full:
+                    ou = full[2.5]
+                elif full and bm.get("key") in SHARP:  # e.g. Pinnacle's Asian line 2.75: turned into a 2.5 price later
+                    pt = min(full, key=lambda x: abs(x - 2.5))
+                    alt = [pt] + full[pt]
             elif mk.get("key") == "h2h":
                 p = {oc.get("name"): fnum(oc.get("price")) for oc in mk.get("outcomes", [])}
                 v = [p.get(home), p.get("Draw"), p.get(away)]
                 if all(v):
                     x = v
-        if ou or x:
+        if ou or x or alt:
             books[bm.get("key")] = {"t": bm.get("title") or bm.get("key"), "ou": ou, "x": x}
+            if alt:
+                books[bm.get("key")]["alt"] = alt
     ko = ev.get("commence_time", "").replace("Z", "+00:00")
     return {"id": ev.get("id"), "ko": ko, "home": home, "away": away, "books": books}
 
@@ -1374,14 +1391,75 @@ def merge_events(fx, events, known, unmatched, names=None):
 
 # ---------------------------------------------------------------- pricing one fixture
 
+def over25_from_line(line, odds):
+    """Fair chance of over 2.5 goals from a fair price on another total line (2.25, 2.75, 3 ...): the Poisson mean of
+    total goals is fitted to the price (whole lines push, quarter lines are split in two), then read at 2.5."""
+    q = demargin(odds)
+    if not q or not 1.0 <= line <= 4.5:
+        return None
+    halves = [line - 0.25, line + 0.25] if abs(line * 4 - round(line * 4)) < 1e-9 and round(line * 4) % 2 else [line, line]
+
+    def fair_over(lam):  # fair decimal odds of the over at this mean
+        p = pois_list(lam)
+        win = push = 0.0
+        for h in halves:
+            win += 0.5 * sum(p[g] for g in range(MAXG + 1) if g > h + 1e-9)
+            push += 0.5 * sum(p[g] for g in range(MAXG + 1) if abs(g - h) < 1e-9)
+        return (1 - push) / max(win, 1e-12)
+
+    target = 1 / q[0]
+    lo, hi = 0.3, 7.0
+    for _ in range(60):  # fair over odds fall as the mean rises
+        mid = (lo + hi) / 2
+        if fair_over(mid) > target:
+            lo = mid
+        else:
+            hi = mid
+    lam = (lo + hi) / 2
+    p = pois_list(lam)
+    return 1 - p[0] - p[1] - p[2]
+
+
 def fair_prices(m):
-    """Fair (margin-free) market probabilities: Pinnacle, else median of UK bookmakers, else average."""
-    books = {k: b for k, b in (m.get("books") or {}).items() if k not in EXCHANGES}
+    """Fair (margin-free) market probabilities: Pinnacle, else the betting exchanges, else Pinnacle or Betfair from
+    football-data, else the median of UK bookmakers, else the average of the market."""
+    allb = m.get("books") or {}
+    books = {k: b for k, b in allb.items() if k not in EXCHANGES and k not in SHARP}
     out = {}
+    pin = allb.get("pinnacle") or {}
+    if pin.get("ou"):
+        out["ou"] = (demargin(pin["ou"]), "Pinnacle", 1)
+    elif pin.get("alt"):
+        q = over25_from_line(pin["alt"][0], pin["alt"][1:])
+        if q:
+            out["ou"] = ([q, 1 - q], "Pinnacle", 1)
+    if pin.get("x") and demargin(pin["x"]):
+        out["x"] = (demargin(pin["x"]), "Pinnacle", 1)
+    for mk in ("ou", "x"):
+        if mk in out:
+            continue
+        ex = []
+        for k, b in allb.items():
+            if k not in EXCHANGES:
+                continue
+            if b.get(mk) and sum(1 / o for o in b[mk]) <= EXCHANGE_MAX_OVERROUND:
+                ex.append(demargin(b[mk]))
+            elif mk == "ou" and b.get("alt") and sum(1 / o for o in b["alt"][1:]) <= EXCHANGE_MAX_OVERROUND:
+                q = over25_from_line(b["alt"][0], b["alt"][1:])
+                if q:
+                    ex.append([q, 1 - q])
+        if ex:
+            out[mk] = ([sum(q[i] for q in ex) / len(ex) for i in range(len(ex[0]))], "giełda", len(ex))
     for mk, fd, key in (("ou", "ou", "ou"), ("x", "x", "x")):
+        if mk in out:
+            continue
         q = demargin(m[fd].get("P"))
         if q:
             out[mk] = (q, "Pinnacle", 1)
+            continue
+        q = demargin(m[fd].get("BFE")) if mk == "ou" else None
+        if q:
+            out[mk] = (q, "giełda", 1)
             continue
         qs = [demargin(b[key]) for b in books.values() if b.get(key)]
         qs = [q for q in qs if q]
@@ -1536,7 +1614,7 @@ def update_journal(journal, code, name, priced, results, now, grade_now):
             e["close_odds"] = e["last_odds"]
         elif close_rows.get("Avg"):
             e["close_odds"] = close_rows["Avg"][i]
-        fair_close = demargin(close_rows.get("P") or close_rows.get("Avg"))
+        fair_close = AG.fair_ou(close_rows)[0] if mk == "ou" else demargin(close_rows.get("P") or close_rows.get("Avg"))
         if fair_close:  # beat the close: our price against the fair closing price (Pinnacle without margin)
             e["clv"] = round(e["odds"] * fair_close[i] - 1, 4)
 
@@ -1775,6 +1853,7 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         print("agent: start failed:", e)
     if ag and not fixtures_from_results and not src.local and not only:
         ag.elo = ZR.ClubElo(src.cache_dir or os.path.join(outdir, ".cache"), now)
+        ag.espn = ZR.ESPNScores(src.cache_dir or os.path.join(outdir, ".cache"), now)
         try:
             nba_ctx = NBA.prepare(src.cache_dir or os.path.join(outdir, ".cache"), now, oa)
         except Exception as e:
@@ -1846,7 +1925,12 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
         update_journal(journal, code, f"{country} · {name}", priced, played, now, grades)
         if ag and code in AG.LEAGUES:
             try:
-                ag.football(code, f"{country} · {name}", priced, played, teams=sorted(teams_of(cur) | teams_of(fx)),
+                late = []
+                if ag.espn is not None:  # football-data 3+ days late with a match: its result from ESPN, for settling only
+                    want = [(ko, h, a) for ko, h, a in ag.late_matches(code)
+                            if not find_result(played, dt.datetime.fromisoformat(ko).astimezone(LONDON).date().isoformat(), h, a)]
+                    late = ag.espn.results(code, want, team_sim) if want else []
+                ag.football(code, f"{country} · {name}", priced, played + late, teams=sorted(teams_of(cur) | teams_of(fx)),
                             elo_backup=ZR.results_elo(seasons))
             except Exception as e:  # the agent must never stop the app
                 ag.errors.append(f"{code}: {str(e)[:160]}")
@@ -1885,6 +1969,7 @@ def run(today, src, outdir, fixtures_from_results=False, now=None, only=None):
                          "errors": (oa.status.get("errors") or [])[:3]},
                 "fpl": {"teams": len(absences), "players": sum(len(v) for v in absences.values())},
                 "clubelo": ag.elo.status() if ag.elo is not None else None,
+                "espn_pilka": ag.espn.status() if ag.espn is not None else None,
                 "espn": {k: nba_ctx["status"].get(k) for k in ("games", "injuries", "errors", "stale")} if nba_ctx else None,
             }
             agent_summary = ag.finish({"nba": nba_ctx["status"] if nba_ctx else None, "odds_remaining": oa.c.get("remaining"),

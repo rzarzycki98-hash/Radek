@@ -153,6 +153,19 @@ def demargin(odds):
     return [x / s for x in inv]
 
 
+FAIR_SRC = {"P": "Pinnacle", "BFE": "giełda Betfair", "Avg": "średnia rynku"}
+
+
+def fair_ou(rows):
+    """Fair over/under 2.5 probabilities from football-data prices: Pinnacle, else the Betfair exchange (when its
+    market is not thin), else the market average. Returns (probabilities, source key) or (None, None)."""
+    for k in ("P", "BFE", "Avg"):
+        o = (rows or {}).get(k)
+        if o and all(o) and (k != "BFE" or sum(1 / x for x in o) <= 1.06):
+            return demargin(o), k
+    return None, None
+
+
 def pool(pm, pk, w):
     """Log-linear pooling of model and market probabilities (w = model weight)."""
     v = [max(a, 1e-9) ** w * max(b, 1e-9) ** (1 - w) for a, b in zip(pm, pk)]
@@ -260,6 +273,7 @@ class Agent:
         self.cands = []
         self.errors = []
         self.elo = None   # zrodla.ClubElo, set by the engine
+        self.espn = None  # zrodla.ESPNScores (backup results), set by the engine
         self.elo_src = {}
         self.res_info = {}  # per league: newest result and matches still waiting for one (warning on the page)
         self.by_id = {b["id"]: b for b in s["bets"]}
@@ -324,13 +338,14 @@ class Agent:
 
     def results_info(self, code, results):
         """Newest result of a league and how many analysed matches, played 2+ days ago, still have none."""
-        last = max((m["d"] for m in results or [] if m.get("hg") is not None), default=None)
+        last = max((m["d"] for m in results or [] if m.get("hg") is not None and m.get("src") != "ESPN"), default=None)
         old = self.now - dt.timedelta(days=2)
-        waiting = sum(1 for a in self.A.values() if a["sp"] == "pilka" and a["lg"] == code and "res" not in a
-                      and dt.datetime.fromisoformat(a["ko"]) < old)
+        mine = [a for a in self.A.values() if a["sp"] == "pilka" and a["lg"] == code and dt.datetime.fromisoformat(a["ko"]) < old]
+        waiting = sum(1 for a in mine if "res" not in a)
+        espn = sum(1 for a in mine if a.get("res_src") == "ESPN")   # settled from ESPN, football-data still missing
         age = (self.now.date() - last).days if last else None
-        self.res_info[code] = {"last": last.isoformat() if last else None, "age_d": age, "waiting": waiting,
-                               "stale": bool(waiting and (age is None or age > RESULTS_STALE_DAYS))}
+        self.res_info[code] = {"last": last.isoformat() if last else None, "age_d": age, "waiting": waiting, "espn": espn,
+                               "stale": bool((waiting or espn) and (age is None or age > RESULTS_STALE_DAYS))}
 
     def analyze_football(self, f, code, league_name, rules, elo=None):
         pm = f["over"]["2.5"]
@@ -348,7 +363,10 @@ class Agent:
         inj = injury_effect(f)
         an["inj"] = inj
         old = self.A.get(an["id"])
-        pk0 = old["pk0"] if old and old.get("pk0") is not None else pk
+        an["pk_src"] = (f.get("fair") or {}).get("ou_src")
+        # a new source of the fair price (e.g. UK median -> Pinnacle) is not a market move: start following it afresh
+        same = old and old.get("pk_src", "UK") == an["pk_src"]
+        pk0 = old["pk0"] if same and old.get("pk0") is not None else pk
         mv = pk - pk0 if pk is not None and pk0 is not None else None
         an["pk0"], an["mv"] = r4(pk0), r4(mv)
         prices = {k: v for k, v in ((f.get("prices") or {}).get("ou") or {}).items() if k in FOOT_BOOKS}
@@ -445,7 +463,8 @@ class Agent:
                  f"{pctf(1 / best['odds'])} → przewaga {pctf(best['edge'], True)} (taktyka „{TACTICS['pilka'][act]['name']}”)."]
         mk = f"Model goli i strzałów: {pctf(pm)}"
         if an["pk"] is not None:
-            mk += f", rynek bez marży: {pctf(an['pk'] if i == 0 else 1 - an['pk'])}"
+            src = {"Pinnacle": " (Pinnacle)", "giełda": " (giełda)", "UK": " (mediana bukmacherów z UK)"}.get(an.get("pk_src"), "")
+            mk += f", rynek bez marży{src}: {pctf(an['pk'] if i == 0 else 1 - an['pk'])}"
         parts.append(mk + ".")
         if f.get("xg"):
             parts.append(f"Oczekiwane gole {numf(f['xg'][0])} – {numf(f['xg'][1])}.")
@@ -464,44 +483,77 @@ class Agent:
             parts.append(f"Rynek od pierwszego odczytu: over {pctf(an['pk0'])} → {pctf(an['pk'])}.")
         return " ".join(parts)
 
+    def late_matches(self, code):
+        """[(kick-off, home, away)] of this league's open bets and analyses still without a result."""
+        out = {(b["ko"], b["home"], b["away"]) for b in self.s["bets"] if b["sp"] == "pilka" and b["lg"] == code and b["status"] == "open"}
+        out |= {(a["ko"], a["home"], a["away"]) for a in self.A.values() if a["sp"] == "pilka" and a["lg"] == code and "res" not in a}
+        return sorted(out)
+
     def settle_football(self, code, results):
+        """results: football-data rows, plus ESPN rows (src="ESPN") for matches football-data is 3+ days late with.
+        An ESPN result settles at once; the closing price (CLV) is added when football-data publishes the match,
+        and a bet is corrected if football-data has a different score."""
         today = self.now.date()
 
-        def find(date, home, away):
+        def find(date, home, away, fd_only=False):
             d0 = dt.date.fromisoformat(date)
+            hit = None
             for m in results:
                 if m["h"] == home and m["a"] == away and m["hg"] is not None and abs((m["d"] - d0).days) <= 2:
-                    return m
-            return None
+                    if m.get("src") != "ESPN":
+                        return m
+                    hit = hit or (None if fd_only else m)
+            return hit
+
+        def bet_extra(b, m):
+            i = SIDES.index(b["side"])
+            extra = {"score": f"{m['hg']}:{m['ag']}", "res_src": m.get("src") or "football-data"}
+            fair, fsrc = fair_ou(m["ouc"])
+            if fair:
+                extra["clv"] = r4(b["odds"] * fair[i] - 1)
+                extra["clv_src"] = FAIR_SRC[fsrc]
+            if b.get("last_odds"):
+                extra["close_odds"] = b["last_odds"]
+            return ("won" if (m["hg"] + m["ag"] > 2.5) == (i == 0) else "lost"), extra
 
         for b in self.s["bets"]:
-            if b["sp"] != "pilka" or b["lg"] != code or b["status"] != "open":
+            if b["sp"] != "pilka" or b["lg"] != code:
+                continue
+            if b["status"] in ("won", "lost") and b.get("res_src") == "ESPN":  # football-data caught up: closing price, check
+                m = find(b["date"], b["home"], b["away"], fd_only=True)
+                if m:
+                    outcome, extra = bet_extra(b, m)
+                    if outcome != b["status"] or extra["score"] != b.get("score"):
+                        extra["note"] = f"Poprawka: ESPN podało {b.get('score')}, football-data {extra['score']}."
+                        self.s["cash"] = round(self.s["cash"] - b["payout"], 2)
+                        self.settle(b, outcome, extra)
+                    else:
+                        b.update(extra)
+                    self.post_mortem(b)
+                continue
+            if b["status"] != "open":
                 continue
             m = find(b["date"], b["home"], b["away"])
             if not m:
                 if dt.date.fromisoformat(b["date"]) < today - dt.timedelta(days=21):
                     self.settle(b, "void", {"note": "Brak wyniku po 21 dniach – zwrot stawki."})
                 continue
-            i = SIDES.index(b["side"])
-            won = (m["hg"] + m["ag"] > 2.5) == (i == 0)
-            extra = {"score": f"{m['hg']}:{m['ag']}"}
-            fair = demargin(m["ouc"].get("P") or m["ouc"].get("Avg"))
-            if fair:
-                extra["clv"] = r4(b["odds"] * fair[i] - 1)
-                extra["clv_src"] = "Pinnacle" if m["ouc"].get("P") else "średnia rynku"
-            if b.get("last_odds"):
-                extra["close_odds"] = b["last_odds"]
-            self.settle(b, "won" if won else "lost", extra)
+            outcome, extra = bet_extra(b, m)
+            self.settle(b, outcome, extra)
             self.post_mortem(b)
         for a in self.A.values():
-            if a["sp"] != "pilka" or a["lg"] != code or "res" in a:
+            if a["sp"] != "pilka" or a["lg"] != code or ("res" in a and a.get("res_src") != "ESPN"):
                 continue
-            m = find(a["date"], a["home"], a["away"])
+            m = find(a["date"], a["home"], a["away"], fd_only="res" in a)
             if not m:
                 continue
             over = m["hg"] + m["ag"] > 2.5
             a["res"] = [m["hg"], m["ag"]]
-            fair = demargin(m["ouc"].get("P") or m["ouc"].get("Avg"))
+            if m.get("src") == "ESPN":
+                a["res_src"] = "ESPN"
+            else:
+                a.pop("res_src", None)
+            fair, _ = fair_ou(m["ouc"])
             if fair:
                 a["close"] = r4(fair[0])
 
@@ -1250,7 +1302,7 @@ class Agent:
         S["summary"] = self.summary()
         S["upcoming"] = [{k: a.get(k) for k in ("id", "sp", "lg", "lgn", "ko", "home", "away", "line", "p", "pm", "pk", "mu", "mu_inj",
                                                  "best", "dec", "why", "stake", "tx", "b2b", "elo", "inj", "p_inj", "pk0", "mv",
-                                                 "lmed", "line0", "xg", "tactic", "odds_age_h", "gp", "veto", "flags_off")}
+                                                 "lmed", "line0", "xg", "tactic", "odds_age_h", "gp", "veto", "flags_off", "pk_src")}
                          for a in upcoming]
         S["critic_names"] = {k: v["name"] for k, v in CRITIC.items()}
         S["status"] = dict(extra_status or {}, errors=self.errors, results=self.res_info)

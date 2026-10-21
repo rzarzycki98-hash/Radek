@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: ["claude/**"]
-    paths: ["gole/testy/historia.py", "gole/testy/diagnoza_zrodel.py", ".github/workflows/linia-goli-diagnoza.yml"]
+    paths: ["gole/testy/historia.py", "gole/testy/diagnoza_zrodel.py"]
 
 permissions:
   contents: read
@@ -28,6 +28,8 @@ jobs:
           restore-keys: fd-
       - run: pip install --quiet numpy
       - name: Źródła danych (ClubElo, football-data)
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python gole/testy/diagnoza_zrodel.py
       - name: Test modelu na historii (11 lig, 6 sezonów)
         run: python gole/testy/historia.py

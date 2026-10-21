@@ -157,7 +157,7 @@ def main(path):
     if res:
         newest = max((r["last"] for r in res.values() if r.get("last")), default=None)
         print(f"    wyniki lig agenta: najnowszy {newest or '—'}"
-              + ("; STARE (3+ dni, a mecze czekają): " + ", ".join(f"{c} ostatni {r['last']}, czeka {r['waiting']}" for c, r in old_res)
+              + ("; STARE (3+ dni, a mecze czekają): " + ", ".join(f"{c} ostatni {r['last']}, czeka {r['waiting']}" + (f", z ESPN {r['espn']}" if r.get("espn") else "") for c, r in old_res)
                  if old_res else "; wszystkie świeże"))
     od = src.get("odds") or {}
     print(f"  The Odds API: zapytania do końca miesiąca: {od.get('remaining', '?')}; ligi agenta z kursami: "

@@ -1066,8 +1066,8 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const bad = Object.entries(R).filter(([, r]) => r && r.stale);
     if (!bad.length) return "";
     const nm = (c) => { const L = L_(c); return L ? `${flag(L)} ${L.name}` : c; };
-    const items = bad.map(([c, r]) => `${nm(c)} (ostatni wynik ${r.last ? esc(shortFmt.format(d(r.last))) : "—"}, czeka ${r.waiting} meczów)`);
-    return `<p class="warn">Stare wyniki: ${items.join("; ")}. Źródło wyników (football-data.co.uk) się spóźnia – zakłady z tych lig rozliczą się, gdy wyniki przyjdą (agent czeka do 21 dni, potem zwraca stawkę).</p>`;
+    const items = bad.map(([c, r]) => `${nm(c)} (ostatni wynik ${r.last ? esc(shortFmt.format(d(r.last))) : "—"}${r.waiting ? `, czeka ${r.waiting} meczów` : ""}${r.espn ? `, z ESPN rozliczono ${r.espn}` : ""})`);
+    return `<p class="warn">Stare wyniki: ${items.join("; ")}. Główne źródło wyników (football-data.co.uk) się spóźnia. Mecze sprzed 3+ dni agent rozlicza z wyników ESPN; „vs zamknięcie” dopisze się, gdy football-data je opublikuje.</p>`;
   }
   const chk = (ok, label, val) => `<div class="chk ${ok ? "y" : "n"}"><span class="fi">${ok ? "✓" : "·"}</span><span>${label}</span><b class="num">${val}</b></div>`;
 
@@ -1405,7 +1405,7 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const ref = fin || model;
     const rows = Object.entries((f.prices && f.prices[mk]) || {}).sort((a, b) => a[1][0].localeCompare(b[1][0]));
     const ec = (e) => e == null ? "" : e > (st.data.edge_min || 0.03) ? "pos" : e < 0 ? "neg" : "";
-    const srcTxt = (s) => s === "Pinnacle" ? "Pinnacle bez marży" : s === "UK" ? "mediana bukmacherów z UK" : s === "Średnia" ? "średnia rynku" : "";
+    const srcTxt = (s) => s === "Pinnacle" ? "Pinnacle bez marży" : s === "giełda" ? "giełda (Betfair, Matchbook) bez marży" : s === "UK" ? "mediana bukmacherów z UK" : s === "Średnia" ? "średnia rynku" : "";
     const probRow = (label, p, note) => p ? `<tr><td>${label}${note ? `<div class="meta">${esc(note)}</div>` : ""}</td>${p.map((v) => `<td>${pct(v)}<small>${fairOdd(v)}</small></td>`).join("")}</tr>` : "";
     return `<div class="card"><h3>Kursy: ${mk === "x" ? "wynik 1X2" : "gole 2.5"}</h3>
       <div class="scroll"><table class="lines num"><thead><tr><th></th>${sides.map((s) => `<th>${s}</th>`).join("")}</tr></thead><tbody>
