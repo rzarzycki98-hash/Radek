@@ -3,7 +3,8 @@
 ClubElo rates every European club after each match (like chess Elo). The agent uses it as an
 independent opinion on how strong the two teams are; the tactic built on it is tested on paper first.
 """
-import csv, difflib, io, os, time, unicodedata, urllib.error, urllib.request
+import csv, datetime as dt, difflib, io, json, os, time, unicodedata, urllib.error, urllib.request
+from zoneinfo import ZoneInfo
 
 ELO_URLS = ["https://api.clubelo.com/{day}", "http://api.clubelo.com/{day}"]
 RETRY_H = 6   # after a failed download, try again after this many hours (meanwhile: Elo from league results)
@@ -161,3 +162,80 @@ def results_elo(seasons, k=20.0, home=60.0):
             delta = k * mult * (res - exp)
             elo[h], elo[a] = rh + delta, ra - delta
     return elo
+
+
+# ---------------------------------------------------------------- backup results (decision 21.10.2026)
+ESPN_SOCCER = "https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={ymd}"
+ESPN_SLUG = {"E0": "eng.1", "SP1": "esp.1", "I1": "ita.1", "D1": "ger.1", "F1": "fra.1", "N1": "ned.1", "P1": "por.1",
+             "B1": "bel.1", "T1": "tur.1", "SC0": "sco.1", "G1": "gre.1"}
+LONDON = ZoneInfo("Europe/London")
+LATE_H = 72   # a match without a football-data result this many hours after kick-off is settled from ESPN
+
+
+class ESPNScores:
+    """Final scores from ESPN (free, no key) for matches football-data has not published 3+ days after kick-off.
+    Used only to settle the agent's bets and analyses; the model keeps learning from football-data only."""
+
+    def __init__(self, cache_dir, now):
+        self.dir = os.path.join(cache_dir, "espn_pilka") if cache_dir else None
+        self.now = now
+        self.errors, self.downloads, self.used = [], 0, 0
+
+    def _day(self, code, day):
+        """[[home, away, home goals, away goals, finished]] of one league on one day (UTC date of kick-off)."""
+        path = os.path.join(self.dir, f"{code}-{day:%Y%m%d}.json") if self.dir else None
+        if path and os.path.exists(path):  # finished days stay cached; others are asked again after 3 hours
+            rows = json.load(open(path, encoding="utf-8"))
+            if (rows and all(r[4] for r in rows)) or (time.time() - os.path.getmtime(path)) / 3600 < 3:
+                return rows
+        url = ESPN_SOCCER.format(slug=ESPN_SLUG[code], ymd=f"{day:%Y%m%d}")
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (linia-goli; +github actions)", "Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            js = json.loads(r.read().decode("utf-8"))
+        self.downloads += 1
+        rows = []
+        for ev in js.get("events", []) or []:
+            try:
+                comp = ev["competitions"][0]
+                cs = {c.get("homeAway"): c for c in comp.get("competitors", [])}
+                stt = ((ev.get("status") or comp.get("status") or {}).get("type") or {})
+                name = str(stt.get("name") or "")
+                done = bool(stt.get("completed")) and not any(w in name for w in ("POSTPONED", "CANCEL", "ABANDON", "SUSPENDED"))
+                rows.append([cs["home"]["team"].get("displayName", ""), cs["away"]["team"].get("displayName", ""),
+                             int(float(cs["home"].get("score") or 0)), int(float(cs["away"].get("score") or 0)), done])
+            except (KeyError, IndexError, TypeError, ValueError):
+                continue
+        if path:
+            os.makedirs(self.dir, exist_ok=True)
+            json.dump(rows, open(path, "w", encoding="utf-8"))
+        return rows
+
+    def results(self, code, wanted, sim):
+        """Result rows (football-data layout, src="ESPN") for wanted matches [(kick-off ISO, home, away)];
+        sim(espn name, football-data name) -> 0..1 matches the team names."""
+        if code not in ESPN_SLUG:
+            return []
+        out, days = [], {}
+        for ko, h, a in wanted:
+            k = dt.datetime.fromisoformat(ko)
+            if (self.now - k).total_seconds() / 3600 < LATE_H or (self.now - k).days > 21:
+                continue
+            days.setdefault(k.date(), []).append((k, h, a))
+        for day, games in sorted(days.items()):
+            try:
+                rows = self._day(code, day)
+            except Exception as e:
+                self.errors.append(f"ESPN {code} {day}: {str(e)[:80]}")
+                continue
+            for k, h, a in games:
+                best = max(((sim(r[0], h) + sim(r[1], a), r) for r in rows if r[4]), default=(0, None), key=lambda x: x[0])
+                if best[1] is None or best[0] < 1.3:
+                    continue
+                r = best[1]
+                out.append({"d": k.astimezone(LONDON).date(), "h": h, "a": a, "hg": r[2], "ag": r[3], "hst": None, "ast": None,
+                            "ou": {}, "ouc": {}, "x": {}, "xc": {}, "src": "ESPN"})
+                self.used += 1
+        return out
+
+    def status(self):
+        return {"errors": self.errors[:5], "downloads": self.downloads, "used": self.used}

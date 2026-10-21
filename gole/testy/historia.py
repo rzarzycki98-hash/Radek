@@ -16,6 +16,7 @@ sys.path.insert(0, GOLE)
 import engine as E  # noqa: E402
 import agent as AG  # noqa: E402
 
+GAINS = (0.0, 0.0005, 0.001, 0.002)   # tested minimum gains for the model's weight in the blend
 BASE_HL = (60.0, 120.0, 240.0)   # tested half-lives (days) of the league scoring level
 EDGE = 0.03            # the agent's "Model + rynek" threshold
 ODDS = (1.5, 3.2)      # the agent's odds range
@@ -85,9 +86,14 @@ def league_rows(src, code, years):
     for i in range(2, len(seasons)):
         if len(played[i]) < 30:
             continue
-        prm = E.choose_params(played[i - 1], preds_by_combo, False)
+        prm = E.choose_params([m for s in played[max(0, i - E.TUNE_SEASONS):i] for m in s], preds_by_combo, False)
         if not prm:
             continue
+        # weight variants: how the engine picked it before 21.10.2026 (1 season, any gain) and with other minimum gains
+        variants = {"przed (1 sezon, bez progu)": E.choose_params(played[i - 1], preds_by_combo, False, min_gain=0.0)}
+        for g in GAINS:
+            variants[f"2 sezony, próg {g}"] = E.choose_params([m for s in played[max(0, i - E.TUNE_SEASONS):i] for m in s],
+                                                             preds_by_combo, False, min_gain=g)
         preds = preds_by_combo[prm["combo"]]
         for bh in BASE_HL:  # variant: the league's scoring level follows recent matches faster than team strengths
             if prm["combo"] not in base_preds[bh]:
@@ -108,6 +114,8 @@ def league_rows(src, code, years):
                         "qa": qa[0] if qa else None, "qc": qc[0] if qc else None, "qb": qb[0] if qb else None,
                         "qbc": qbc[0] if qbc else None, "qac": qac[0] if qac else None, "hasP": bool(m["ou"].get("P")),
                         "pv": {bh: base_preds[bh][prm["combo"]].get(id(m), (None,))[0] for bh in BASE_HL},
+                        "qs": (AG.fair_ou(m["ou"])[0] or [None])[0], "qsc": (AG.fair_ou(m["ouc"])[0] or [None])[0],
+                        "var": {k: (preds_by_combo[v["combo"]].get(id(m), (None,))[0], v["w_ou"]) for k, v in variants.items() if v},
                         "odds": {b: m["ou"].get(b) for b in ("B365", "Max", "Avg", "P")}, "_hist": hist, "_w": prm["w_ou"]})
     return out, seasons
 
@@ -275,6 +283,21 @@ def main():
         b0, b1 = bets(rs, "b_raw", "B365"), bets(rs, "b_cal", "B365")
         print(f"     {code:5} typów {b0['n']:4} (O {b0['over']:3}/U {b0['under']:3}) wynik {pct(b0['roi'])} CLV {pct(b0['clv'])}"
               f"  →  typów {b1['n']:4} (O {b1['over']:3}/U {b1['under']:3}) wynik {pct(b1['roi'])} CLV {pct(b1['clv'])}")
+    print("\n4) WAGA MODELU: jak silnik dobierał ją przed 21.10 i warianty nowego doboru")
+    print("   (rynek = Pinnacle, a gdy go brak – giełda Betfair, potem średnia; zakłady jak „Model + rynek” przy Bet365 i przy najlepszym kursie)")
+    for name in list(rows[0]["var"]):
+        for r in rows:
+            v = r["var"].get(name)
+            r["vb"] = E.pool([v[0], 1 - v[0]], [r["qs"], 1 - r["qs"]], v[1])[0] if v and v[0] is not None and r["qs"] is not None else None
+        ok = [r for r in rows if r["vb"] is not None]
+        lls = sum(ll(r["vb"], r["y"]) for r in ok) / len(ok)
+        llm = sum(ll(r["qs"], r["y"]) for r in ok) / len(ok)
+        ws = [r["var"][name][1] for r in ok]
+        line = f"   {name:28} log loss {lls:.4f} (sam rynek {llm:.4f}), średnia waga {sum(ws) / len(ws):.2f}, ligo-sezony z wagą 0: {sum(1 for w in ws if w == 0) / len(ws) * 100:3.0f}%"
+        for book in ("B365", "Max"):
+            b = bets(ok, "vb", book, "qsc")
+            line += f" | {book:4} typów {b['n']:4} (O {b['over']:3}/U {b['under']:3}) wynik {pct(b['roi'])} CLV {pct(b['clv'])}"
+        print(line)
     if a.json:
         json.dump({"ll": res, "bets": out3, "seasons": n_season}, open(a.json, "w"), indent=1, default=str)
 

@@ -159,5 +159,46 @@ ag7.adapt()
 check("rynek_przeciw" not in ag7.s["rules"]["pilka"]["critic_off"] and "Krytyk znów blokuje" in ag7.s["changes"][-1]["text"],
       "bets placed despite a switched-off warning lose → the warning comes back")
 
+# ------------------------------------------------------------------ 5) backup results from ESPN (21.10.2026)
+d5 = tempfile.mkdtemp(prefix="lg-espn-")
+t0 = dt.datetime(2026, 10, 15, 9, 0, tzinfo=UTC)
+ag8 = AG.Agent(d5, t0)
+bet = {"id": "pilka|B1|2026-10-18|Genk|Gent|ou", "sp": "pilka", "lg": "B1", "lgn": "B1", "date": "2026-10-18", "ko": "2026-10-18T14:00+00:00",
+       "home": "Genk", "away": "Gent", "side": "Under", "line": 2.5, "odds": 2.0, "book": "William Hill", "book_key": "williamhill",
+       "prob": 0.52, "edge": 0.04, "tactic": "blend", "stake": 10.0, "status": "open", "why": "test"}
+ag8.s["bets"].append(bet)
+ag8.s["cash"] -= 10.0
+ag8.A["pilka|B1|2026-10-18|Genk|Gent"] = {"id": "pilka|B1|2026-10-18|Genk|Gent", "sp": "pilka", "lg": "B1", "date": "2026-10-18",
+                                          "ko": "2026-10-18T14:00+00:00", "home": "Genk", "away": "Gent", "best": {"side": "Under", "odds": 2.0}, "dec": "bet",
+                                          "tx": {"blend": [1, 2.0, "williamhill", 0.04]}}
+ag8.finish({})
+cash0 = AG.Agent(d5, t0).s["cash"]
+
+
+class FakeESPN:
+    def results(self, code, wanted, sim):
+        return [{"d": dt.date(2026, 10, 18), "h": h, "a": a, "hg": 1, "ag": 0, "ouc": {}, "src": "ESPN"} for ko, h, a in wanted]
+
+
+t1 = dt.datetime(2026, 10, 22, 9, 0, tzinfo=UTC)
+ag9 = AG.Agent(d5, t1)
+check(ag9.late_matches("B1") == [("2026-10-18T14:00+00:00", "Genk", "Gent")], "late matches: the open bet and its analysis")
+ag9.football("B1", "B1", [], FakeESPN().results("B1", ag9.late_matches("B1"), None))
+ag9.finish({})
+b9 = ag9.by_id[bet["id"]]
+check(b9["status"] == "won" and b9["res_src"] == "ESPN" and b9.get("clv") is None and abs(ag9.s["cash"] - (cash0 + 20.0)) < 1e-6,
+      "ESPN result settles the bet at once, without a closing price")
+r9 = ag9.s["status"]["results"]["B1"]
+check(r9["stale"] and r9["espn"] == 1 and r9["waiting"] == 0, f"page warning knows the match was settled from ESPN ({r9})")
+# football-data catches up with a different score: the bet is corrected and gets its closing price
+ag10 = AG.Agent(d5, t1 + dt.timedelta(days=1))
+ag10.football("B1", "B1", [], [{"d": dt.date(2026, 10, 18), "h": "Genk", "a": "Gent", "hg": 2, "ag": 1, "ouc": {"Avg": [1.8, 2.1]}}])
+ag10.finish({})
+b10 = ag10.by_id[bet["id"]]
+check(b10["status"] == "lost" and b10["res_src"] == "football-data" and b10.get("clv") is not None and "Poprawka" in b10.get("note", "")
+      and abs(ag10.s["cash"] - cash0) < 1e-6, f"football-data score differs → bet corrected, cash back to the stake lost ({b10.get('note')})")
+a10 = ag10.A["pilka|B1|2026-10-18|Genk|Gent"]
+check(a10["res"] == [2, 1] and "res_src" not in a10 and a10.get("close") is not None, "analysis re-settled from football-data with the closing price")
+
 print("\nWYNIK:", "wszystko OK" if not fails else f"{len(fails)} błędów")
 sys.exit(1 if fails else 0)

@@ -34,7 +34,7 @@ for host in ("api.clubelo.com", "clubelo.com", "www.clubelo.com"):
         print(f"  DNS {host}: {sorted({a[4][0] for a in socket.getaddrinfo(host, 80)})}")
     except Exception as e:
         print(f"  DNS {host}: {e}")
-for day in (today, dt.date(2025, 10, 1)):
+for day in (today,):
     for scheme in ("http", "https"):
         for ua in UAS:
             print(f"  {scheme}://api.clubelo.com/{day} [{ua}]: {probe(f'{scheme}://api.clubelo.com/{day}', ua)}")
@@ -84,3 +84,40 @@ for code in AG.LEAGUES:
         print(f"  {code:4} wyników {sum(1 for m in rows if m['hg'] is not None):3}, ostatni {last}, Last-Modified: {lm}")
     except Exception as e:
         print(f"  {code:4} błąd: {e}")
+
+print("\n=== ESPN – wyniki piłkarskie (zapasowe źródło)")
+import tempfile  # noqa: E402
+import zrodla as ZR  # noqa: E402
+es = ZR.ESPNScores(tempfile.mkdtemp(), dt.datetime.now(dt.timezone.utc))
+for code in ("B1", "E0", "G1"):
+    try:
+        rows = es._day(code, dt.date(2026, 10, 18))
+        print(f"  {code} 18.10: {len(rows)} meczów, np. {rows[:3]}")
+    except Exception as e:
+        print(f"  {code}: błąd {e}")
+
+print("\n=== The Odds API – czy Pinnacle i giełdy podają linię goli (1 zapytanie, 1 kredyt)")
+key = os.environ.get("ODDS_API_KEY", "").strip()
+if key:
+    import json  # noqa: E402
+    url = (f"https://api.the-odds-api.com/v4/sports/soccer_epl/odds?apiKey={key}&dateFormat=iso&oddsFormat=decimal&markets=totals"
+           f"&bookmakers={','.join(E.FOOT_BOOKMAKERS)}")
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "linia-goli/3"}), timeout=60) as r:
+            evs = json.loads(r.read().decode("utf-8"))
+            print(f"  zużyte w zapytaniu: {r.headers.get('x-requests-last')}, zostało: {r.headers.get('x-requests-remaining')}")
+        cnt = {}
+        for ev in evs:
+            for bm in ev.get("bookmakers", []):
+                pts = sorted({o.get("point") for mk in bm.get("markets", []) for o in mk.get("outcomes", [])})
+                cnt.setdefault(bm["key"], []).append(pts)
+        for k, v in sorted(cnt.items()):
+            print(f"  {k:15} meczów {len(v):2}, z linią 2.5: {sum(1 for p in v if 2.5 in p):2}, linie np. {v[:4]}")
+        ce = E.compact_event(evs[0]) if evs else None
+        if ce:
+            print("  przykład:", ce["home"], "–", ce["away"], json.dumps(ce["books"])[:400])
+            print("  uczciwa cena:", E.fair_prices({"books": ce["books"], "ou": {}, "x": {}}))
+    except Exception as e:
+        print("  błąd:", str(e).replace(key, "***"))
+else:
+    print("  brak klucza")
