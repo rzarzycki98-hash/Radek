@@ -1211,10 +1211,10 @@ table.tt { font-size: 13px; } table.tt th, table.tt td { padding: 7px 4px; } tab
     const rows = [
       ["football-data.co.uk", "wyniki, gole, strzały celne, kursy zamknięcia (6 sezonów)", fd ? ok(!(fd.errors || []).length && !fd.n_stale && !staleN,
         `${fd.leagues} lig${fd.n_stale ? ` · ${fd.n_stale} plików nie pobrało się – użyte starsze kopie` : ""}${staleN ? ` · stare wyniki w ${staleN} ligach` : ""}`) : "—"],
-      ["The Odds API", "kursy bukmacherów z UK przed meczem", od ? ok(!(od.errors || []).length, `zostało ${od.remaining ?? "?"} zapytań w miesiącu`) : "—"],
+      ["The Odds API", "kursy przed meczem: 4 bukmacherów agenta, Ladbrokes, BetVictor; Pinnacle i giełdy jako uczciwa cena", od ? ok(!(od.errors || []).length, `zostało ${od.remaining ?? "?"} zapytań w miesiącu`) : "—"],
       ["ClubElo", "siła drużyn (ranking Elo)", ce ? (ceN > 0 ? ok(true, `${ceN} drużyn dopasowanych`) : ok(false, `nie odpowiada${ce.tried && ce.tried.why ? ` (${esc(ce.tried.why.slice(0, 90))})` : ""} – zastępczo Elo liczone z wyników lig`)) : "—"],
       ["Fantasy Premier League", "kontuzje i zawieszenia w Premier League", fp ? ok(fp.teams > 0, `${fp.players} zawodników na liście`) : "—"],
-      ["ESPN", "NBA: wyniki, terminarz, najlepsi strzelcy, raport kontuzji", es ? ok(!(es.errors || []).length, `${es.games ?? 0} meczów, ${es.injuries ?? 0} kontuzji`) : "—"],
+      ["ESPN", "NBA: wyniki, terminarz, najlepsi strzelcy, raport kontuzji; piłka: zapasowe wyniki, gdy football-data spóźnia się 3+ dni", es ? ok(!(es.errors || []).length && !((s.espn_pilka || {}).errors || []).length, `${es.games ?? 0} meczów NBA, ${es.injuries ?? 0} kontuzji${(s.espn_pilka || {}).used ? ` · piłka: ${s.espn_pilka.used} wyników z ESPN` : ""}`) : "—"],
     ];
     return `<div class="card"><h3>Skąd agent bierze dane</h3><div class="srcs">${rows.map(([n, w, v]) => `<div class="src"><b>${esc(n)}</b><span class="note">${esc(w)}</span><span class="meta num">${v}</span></div>`).join("")}</div>
       <p class="note">Wszystko za darmo. Nowe dane agent zawsze najpierw sprawdza na sucho (osobna taktyka), a pieniądze idą za nimi dopiero, gdy pomagają. Newsów i składów nie czyta – to wymagałoby płatnej AI.</p></div>`;

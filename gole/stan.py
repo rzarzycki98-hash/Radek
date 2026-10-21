@@ -172,6 +172,9 @@ def main(path):
     es = src.get("espn") or {}
     print(f"  ESPN (NBA): mecze w bazie {es.get('games', 0)}, kontuzje w raporcie {es.get('injuries', 0)}{err(es)}"
           + (f"; starsze kopie zamiast pobrania: {len(es['stale'])}" if es.get("stale") else ""))
+    ep = src.get("espn_pilka")
+    if ep is not None:
+        print(f"  ESPN (zapasowe wyniki piłki): rozliczone z ESPN w tej aktualizacji {ep.get('used', 0)}{err(ep)}")
     nb = st.get("nba") or {}
     if nb:
         nx = nb.get("next")
