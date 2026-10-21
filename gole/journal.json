@@ -8293,6 +8293,78 @@
    "added": "2026-10-21T09:28+00:00",
    "status": "open",
    "last_odds": 2.55
+  },
+  {
+   "id": "POL|2026-10-24|Pogon Szczecin|Radomiak Radom|model|1x2",
+   "match": "POL|2026-10-24|Pogon Szczecin|Radomiak Radom",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "POL",
+   "league_name": "Polska · Ekstraklasa",
+   "date": "2026-10-24",
+   "time": "16:30",
+   "ko": "2026-10-24T15:30+00:00",
+   "home": "Pogon Szczecin",
+   "away": "Radomiak Radom",
+   "side": "2",
+   "prob": 0.2218,
+   "odds": 4.7,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0422,
+   "grade": "no",
+   "added": "2026-10-21T10:11+00:00",
+   "status": "open",
+   "last_odds": 4.7
+  },
+  {
+   "id": "POL|2026-10-24|Pogon Szczecin|Radomiak Radom|market|1x2",
+   "match": "POL|2026-10-24|Pogon Szczecin|Radomiak Radom",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "POL",
+   "league_name": "Polska · Ekstraklasa",
+   "date": "2026-10-24",
+   "time": "16:30",
+   "ko": "2026-10-24T15:30+00:00",
+   "home": "Pogon Szczecin",
+   "away": "Radomiak Radom",
+   "side": "2",
+   "prob": 0.2275,
+   "odds": 4.7,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0691,
+   "grade": "no",
+   "added": "2026-10-21T10:11+00:00",
+   "status": "open",
+   "last_odds": 4.7
+  },
+  {
+   "id": "POL|2026-10-25|Slask Wroclaw|Wieczysta Krakow|market|1x2",
+   "match": "POL|2026-10-25|Slask Wroclaw|Wieczysta Krakow",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "POL",
+   "league_name": "Polska · Ekstraklasa",
+   "date": "2026-10-25",
+   "time": "11:15",
+   "ko": "2026-10-25T11:15+00:00",
+   "home": "Slask Wroclaw",
+   "away": "Wieczysta Krakow",
+   "side": "2",
+   "prob": 0.4451,
+   "odds": 2.3,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0236,
+   "grade": "no",
+   "added": "2026-10-21T10:11+00:00",
+   "status": "open",
+   "last_odds": 2.3
   }
  ],
  "summary": {
@@ -8307,7 +8379,7 @@
   "model_x": {
    "settled": 55,
    "won": 13,
-   "open": 75,
+   "open": 76,
    "profit": 10.95,
    "roi": 0.1991,
    "clv": 0.0169
@@ -8323,11 +8395,11 @@
   "market_x": {
    "settled": 68,
    "won": 13,
-   "open": 67,
+   "open": 69,
    "profit": 4.0,
    "roi": 0.0588,
    "clv": 0.0307
   }
  },
- "updated": "2026-10-21T09:28+00:00"
+ "updated": "2026-10-21T10:11+00:00"
 }
