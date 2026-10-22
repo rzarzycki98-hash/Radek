@@ -5472,8 +5472,12 @@
    "edge": 0.0324,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 6.75
+   "status": "won",
+   "last_odds": 6.75,
+   "score": "4:0",
+   "profit": 5.75,
+   "close_odds": 6.75,
+   "clv": -0.0858
   },
   {
    "id": "JPN|2026-10-21|V-Varen Nagasaki|Sanfrecce Hiroshima|market|1x2",
@@ -5496,8 +5500,12 @@
    "edge": 0.0324,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 6.75
+   "status": "won",
+   "last_odds": 6.75,
+   "score": "4:0",
+   "profit": 5.75,
+   "close_odds": 6.75,
+   "clv": -0.0858
   },
   {
    "id": "MEX|2026-10-21|Guadalajara Chivas|Necaxa|market|1x2",
@@ -5520,8 +5528,12 @@
    "edge": 0.0295,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "lost",
+   "last_odds": 7.0,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 7.0,
+   "clv": -0.1024
   },
   {
    "id": "USA|2026-10-18|Los Angeles Galaxy|San Diego FC|model|1x2",
@@ -7531,8 +7543,11 @@
    "edge": 0.0439,
    "grade": null,
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 2.25
+   "status": "lost",
+   "last_odds": 2.25,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.25
   },
   {
    "id": "FIN|2026-10-21|PK-35|Jaro|market",
@@ -7555,8 +7570,11 @@
    "edge": 0.0216,
    "grade": null,
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 2.25
+   "status": "lost",
+   "last_odds": 2.25,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.25
   },
   {
    "id": "MEX|2026-10-21|Guadalajara Chivas|Necaxa|model|1x2",
@@ -7579,8 +7597,12 @@
    "edge": 0.1005,
    "grade": "no",
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 8.0,
+   "clv": -0.0383
   },
   {
    "id": "MEX|2026-10-22|Santos Laguna|UNAM Pumas|model|1x2",
@@ -7603,8 +7625,12 @@
    "edge": 0.0349,
    "grade": "no",
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 3.1
+   "status": "lost",
+   "last_odds": 3.1,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 2.65,
+   "clv": 0.094
   },
   {
    "id": "MEX|2026-10-22|Santos Laguna|UNAM Pumas|market|1x2",
@@ -7627,8 +7653,12 @@
    "edge": 0.0349,
    "grade": "no",
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 3.1
+   "status": "lost",
+   "last_odds": 3.1,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 2.65,
+   "clv": 0.094
   },
   {
    "id": "POL|2026-10-24|Wisla|Rakow|model|1x2",
@@ -7875,8 +7905,12 @@
    "edge": 0.0406,
    "grade": "no",
    "added": "2026-10-21T01:03+00:00",
-   "status": "open",
-   "last_odds": 3.8
+   "status": "won",
+   "last_odds": 3.8,
+   "score": "0:2",
+   "profit": 2.8,
+   "close_odds": 3.3,
+   "clv": 0.055
   },
   {
    "id": "MEX|2026-10-21|Tigres UANL|Club Leon|market|1x2",
@@ -7899,8 +7933,12 @@
    "edge": 0.0406,
    "grade": "no",
    "added": "2026-10-21T01:03+00:00",
-   "status": "open",
-   "last_odds": 3.8
+   "status": "won",
+   "last_odds": 3.8,
+   "score": "0:2",
+   "profit": 2.8,
+   "close_odds": 3.3,
+   "clv": 0.055
   },
   {
    "id": "MEX|2026-10-22|Toluca|Club Tijuana|model|1x2",
@@ -7923,8 +7961,12 @@
    "edge": 0.0381,
    "grade": "no",
    "added": "2026-10-21T01:03+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": -0.5369
   },
   {
    "id": "MEX|2026-10-22|Toluca|Club Tijuana|market|1x2",
@@ -7947,8 +7989,12 @@
    "edge": 0.0381,
    "grade": "no",
    "added": "2026-10-21T01:03+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": -0.5369
   },
   {
    "id": "E0|2026-10-25|Man United|Bournemouth|model|1x2",
@@ -9465,37 +9511,37 @@
  ],
  "summary": {
   "model_ou": {
-   "settled": 30,
+   "settled": 31,
    "won": 12,
-   "open": 16,
-   "profit": -5.85,
-   "roi": -0.195,
-   "clv": -0.0313
+   "open": 15,
+   "profit": -6.85,
+   "roi": -0.221,
+   "clv": -0.0303
   },
   "model_x": {
-   "settled": 58,
-   "won": 14,
-   "open": 90,
-   "profit": 11.75,
-   "roi": 0.2026,
-   "clv": 0.0206
+   "settled": 63,
+   "won": 16,
+   "open": 85,
+   "profit": 17.3,
+   "roi": 0.2746,
+   "clv": 0.0108
   },
   "market_ou": {
-   "settled": 10,
+   "settled": 11,
    "won": 4,
-   "open": 3,
-   "profit": -1.63,
-   "roi": -0.163,
-   "clv": -0.0258
+   "open": 2,
+   "profit": -2.63,
+   "roi": -0.2391,
+   "clv": -0.0235
   },
   "market_x": {
-   "settled": 75,
-   "won": 17,
-   "open": 84,
-   "profit": 13.35,
-   "roi": 0.178,
-   "clv": 0.033
+   "settled": 80,
+   "won": 19,
+   "open": 79,
+   "profit": 18.9,
+   "roi": 0.2362,
+   "clv": 0.0237
   }
  },
- "updated": "2026-10-22T01:02+00:00"
+ "updated": "2026-10-22T13:05+00:00"
 }
