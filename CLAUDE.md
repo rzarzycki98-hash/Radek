@@ -55,6 +55,11 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   Radek wybrał: taktyka na sucho `xg` (agent przejdzie na nią sam, gdy się sprawdzi). Opis po meczu pokazuje teraz też
   szansę na over („Model spodziewał się 2.6 gola (szansa na over 2.5: 48%)”).
 
+- **23.10 wieczorem – Godziny pracy** (poza agentem): Radek poprosił o kalendarz godzin pracy z tygodniowym rozliczeniem
+  i odjęciem 45 minut od każdego dnia. Wybrał (z opcji): osobna strona `godziny/` i wpisywanie „od – do”. Przetestowane
+  w Chromium na 390 px (jasny i ciemny motyw, zmiana nocna, zmiana przerwy, odświeżenie strony). Przy okazji `sw.js` List
+  kasuje już tylko swoje pamięci podręczne (wcześniej kasowałby też pamięć Godzin).
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
@@ -88,6 +93,12 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 
 - **Główny folder: „Listy”** – prosta aplikacja PWA (Zadania, Zakupy): `index.html`, `app.js`, `style.css`, `sw.js`,
   `manifest.webmanifest`, `icons/`. Dawno bez zmian.
+- **`godziny/`: Godziny pracy** (23.10.2026) – osobna aplikacja PWA (`index.html` z CSS i JS w środku, `sw.js`,
+  `manifest.webmanifest`, `icons/`): Radek wpisuje każdy dzień „od – do”, strona odejmuje przerwę (domyślnie 45 min,
+  do zmiany w Ustawieniach; każdy dzień pamięta przerwę z chwili wpisu) i liczy sumę tygodnia (pon–nd), listę tygodni
+  i sumę miesiąca. Koniec przed początkiem = zmiana przez północ. Dane tylko w telefonie (localStorage `godziny-v1`),
+  kopia do pliku JSON; „Wyślij podsumowanie tygodnia” udostępnia albo kopiuje tekst. Adres:
+  https://rzarzycki98-hash.github.io/Radek/godziny/ (działa po wejściu zmian do `main`).
 - **`gole/`: Linia Goli + agent.**
 
 | Plik | Co robi |

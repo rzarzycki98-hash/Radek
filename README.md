@@ -39,6 +39,16 @@ python3 -m http.server 8000
 
 Potem otwórz http://localhost:8000 w przeglądarce.
 
+## Godziny pracy – kalendarz z rozliczeniem tygodnia
+
+Aplikacja na telefon do zapisywania godzin pracy: https://rzarzycki98-hash.github.io/Radek/godziny/
+
+- każdy dzień tygodnia: godzina rozpoczęcia i zakończenia (zmiana przez północ też się liczy)
+- od każdego przepracowanego dnia odejmuje przerwę – domyślnie 45 minut (do zmiany w Ustawieniach)
+- suma tygodnia (poniedziałek–niedziela) w godzinach i minutach oraz dziesiętnie (np. 37.50 h), lista tygodni, suma miesiąca
+- „Wyślij podsumowanie tygodnia” – gotowy tekst do wysłania albo skopiowania
+- dane zapisują się w telefonie, kopia zapasowa do pliku; działa bez internetu; instalacja jak przy Listach
+
 ## Autor
 
 Radek ([@rzarzycki98-hash](https://github.com/rzarzycki98-hash))
