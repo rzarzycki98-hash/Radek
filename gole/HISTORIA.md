@@ -156,7 +156,7 @@ osi czasu.
 | Korekta (kalibracja) skrzywionego modelu | Sprawdzone 21.10 na historii – nie pomaga; zamiast tego uczciwa cena z Pinnacle i giełd oraz ostrożniejsza waga modelu |
 | Wrzucanie na stronę screenów meczów na żywo | Strona sama nie odczyta obrazka (potrzebna byłaby płatna AI, a klucza nie da się ukryć w publicznej stronie). Screeny można wysyłać do Claude w rozmowie: odczyta wynik, minutę, statystyki i kursy i oceni szanse. Do tego w karcie meczu jest kalkulator na żywo (15.10) – Radek nie był pewien, czy będzie z niego korzystał |
 | Skille z grafik o AI (21.10) | Zrobione: komendy-skille i bezpieczniki dla Claude, testy na GitHubie, cotygodniowa rutyna, zdrowie agenta, raport tygodnia. Pominięte: płatne i do dużych systemów; eksport CSV i fact checker – nie wybrane |
-| Wtyczki z filmu o Claude Code (23.10) | Zrobione: claude-code-setup, document-skills i skill-creator („Agent Skills”), frontend-design, security-guidance – włączone w `.claude/settings.json`, działają w każdym wątku projektu |
+| Wtyczki z filmu o Claude Code (23.10) | Zrobione: claude-code-setup, document-skills i skill-creator („Agent Skills”), frontend-design, security-guidance – włączone w `.claude/settings.json`, działają w każdym wątku projektu. Potem „wszystkie możliwe”: Radek wybrał wszystkie darmowe działające bez kont (razem 16) i styl tłumaczący; ok. 270 łączników do firm pominięte |
 | Over, gdy model spodziewa się 2.6+ gola (21.10) | Na historii traciło (−3.7%); dodane jako taktyka na sucho `xg` – pieniądze tylko, jeśli się sprawdzi |
 | Wynik 1X2 dla agenta | Odrzucone – Radek wybrał gole |
 | Powiadomienia na telefon | Odrzucone – Radek wybrał raport tylko na stronie |

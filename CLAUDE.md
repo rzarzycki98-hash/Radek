@@ -215,6 +215,14 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   (tworzenie własnych skilli) – to „Agent Skills” z filmu, `frontend-design` (wygląd stron), `security-guidance` (po każdej
   zmianie kodu Claude sam sprawdza bezpieczeństwo; przegląd zużywa trochę limitu użycia Claude). Pakiet `example-skills`
   pominięty – dubluje frontend-design i skill-creator.
+  Tego samego wieczoru Radek: „zainstaluj wszystkie możliwe wtyczki” → wybrał (z opcji) wszystkie darmowe wtyczki Anthropic,
+  które działają bez kont: `claude-md-management`, `code-simplifier`, `feature-dev`, `hookify`, `commit-commands`,
+  `claude-security`, `playground`, `project-artifact`, `session-report`, `pyright-lsp` oraz styl **tłumaczący**
+  (`explanatory-output-style` – Claude wyjaśnia swoje wybory; odpowiadaj dalej po polsku). Razem 16 wtyczek, ok. 3.5 tys.
+  tokenów na sesję. Pominięte: ok. 270 łączników do firm (konta, często płatne; w chmurze Claude Code wtyczki-łączniki
+  MCP i tak są wyłączone), `learning-output-style` (Radek wybrał tłumaczący), języki programowania spoza repo, matematyka,
+  `ralph-loop` (zjada limit), `code-review`/`pr-review-toolkit` (tylko do pull requestów), `agent-sdk-dev` (płatne API).
+  Uwaga: `/commit-commands:commit-push-pr` nie robi rebase – przed pushem i tak `git fetch origin main && git rebase origin/main`.
 - **Cotygodniowa rutyna Claude – jeszcze nieaktywna.** Rutyny utworzone narzędziem z rozmowy dostają sesję bez podpiętego
   repozytorium: dwa testy 21.10 sprawdziły stan, ale push dostał 403 (i poszło powiadomienie). Obie usunięte. Rutynę musi
   utworzyć Radek w claude.ai/code → Routines (repozytorium `rzarzycki98-hash/Radek` z prawem zapisu, poniedziałek ok. 7:45
