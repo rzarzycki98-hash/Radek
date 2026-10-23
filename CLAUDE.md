@@ -209,6 +209,12 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   `cp` na nie) i force push. Czytanie i kopiowanie tych plików do folderu tymczasowego działa. Uwaga: blokuje też polecenia,
   które tylko zawierają taki tekst (np. test z napisem force push) – takie rzeczy rób przez plik ze skryptem.
 - **Testy automatyczne**: „Linia Goli – testy” na GitHubie (wyżej, „Jak to działa automatycznie”).
+- **Wtyczki Claude Code (23.10.2026, Radek wysłał screen z filmu i napisał „zainstaluj te wtyczki”)** – włączone
+  w `.claude/settings.json` (`enabledPlugins` + `extraKnownMarketplaces`), więc każdy wątek projektu ładuje je sam:
+  `claude-code-setup` (podpowiada automatyzacje dla repo), `document-skills` (Word, Excel, PowerPoint, PDF) i `skill-creator`
+  (tworzenie własnych skilli) – to „Agent Skills” z filmu, `frontend-design` (wygląd stron), `security-guidance` (po każdej
+  zmianie kodu Claude sam sprawdza bezpieczeństwo; przegląd zużywa trochę limitu użycia Claude). Pakiet `example-skills`
+  pominięty – dubluje frontend-design i skill-creator.
 - **Cotygodniowa rutyna Claude – jeszcze nieaktywna.** Rutyny utworzone narzędziem z rozmowy dostają sesję bez podpiętego
   repozytorium: dwa testy 21.10 sprawdziły stan, ale push dostał 403 (i poszło powiadomienie). Obie usunięte. Rutynę musi
   utworzyć Radek w claude.ai/code → Routines (repozytorium `rzarzycki98-hash/Radek` z prawem zapisu, poniedziałek ok. 7:45
