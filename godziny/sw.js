@@ -1,5 +1,5 @@
 // Bump the version when any cached file changes so phones pick up the update.
-const CACHE = 'godziny-v1';
+const CACHE = 'godziny-v2';
 const FILES = [
   './',
   'index.html',

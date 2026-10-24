@@ -59,6 +59,8 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   i odjęciem 45 minut od każdego dnia. Wybrał (z opcji): osobna strona `godziny/` i wpisywanie „od – do”. Przetestowane
   w Chromium na 390 px (jasny i ciemny motyw, zmiana nocna, zmiana przerwy, odświeżenie strony). Przy okazji `sw.js` List
   kasuje już tylko swoje pamięci podręczne (wcześniej kasowałby też pamięć Godzin).
+  24.10: na Androidzie Radka stuknięcie w pole godziny nic nie otwierało (natywne `<input type="time">`) – zamiast niego
+  własny panel wyboru (godziny 00–23, minuty co 5, „Teraz”, podpowiedź z ostatniego wpisu, po początku sam otwiera koniec).
 
 **Do sprawdzenia w najbliższych dniach:**
 
