@@ -139,6 +139,13 @@ osi czasu.
   −4.7%): 2.6 oczekiwanego gola to tylko ok. 48–52% szans na over, a kurs ok. 1.90 wymaga 53%. **Decyzja Radka:** taktyka na
   sucho „Model: 2.6+ goli → Over” – agent sam przejdzie na nią, jeśli po 50+ typach będzie zarabiać i bić kurs zamknięcia.
 
+### 24.10.2026 – wtyczki z TikToka
+
+- Radek wysłał 4 grafiki („Top 10 Claude Code Skills”, „10 Trending GitHub Repos”, „5 Plugins” i znany już film z 23.10).
+  Claude sprawdził, co już jest i co ma sens; Radek wybrał (z opcji) trzy wtyczki niezależnych autorów: **Superpowers**
+  (planowanie i testy przed zmianą kodu), **Impeccable** (wygląd stron) i **Ponytail** (jak najmniej kodu). Odradzone:
+  OmniRoute (kod do obcych firm AI) i Caveman (urywane odpowiedzi, mała oszczędność); reszta niepotrzebna w tym repo.
+
 ## Pomysły Radka – co się z nimi stało
 
 | Pomysł | Co się stało |
@@ -157,6 +164,7 @@ osi czasu.
 | Wrzucanie na stronę screenów meczów na żywo | Strona sama nie odczyta obrazka (potrzebna byłaby płatna AI, a klucza nie da się ukryć w publicznej stronie). Screeny można wysyłać do Claude w rozmowie: odczyta wynik, minutę, statystyki i kursy i oceni szanse. Do tego w karcie meczu jest kalkulator na żywo (15.10) – Radek nie był pewien, czy będzie z niego korzystał |
 | Skille z grafik o AI (21.10) | Zrobione: komendy-skille i bezpieczniki dla Claude, testy na GitHubie, cotygodniowa rutyna, zdrowie agenta, raport tygodnia. Pominięte: płatne i do dużych systemów; eksport CSV i fact checker – nie wybrane |
 | Wtyczki z filmu o Claude Code (23.10) | Zrobione: claude-code-setup, document-skills i skill-creator („Agent Skills”), frontend-design, security-guidance – włączone w `.claude/settings.json`, działają w każdym wątku projektu. Potem „wszystkie możliwe”: Radek wybrał wszystkie darmowe działające bez kont (razem 16) i styl tłumaczący; ok. 270 łączników do firm pominięte |
+| Wtyczki z TikToka (24.10) | Zrobione: superpowers, impeccable, ponytail (wybór Radka); OmniRoute i Caveman odradzone, reszta niepotrzebna |
 | Over, gdy model spodziewa się 2.6+ gola (21.10) | Na historii traciło (−3.7%); dodane jako taktyka na sucho `xg` – pieniądze tylko, jeśli się sprawdzi |
 | Wynik 1X2 dla agenta | Odrzucone – Radek wybrał gole |
 | Powiadomienia na telefon | Odrzucone – Radek wybrał raport tylko na stronie |

@@ -62,6 +62,9 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   24.10: na Androidzie Radka stuknięcie w pole godziny nic nie otwierało (natywne `<input type="time">`) – zamiast niego
   własny panel wyboru (godziny 00–23, minuty co 5, „Teraz”, podpowiedź z ostatniego wpisu, po początku sam otwiera koniec).
 
+- **24.10 – wtyczki z TikToka:** Radek wysłał 4 grafiki z listami skilli i wtyczek do Claude Code. Włączone (jego wybór):
+  `superpowers`, `impeccable`, `ponytail` – razem 19 wtyczek; szczegóły w „Skille i bezpieczniki Claude”.
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
@@ -236,6 +239,17 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   MCP i tak są wyłączone), `learning-output-style` (Radek wybrał tłumaczący), języki programowania spoza repo, matematyka,
   `ralph-loop` (zjada limit), `code-review`/`pr-review-toolkit` (tylko do pull requestów), `agent-sdk-dev` (płatne API).
   Uwaga: `/commit-commands:commit-push-pr` nie robi rebase – przed pushem i tak `git fetch origin main && git rebase origin/main`.
+- **Wtyczki od niezależnych autorów (24.10.2026, Radek wysłał 4 grafiki z TikToka)** – Radek wybrał (z opcji) trzy,
+  każda z własnym marketplace w `.claude/settings.json`: `superpowers` (obra/superpowers-marketplace: planowanie, testy,
+  debugowanie, samosprawdzanie; skrypt startowy tylko wczytuje jej opis), `impeccable` (pbakaus/impeccable: dopracowanie
+  wyglądu stron, komendy `/impeccable polish|audit|critique`; przy pierwszym starcie pobiera swój program z jej wydań na
+  GitHubie, sprawdza sumę kontrolną, potem po każdej zmianie pliku ocenia wygląd, ok. 0.1 s) i `ponytail`
+  (DietrichGebert/ponytail: jak najmniej kodu, wymaga Node.js; wyłączenie w rozmowie: „stop ponytail”, poziomy
+  `/ponytail lite|full|ultra`; webhook pusty, więc nic nie wysyła). Sprawdzone w chmurze: instalacja i skrypty startowe
+  bez błędów, nic nie zapisują w repozytorium. Odradzone i pominięte: OmniRoute (kod szedłby do obcych firm AI, wymaga
+  kluczy, w chmurze nie działa), Caveman (urywane odpowiedzi, realna oszczędność 1–3%), Onyx, Scrapling, REA, Humanizer,
+  Last 30 Days, Graphify, Archify, Understand Anything, Awesome Claude Skills (niepotrzebne w małym repo albo nie do tego).
+  Uwaga: to kod obcych autorów, aktualizowany przez nich – gdy któraś zacznie przeszkadzać, usuń ją z `enabledPlugins`.
 - **Cotygodniowa rutyna Claude – jeszcze nieaktywna.** Rutyny utworzone narzędziem z rozmowy dostają sesję bez podpiętego
   repozytorium: dwa testy 21.10 sprawdziły stan, ale push dostał 403 (i poszło powiadomienie). Obie usunięte. Rutynę musi
   utworzyć Radek w claude.ai/code → Routines (repozytorium `rzarzycki98-hash/Radek` z prawem zapisu, poniedziałek ok. 7:45
