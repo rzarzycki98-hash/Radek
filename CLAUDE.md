@@ -61,6 +61,10 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   kasuje już tylko swoje pamięci podręczne (wcześniej kasowałby też pamięć Godzin).
   24.10: na Androidzie Radka stuknięcie w pole godziny nic nie otwierało (natywne `<input type="time">`) – zamiast niego
   własny panel wyboru (godziny 00–23, minuty co 5, „Teraz”, podpowiedź z ostatniego wpisu, po początku sam otwiera koniec).
+  Potem: w okienku w aplikacji (Custom Tab z linku) panel-nakładka nie pokazał się, a zablokował przewijanie – teraz wybór
+  rozwija się pod danym dniem (bez nakładki i blokady). Na dole strony numer wersji, a błędy JS pokazują się na ekranie
+  (Radek może przysłać zrzut). Instalacja z okienka w aplikacji kończy się „Nie udało się otworzyć aplikacji” – instalować
+  z Chrome (⋮ → Otwórz w Chrome → ⋮ → Dodaj do ekranu głównego).
 
 - **24.10 – wtyczki z TikToka:** Radek wysłał 4 grafiki z listami skilli i wtyczek do Claude Code. Włączone (jego wybór):
   `superpowers`, `impeccable`, `ponytail` – razem 19 wtyczek; szczegóły w „Skille i bezpieczniki Claude”.

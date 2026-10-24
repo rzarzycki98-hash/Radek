@@ -235,39 +235,20 @@
 
     .setting input { width: 90px; text-align: right; }
 
-    .sheet {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
+    .time-btn.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 
-    .sheet-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45); }
-
-    .sheet-panel {
-      position: relative;
-      width: 100%;
-      max-width: 560px;
-      max-height: 100vh;
-      max-height: 100dvh;
-      overflow-y: auto;
-      padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
-      border-radius: 20px 20px 0 0;
-      background: var(--surface);
-    }
-
-    .sheet-title { font-weight: 600; }
-    .sheet-time { font-size: 2.4rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
-    .sheet-sub { min-height: 1.4em; color: var(--muted); font-size: 0.9rem; }
-    .sheet-label { margin: 14px 0 6px; color: var(--muted); font-size: 0.85rem; }
+    .picker { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+    .picker-title { font-weight: 600; }
+    .picker-time { font-size: 2.2rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+    .picker-sub { min-height: 1.4em; color: var(--muted); font-size: 0.9rem; }
+    .picker-label { margin: 12px 0 6px; color: var(--muted); font-size: 0.85rem; }
 
     .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
 
     .grid button {
       height: 44px;
       min-width: 0;
+      padding: 0;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--bg);
@@ -281,8 +262,10 @@
       font-weight: 600;
     }
 
-    .sheet-actions { display: flex; gap: 8px; margin-top: 16px; }
-    .sheet-actions .primary { flex: 1; }
+    .picker-actions { display: flex; gap: 8px; margin-top: 14px; }
+    .picker-actions .primary { flex: 1; }
+
+    .version { margin-top: 28px; text-align: center; }
 
     .toast {
       position: fixed;
@@ -340,27 +323,21 @@
       <button id="import" class="pill" type="button">Wczytaj kopię</button>
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
+
+    <p class="muted version">Wersja 3 · 24.10.2026</p>
   </main>
 
-  <div id="sheet" class="sheet" hidden>
-    <div class="sheet-backdrop" data-close></div>
-    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
-      <div id="sheet-title" class="sheet-title"></div>
-      <div id="sheet-time" class="sheet-time"></div>
-      <div id="sheet-sub" class="sheet-sub"></div>
-      <div class="sheet-label">Godzina</div>
-      <div id="sheet-hours" class="grid"></div>
-      <div class="sheet-label">Minuty</div>
-      <div id="sheet-mins" class="grid"></div>
-      <div class="sheet-actions">
-        <button type="button" class="pill" data-close>Anuluj</button>
-        <button id="sheet-now" type="button" class="pill">Teraz</button>
-        <button id="sheet-ok" type="button" class="primary">Zapisz</button>
-      </div>
-    </div>
-  </div>
-
   <div id="toast" class="toast" role="status" hidden></div>
+
+  <script>
+    // Plain ES5 on purpose: shows any later error on screen, so a phone screenshot is enough to diagnose it.
+    window.addEventListener('error', function (e) {
+      var el = document.getElementById('toast');
+      if (!el) return;
+      el.textContent = 'Błąd: ' + (e.message || 'nieznany') + ' (wiersz ' + (e.lineno || '?') + ')';
+      el.hidden = false;
+    });
+  </script>
 
   <script>
     const STORAGE_KEY = 'godziny-v1';
@@ -516,6 +493,10 @@
         gross.className = 'day-gross';
 
         li.append(head, times, gross);
+        if (picker && picker.k === k) {
+          (picker.field === 's' ? start : end).classList.add('active');
+          li.append(buildPicker());
+        }
         rows.push(li);
       }
       $('days').replaceChildren(...rows);
@@ -529,12 +510,15 @@
       btn.dataset.field = field;
       btn.textContent = value || (field === 's' ? 'od' : 'do');
       btn.setAttribute('aria-label', `${dayLabel} – ${field === 's' ? 'początek' : 'koniec'}: ${value || 'nie wpisano'}`);
-      btn.addEventListener('click', () => openPicker(k, field, dayLabel));
+      btn.addEventListener('click', () => {
+        if (picker && picker.k === k && picker.field === field) closePicker();
+        else openPicker(k, field);
+      });
       return btn;
     }
 
-    // Own time picker: the native <input type="time"> dialog does not open in some Android browsers.
-    const sheet = $('sheet');
+    // Own time picker, opened inline under the day: the native <input type="time"> dialog does not open in
+    // some Android in-app browsers, and an overlay could leave the page locked if it failed to show.
     let picker = null;
 
     function pad(n) {
@@ -547,81 +531,118 @@
       return keys.length ? state.days[keys[keys.length - 1]][field] : (field === 's' ? '07:00' : '15:00');
     }
 
-    function openPicker(k, field, dayLabel) {
+    function openPicker(k, field) {
       const value = (state.days[k] && state.days[k][field]) || lastTime(field);
       const [h, m] = value.split(':').map(Number);
-      picker = { k, field, h, m, dayLabel };
-      $('sheet-title').textContent = `${dayLabel} – ${field === 's' ? 'początek' : 'koniec'} pracy`;
-      sheet.hidden = false;
-      document.body.style.overflow = 'hidden';
-      renderPicker();
-      const selected = $('sheet-hours').querySelector('[aria-pressed="true"]');
-      if (selected) selected.focus();
-    }
-
-    function renderPicker() {
-      const value = `${pad(picker.h)}:${pad(picker.m)}`;
-      $('sheet-time').textContent = value;
-      const entry = Object.assign({}, state.days[picker.k], { [picker.field]: value });
-      const r = minutes(entry);
-      $('sheet-sub').textContent = r ? `${entry.s}–${entry.e} → ${fmt(r.net)} po odjęciu przerwy` : '';
-      $('sheet-hours').querySelectorAll('button').forEach((b) => {
-        b.setAttribute('aria-pressed', String(Number(b.dataset.v) === picker.h));
-      });
-      $('sheet-mins').querySelectorAll('button').forEach((b) => {
-        b.setAttribute('aria-pressed', String(Number(b.dataset.v) === picker.m));
-      });
+      picker = { k, field, h, m };
+      renderDays();
+      const box = document.querySelector('.picker');
+      if (box && box.scrollIntoView) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
 
     function closePicker() {
       if (!picker) return;
       const { k, field } = picker;
       picker = null;
-      sheet.hidden = true;
-      document.body.style.overflow = '';
+      renderDays();
       const btn = document.querySelector(`.day[data-key="${k}"] [data-field="${field}"]`);
       if (btn) btn.focus();
     }
 
     function savePicker() {
-      const { k, field, dayLabel } = picker;
+      const { k, field } = picker;
       const prev = state.days[k] || {};
       const entry = { s: prev.s || '', e: prev.e || '', b: Number.isFinite(prev.b) ? prev.b : state.brk };
       entry[field] = `${pad(picker.h)}:${pad(picker.m)}`;
       state.days[k] = entry;
       save();
-      render();
-      closePicker();
+      renderSummary();
       // Fresh day: go straight on to the end time.
-      if (field === 's' && !entry.e) openPicker(k, 'e', dayLabel);
+      if (field === 's' && !entry.e) openPicker(k, 'e');
+      else closePicker();
     }
 
-    function buildGrid(id, values, pick) {
-      $(id).replaceChildren(...values.map((v) => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.dataset.v = v;
-        b.textContent = pad(v);
-        b.addEventListener('click', () => {
-          pick(v);
-          renderPicker();
-        });
-        return b;
-      }));
-    }
-
-    buildGrid('sheet-hours', Array.from({ length: 24 }, (_, i) => i), (v) => { picker.h = v; });
-    buildGrid('sheet-mins', Array.from({ length: 12 }, (_, i) => i * 5), (v) => { picker.m = v; });
-
-    $('sheet-ok').addEventListener('click', savePicker);
-    $('sheet-now').addEventListener('click', () => {
+    function setNow() {
       const now = new Date();
       const t = (Math.round((now.getHours() * 60 + now.getMinutes()) / 5) * 5) % (24 * 60);
       picker.h = Math.floor(t / 60);
       picker.m = t % 60;
       renderPicker();
-    });
-    sheet.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', closePicker));
+    }
+
+    function buildPicker() {
+      const box = document.createElement('div');
+      box.className = 'picker';
+      const title = document.createElement('div');
+      title.className = 'picker-title';
+      title.textContent = picker.field === 's' ? 'Początek pracy' : 'Koniec pracy';
+      const time = document.createElement('div');
+      time.className = 'picker-time';
+      const sub = document.createElement('div');
+      sub.className = 'picker-sub';
+      const actions = document.createElement('div');
+      actions.className = 'picker-actions';
+      actions.append(
+        actionButton('Anuluj', 'pill', closePicker),
+        actionButton('Teraz', 'pill', setNow),
+        actionButton('Zapisz', 'primary', savePicker)
+      );
+      box.append(
+        title, time, sub,
+        pickerLabel('Godzina'), pickerGrid('h', Array.from({ length: 24 }, (_, i) => i)),
+        pickerLabel('Minuty'), pickerGrid('m', Array.from({ length: 12 }, (_, i) => i * 5)),
+        actions
+      );
+      renderPicker(box);
+      return box;
+    }
+
+    function pickerLabel(text) {
+      const el = document.createElement('div');
+      el.className = 'picker-label';
+      el.textContent = text;
+      return el;
+    }
+
+    function pickerGrid(unit, values) {
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      grid.append(...values.map((v) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.dataset.unit = unit;
+        b.dataset.v = v;
+        b.textContent = pad(v);
+        b.addEventListener('click', () => {
+          picker[unit] = v;
+          renderPicker();
+        });
+        return b;
+      }));
+      return grid;
+    }
+
+    function actionButton(text, cls, onClick) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = cls;
+      b.textContent = text;
+      b.addEventListener('click', onClick);
+      return b;
+    }
+
+    function renderPicker(box = document.querySelector('.picker')) {
+      if (!box || !picker) return;
+      const value = `${pad(picker.h)}:${pad(picker.m)}`;
+      box.querySelector('.picker-time').textContent = value;
+      const entry = Object.assign({}, state.days[picker.k], { [picker.field]: value });
+      const r = minutes(entry);
+      box.querySelector('.picker-sub').textContent = r ? `${entry.s}–${entry.e} → ${fmt(r.net)} po odjęciu przerwy` : '';
+      box.querySelectorAll('.grid button').forEach((b) => {
+        b.setAttribute('aria-pressed', String(Number(b.dataset.v) === picker[b.dataset.unit]));
+      });
+    }
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closePicker();
     });
