@@ -70,11 +70,11 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   `superpowers`, `impeccable`, `ponytail` – razem 19 wtyczek; szczegóły w „Skille i bezpieczniki Claude”.
 
 - **25.10 – „32 things to install in Claude”** (grafika z TikToka, „zainstaluj, jeśli nie masz”): Radek wybrał karpathy-skills
-  i „duże paczki”, a po ostrzeżeniu o koszcie – „wszystko z grafiki”. Doszło 201 wtyczek (razem 220), gstack (skrypt startowy)
+  i „duże paczki”, a po ostrzeżeniu o koszcie – „wszystko z grafiki”. Doszło 201 wtyczek (razem 219), gstack (skrypt startowy)
   i skill `find-skills`. Rozmowa zaczyna się od ok. 117 tys. tokenów (wcześniej ok. 60 tys.; zmierzone w testowej sesji). Szczegóły i co pominięte:
   „Skille i bezpieczniki Claude”. **Odkrycie:** w chmurze wtyczki spoza katalogu Anthropic w ogóle się nie wczytują
   (`SKIP_PLUGIN_MARKETPLACE=true`) – także superpowers, impeccable, ponytail i document-skills z 23–24.10. Działają tylko po
-  instalacji przed startem Claude: `.claude/instaluj-wtyczki.sh` w skrypcie instalacyjnym środowiska (czeka na Radka, niżej).
+  instalacji przed startem Claude: `.claude/instaluj-wtyczki.sh` w skrypcie instalacyjnym środowiska (czeka na Radka, niżej). Radek: zostawić wszystkie; zmiany w `main` od 25.10.
 
 **Do sprawdzenia w najbliższych dniach:**
 
