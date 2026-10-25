@@ -241,8 +241,7 @@
     "claude-seo@agricidaniel-claude-seo": true,
     "repomix-mcp@repomix": true,
     "repomix-commands@repomix": true,
-    "repomix-explorer@repomix": true,
-    "andrej-karpathy-skills@karpathy-skills": true
+    "repomix-explorer@repomix": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -254,61 +253,64 @@
     "anthropic-agent-skills": {
       "source": {
         "source": "github",
-        "repo": "anthropics/skills"
+        "repo": "anthropics/skills",
+        "ref": "dbd4588f9e1033efb41dad4bef2f7947c8993d44"
       }
     },
     "superpowers-marketplace": {
       "source": {
         "source": "github",
-        "repo": "obra/superpowers-marketplace"
+        "repo": "obra/superpowers-marketplace",
+        "ref": "87b5911c829706f0665aab18462c40cd47822835"
       }
     },
     "impeccable": {
       "source": {
         "source": "github",
-        "repo": "pbakaus/impeccable"
+        "repo": "pbakaus/impeccable",
+        "ref": "936867543ac2576920d663cc9803597f6044f3ac"
       }
     },
     "ponytail": {
       "source": {
         "source": "github",
-        "repo": "DietrichGebert/ponytail"
+        "repo": "DietrichGebert/ponytail",
+        "ref": "09c434ab73ca43761c5d8b0c5d341926c2fba710"
       }
     },
     "claude-code-workflows": {
       "source": {
         "source": "github",
-        "repo": "wshobson/agents"
+        "repo": "wshobson/agents",
+        "ref": "0874a27b17a22e2b7c2e2bcd725768e0803cad06"
       }
     },
     "claude-code-skills": {
       "source": {
         "source": "github",
-        "repo": "alirezarezvani/claude-skills"
+        "repo": "alirezarezvani/claude-skills",
+        "ref": "6d2f02ea077eead1bee5411a31bcc6db5a11a70c"
       }
     },
     "marketingskills": {
       "source": {
         "source": "github",
-        "repo": "coreyhaines31/marketingskills"
+        "repo": "coreyhaines31/marketingskills",
+        "ref": "e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b"
       }
     },
     "agricidaniel-claude-seo": {
       "source": {
         "source": "github",
-        "repo": "AgriciDaniel/claude-seo"
+        "repo": "AgriciDaniel/claude-seo",
+        "ref": "6be93f45064ffbadced572b5d5c95f55fd263af0"
       }
     },
     "repomix": {
       "source": {
         "source": "github",
-        "repo": "yamadashy/repomix"
-      }
-    },
-    "karpathy-skills": {
-      "source": {
-        "source": "github",
-        "repo": "forrestchang/andrej-karpathy-skills"
+        "repo": "yamadashy/repomix",
+        "ref": "b2061b21c3dde918fe99d90356e33051fa1a970a"
       }
     }
   }

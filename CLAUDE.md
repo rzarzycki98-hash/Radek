@@ -72,7 +72,9 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 - **25.10 – „32 things to install in Claude”** (grafika z TikToka, „zainstaluj, jeśli nie masz”): Radek wybrał karpathy-skills
   i „duże paczki”, a po ostrzeżeniu o koszcie – „wszystko z grafiki”. Doszło 201 wtyczek (razem 220), gstack (skrypt startowy)
   i skill `find-skills`. Rozmowa zaczyna się od ok. 117 tys. tokenów (wcześniej ok. 60 tys.; zmierzone w testowej sesji). Szczegóły i co pominięte:
-  „Skille i bezpieczniki Claude”.
+  „Skille i bezpieczniki Claude”. **Odkrycie:** w chmurze wtyczki spoza katalogu Anthropic w ogóle się nie wczytują
+  (`SKIP_PLUGIN_MARKETPLACE=true`) – także superpowers, impeccable, ponytail i document-skills z 23–24.10. Działają tylko po
+  instalacji przed startem Claude: `.claude/instaluj-wtyczki.sh` w skrypcie instalacyjnym środowiska (czeka na Radka, niżej).
 
 **Do sprawdzenia w najbliższych dniach:**
 
@@ -254,8 +256,8 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   wyglądu stron, komendy `/impeccable polish|audit|critique`; przy pierwszym starcie pobiera swój program z jej wydań na
   GitHubie, sprawdza sumę kontrolną, potem po każdej zmianie pliku ocenia wygląd, ok. 0.1 s) i `ponytail`
   (DietrichGebert/ponytail: jak najmniej kodu, wymaga Node.js; wyłączenie w rozmowie: „stop ponytail”, poziomy
-  `/ponytail lite|full|ultra`; webhook pusty, więc nic nie wysyła). Sprawdzone w chmurze: instalacja i skrypty startowe
-  bez błędów, nic nie zapisują w repozytorium. Odradzone i pominięte: OmniRoute (kod szedłby do obcych firm AI, wymaga
+  `/ponytail lite|full|ultra`; webhook pusty, więc nic nie wysyła). Sprawdzone w chmurze: instalacja ręczna i skrypty
+  startowe bez błędów, nic nie zapisują w repozytorium – ale same z ustawień projektu się nie wczytują (patrz niżej, 25.10). Odradzone i pominięte: OmniRoute (kod szedłby do obcych firm AI, wymaga
   kluczy, w chmurze nie działa), Caveman (urywane odpowiedzi, realna oszczędność 1–3%), Onyx, Scrapling, REA, Humanizer,
   Last 30 Days, Graphify, Archify, Understand Anything, Awesome Claude Skills (niepotrzebne w małym repo albo nie do tego).
   Uwaga: to kod obcych autorów, aktualizowany przez nich – gdy któraś zacznie przeszkadzać, usuń ją z `enabledPlugins`.
@@ -275,6 +277,16 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   i oh-my-claudecode (Radek nie wybrał), vibe-kanban (aplikacja na komputer). Wtyczki `agent-memory` i `handoff` zapisują
   `.memory/` i `.handoff/` w repozytorium – są w `.gitignore` (repo publiczne). Gdy rozmowy będą za wolne albo limit będzie
   się kończył: usuń z `enabledPlugins` wpisy `@claude-code-skills` (najwięcej opisów) i `@claude-code-workflows`.
+- **Wtyczki spoza Anthropic w chmurze (25.10.2026):** sesje w chmurze mają `SKIP_PLUGIN_MARKETPLACE=true`, więc katalogi
+  z `extraKnownMarketplaces` nie są pobierane i wczytuje się tylko 15 oficjalnych wtyczek (sprawdzone: `~/.claude/plugins/
+  installed_plugins.json` puste). Instalacja w trakcie rozmowy nie pomaga (wtyczki czytane raz, przy starcie; same skille
+  w `~/.claude/skills` wczytują się na bieżąco – dlatego gstack działa z hooka). Rozwiązanie: `.claude/instaluj-wtyczki.sh`
+  (pobiera `settings.json` z `main`, klonuje każdy katalog na przypiętym commicie `ref`, instaluje włączone wtyczki;
+  przetestowane: 205/205, ok. 5.5 min, sesja z `SKIP_PLUGIN_MARKETPLACE=true` je wczytuje). Musi go wpisać Radek: menu
+  środowiska w pasku tytułu sesji → Edit → Setup script, jedna linia:
+  `curl -fsSL https://raw.githubusercontent.com/rzarzycki98-hash/Radek/main/.claude/instaluj-wtyczki.sh | bash`.
+  Wersje są przypięte (`ref` w `extraKnownMarketplaces`, `GSTACK_SHA` w `gstack.sh`) – aktualizacja = zmiana commita
+  po przejrzeniu zmian.
 - **Cotygodniowa rutyna Claude – jeszcze nieaktywna.** Rutyny utworzone narzędziem z rozmowy dostają sesję bez podpiętego
   repozytorium: dwa testy 21.10 sprawdziły stan, ale push dostał 403 (i poszło powiadomienie). Obie usunięte. Rutynę musi
   utworzyć Radek w claude.ai/code → Routines (repozytorium `rzarzycki98-hash/Radek` z prawem zapisu, poniedziałek ok. 7:45

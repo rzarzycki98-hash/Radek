@@ -153,6 +153,9 @@ osi czasu.
   paczki”; po informacji, że to ok. 130 tys. tokenów opisów na rozmowę (wolniej, szybciej kończy się limit; zmierzone potem: start rozmowy 60 → 117 tys.) – **„wszystko
   z grafiki”**. Włączone: ok. 200 wtyczek (wshobson agents, claude-skills, marketing, SEO, repomix, karpathy), gstack
   i find-skills. Pominięte tylko te, które zapisywały pliki w repozytorium, Caveman (odrzucony 24.10) i panel płatnego SEO.
+- Przy okazji wyszło, że w chmurze wtyczki spoza katalogu Anthropic w ogóle się nie wczytują (także te z 23–24.10). Działają
+  dopiero, gdy instaluje je skrypt instalacyjny środowiska (`.claude/instaluj-wtyczki.sh`) – Radek musi go wpisać w ustawieniach.
+  Wersje wszystkich zewnętrznych wtyczek i gstack są przypięte do sprawdzonych commitów.
 
 ## Pomysły Radka – co się z nimi stało
 
