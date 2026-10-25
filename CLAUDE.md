@@ -69,6 +69,11 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 - **24.10 – wtyczki z TikToka:** Radek wysłał 4 grafiki z listami skilli i wtyczek do Claude Code. Włączone (jego wybór):
   `superpowers`, `impeccable`, `ponytail` – razem 19 wtyczek; szczegóły w „Skille i bezpieczniki Claude”.
 
+- **25.10 – „32 things to install in Claude”** (grafika z TikToka, „zainstaluj, jeśli nie masz”): Radek wybrał karpathy-skills
+  i „duże paczki”, a po ostrzeżeniu o koszcie – „wszystko z grafiki”. Doszło 201 wtyczek (razem 220), gstack (skrypt startowy)
+  i skill `find-skills`. Rozmowa zaczyna się od ok. 117 tys. tokenów (wcześniej ok. 60 tys.; zmierzone w testowej sesji). Szczegóły i co pominięte:
+  „Skille i bezpieczniki Claude”.
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
@@ -254,6 +259,22 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   kluczy, w chmurze nie działa), Caveman (urywane odpowiedzi, realna oszczędność 1–3%), Onyx, Scrapling, REA, Humanizer,
   Last 30 Days, Graphify, Archify, Understand Anything, Awesome Claude Skills (niepotrzebne w małym repo albo nie do tego).
   Uwaga: to kod obcych autorów, aktualizowany przez nich – gdy któraś zacznie przeszkadzać, usuń ją z `enabledPlugins`.
+- **„32 things to install in Claude” (25.10.2026, grafika z TikToka)** – Radek: „wszystko z grafiki” (świadomie, mimo kosztu
+  ok. 57 tys. tokenów więcej na start każdej rozmowy). Włączone w `.claude/settings.json`: `wshobson/agents` (marketplace
+  `claude-code-workflows`, 92 wtyczki), `alirezarezvani/claude-skills` (`claude-code-skills`, 103), `marketingskills`,
+  `claude-seo`, `repomix` (3, w tym serwer MCP przez npx) i `andrej-karpathy-skills`. **gstack** (garrytan/gstack, 60+ skilli
+  jak `/review`, `/qa`, `/ship`, `/investigate`) to nie wtyczka: `.claude/hooks/gstack.sh` (SessionStart) w chmurze klonuje go
+  w tle do `~/.claude/skills/gstack` i uruchamia `./setup` (ok. 40 s, 1.8 GB; skille pojawiają się same, przeglądarka gstack
+  w chmurze się nie instaluje). **find-skills** (Vercel, MIT) skopiowany do `.claude/skills/find-skills` – w chmurze `npx skills
+  find` nie działa (proxy blokuje skills.sh). Pominięte z paczek: `protect-mcp` i `review-agent-governance` (po każdym
+  narzędziu `npx protect-mcp sign` zapisywał `receipts/` i klucz w repozytorium), `caveman` (odrzucony 24.10), `seo-cockpit`
+  (płatne API SEO i konto Google). Z grafiki już były: superpowers, frontend-design, skill-creator, anthropic skills, GitHub
+  (wbudowany), Playwright (testy strony), humanizer (odrzucony 24.10). Niemożliwe/bez sensu: granola, slack, notion, kondo,
+  zapier, higgsfield, perplexity, firecrawl, codex, hyperframes, claude-for-legal, financial-services (konta, często płatne –
+  łączniki dodaje się w claude.ai → Ustawienia → Łączniki), context7 (proxy chmury blokuje mcp.context7.com), claude-mem
+  i oh-my-claudecode (Radek nie wybrał), vibe-kanban (aplikacja na komputer). Wtyczki `agent-memory` i `handoff` zapisują
+  `.memory/` i `.handoff/` w repozytorium – są w `.gitignore` (repo publiczne). Gdy rozmowy będą za wolne albo limit będzie
+  się kończył: usuń z `enabledPlugins` wpisy `@claude-code-skills` (najwięcej opisów) i `@claude-code-workflows`.
 - **Cotygodniowa rutyna Claude – jeszcze nieaktywna.** Rutyny utworzone narzędziem z rozmowy dostają sesję bez podpiętego
   repozytorium: dwa testy 21.10 sprawdziły stan, ale push dostał 403 (i poszło powiadomienie). Obie usunięte. Rutynę musi
   utworzyć Radek w claude.ai/code → Routines (repozytorium `rzarzycki98-hash/Radek` z prawem zapisu, poniedziałek ok. 7:45

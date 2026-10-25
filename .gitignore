@@ -1,2 +1,10 @@
 __pycache__/
 gole/.cache/
+
+# Files that Claude Code plugins may write into the project (repo is public)
+.memory/
+.handoff/
+receipts/
+review-receipts/
+*.key
+.gstack/
