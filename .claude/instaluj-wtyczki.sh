@@ -14,7 +14,7 @@ if [ -z "$SETTINGS" ]; then
   curl -fsSL https://raw.githubusercontent.com/rzarzycki98-hash/Radek/main/.claude/settings.json -o "$SETTINGS" || exit 0
 fi
 python3 - "$SETTINGS" "$HOME/.claude/marketplaces-radek" <<'EOF'
-import json, os, subprocess, sys
+import json, os, re, subprocess, sys
 cfg = json.load(open(sys.argv[1]))
 base = sys.argv[2]
 os.makedirs(base, exist_ok=True)
@@ -34,8 +34,12 @@ for name, m in cfg.get("extraKnownMarketplaces", {}).items():
         r = run("git", "clone", "-q", "--filter=blob:none", f"https://github.com/{src['repo']}", d)
         if r.returncode:
             print(f"instaluj-wtyczki: clone {src['repo']} failed: {r.stderr.strip()}"); fail += len(plugins); continue
-    if src.get("ref") and os.path.isdir(d) and run("git", "-C", d, "checkout", "-q", src["ref"]).returncode:
-        print(f"instaluj-wtyczki: {name} has no commit {src['ref']}, skipped"); fail += len(plugins); continue
+    if os.path.isdir(d):
+        ref = src.get("ref", "")
+        if not re.fullmatch(r"[0-9a-f]{40}", ref) or run("git", "-C", d, "checkout", "-q", "--detach", ref).returncode \
+                or run("git", "-C", d, "rev-parse", "HEAD").stdout.strip() != ref:
+            print(f"instaluj-wtyczki: {name} not pinned to a full commit ({ref or 'no ref'}), skipped")
+            fail += len(plugins); continue
     run("claude", "plugin", "marketplace", "add", d)
     for p in plugins:
         r = run("claude", "plugin", "install", f"{p}@{name}")
