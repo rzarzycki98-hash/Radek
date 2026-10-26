@@ -76,6 +76,14 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   (`SKIP_PLUGIN_MARKETPLACE=true`) – także superpowers, impeccable, ponytail i document-skills z 23–24.10. Działają tylko po
   instalacji przed startem Claude: `.claude/instaluj-wtyczki.sh` w skrypcie instalacyjnym środowiska (czeka na Radka, niżej). Radek: zostawić wszystkie; zmiany w `main` od 25.10.
 
+- **26.10 – poniedziałkowe sprawdzenie (rutyna):** aktualizacje GitHuba z 25–26.10 wszystkie zielone, 0 błędów agenta,
+  kod bez zmian (testów nie trzeba było puszczać). Portfel £1001.60, 4 rozliczone (2 trafione), 7 otwartych (6 z meczami
+  już rozegranymi 24–25.10, czekają na wynik; wszystkie Under). Raport tygodnia 19–25.10 jest (4 nowe zakłady, 0 Over / 4 Under,
+  vs zamknięcie −4.6%). Over/Under: oceny 7 dni 121 Over / 74 Under, ale zakłady 0 / 4. **Do uwagi:** football-data wciąż
+  spóźnia się z wynikami (E0 do 19.10, B1 do 11.10, reszta 18–21.10) – stąd brak rozliczeń z weekendu; ESPN rozliczy mecze
+  z 24.10 najwcześniej 27.10 ok. 15:00 (72 h) – sprawdzić we wtorek, czy zadziałało (`res_src: "ESPN"`). ClubElo nadal
+  nie działa (502, bez znaczenia). Limit kursów: 163 zapytania (ok. 6 dni miesiąca do końca = OK). Bez zmian w kodzie i zasadach.
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
