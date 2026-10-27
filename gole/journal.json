@@ -149,8 +149,12 @@
    "edge": 0.0449,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "won",
+   "last_odds": 5.0,
+   "score": "2:1",
+   "profit": 3.9,
+   "close_odds": 5.0,
+   "clv": 0.031
   },
   {
    "id": "E0|2026-10-25|Hull|Brentford|model|1x2",
@@ -173,8 +177,12 @@
    "edge": 0.0893,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": -0.1101
   },
   {
    "id": "E2|2026-10-17|Milton Keynes Dons|Luton|market|1x2",
@@ -477,8 +485,12 @@
    "edge": 0.059,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "won",
+   "last_odds": 7.0,
+   "score": "2:3",
+   "profit": 6.0,
+   "close_odds": 7.0,
+   "clv": -0.1131
   },
   {
    "id": "D1|2026-10-23|Stuttgart|M'gladbach|market|1x2",
@@ -501,8 +513,12 @@
    "edge": 0.059,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "won",
+   "last_odds": 7.0,
+   "score": "2:3",
+   "profit": 6.0,
+   "close_odds": 7.0,
+   "clv": -0.1131
   },
   {
    "id": "D1|2026-10-24|FC Koln|Schalke 04|model|1x2",
@@ -525,8 +541,12 @@
    "edge": 0.0313,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 3.25
+   "status": "lost",
+   "last_odds": 3.25,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 3.25,
+   "clv": 0.0762
   },
   {
    "id": "D1|2026-10-24|FC Koln|Schalke 04|market|1x2",
@@ -549,8 +569,12 @@
    "edge": 0.0313,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 3.25
+   "status": "lost",
+   "last_odds": 3.25,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 3.25,
+   "clv": 0.0762
   },
   {
    "id": "D1|2026-10-24|Augsburg|Union Berlin|model|1x2",
@@ -573,8 +597,12 @@
    "edge": 0.0478,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 3.8
+   "status": "lost",
+   "last_odds": 3.8,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": -0.1036
   },
   {
    "id": "D1|2026-10-24|Augsburg|Union Berlin|market|1x2",
@@ -597,8 +625,12 @@
    "edge": 0.0478,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 3.8
+   "status": "lost",
+   "last_odds": 3.8,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": -0.1036
   },
   {
    "id": "D1|2026-10-24|RB Leipzig|Elversberg|model|1x2",
@@ -621,8 +653,12 @@
    "edge": 0.092,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "4:0",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": 0.5006
   },
   {
    "id": "D1|2026-10-24|RB Leipzig|Elversberg|market|1x2",
@@ -645,8 +681,12 @@
    "edge": 0.092,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "4:0",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": 0.5006
   },
   {
    "id": "D1|2026-10-25|Freiburg|Bayern Munich|model|1x2",
@@ -669,8 +709,12 @@
    "edge": 0.0859,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 6.5
+   "status": "lost",
+   "last_odds": 6.5,
+   "score": "1:3",
+   "profit": -1.0,
+   "close_odds": 6.5,
+   "clv": 0.0942
   },
   {
    "id": "D1|2026-10-25|Freiburg|Bayern Munich|market|1x2",
@@ -693,8 +737,12 @@
    "edge": 0.0859,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 6.5
+   "status": "lost",
+   "last_odds": 6.5,
+   "score": "1:3",
+   "profit": -1.0,
+   "close_odds": 6.5,
+   "clv": 0.0942
   },
   {
    "id": "D2|2026-10-18|Bielefeld|Osnabruck|model|1x2",
@@ -997,8 +1045,12 @@
    "edge": 0.0365,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "lost",
+   "last_odds": 7.0,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 7.0,
+   "clv": -0.1822
   },
   {
    "id": "I1|2026-10-24|Lazio|Parma|market|1x2",
@@ -1021,8 +1073,12 @@
    "edge": 0.0365,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "lost",
+   "last_odds": 7.0,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 7.0,
+   "clv": -0.1822
   },
   {
    "id": "I1|2026-10-25|Inter|Fiorentina|model|1x2",
@@ -1045,8 +1101,12 @@
    "edge": 0.0418,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 8.0
+   "status": "lost",
+   "last_odds": 8.0,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 8.0,
+   "clv": 0.0195
   },
   {
    "id": "I1|2026-10-25|Inter|Fiorentina|market|1x2",
@@ -1069,8 +1129,12 @@
    "edge": 0.0418,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 8.0
+   "status": "lost",
+   "last_odds": 8.0,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 8.0,
+   "clv": 0.0195
   },
   {
    "id": "SP1|2026-10-17|Betis|Barcelona|model|1x2",
@@ -1261,8 +1325,12 @@
    "edge": 0.0822,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 12.0
+   "status": "lost",
+   "last_odds": 12.0,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 12.0,
+   "clv": 0.1622
   },
   {
    "id": "SP1|2026-10-24|Ath Madrid|La Coruna|market|1x2",
@@ -1285,8 +1353,12 @@
    "edge": 0.0822,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 12.0
+   "status": "lost",
+   "last_odds": 12.0,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 12.0,
+   "clv": 0.1622
   },
   {
    "id": "SP1|2026-10-25|Ath Bilbao|Getafe|market|1x2",
@@ -1309,8 +1381,12 @@
    "edge": 0.0295,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 3.8
+   "status": "lost",
+   "last_odds": 3.8,
+   "score": "4:0",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": -0.0576
   },
   {
    "id": "SP1|2026-10-25|Barcelona|Real Madrid|market|1x2",
@@ -1333,8 +1409,12 @@
    "edge": 0.0292,
    "grade": "watch",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "won",
+   "last_odds": 4.33,
+   "score": "1:2",
+   "profit": 4.5,
+   "close_odds": 4.33,
+   "clv": 0.3098
   },
   {
    "id": "F1|2026-10-25|Marseille|Le Havre|model|1x2",
@@ -1357,8 +1437,12 @@
    "edge": 0.0709,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 5.5
+   "status": "lost",
+   "last_odds": 5.5,
+   "score": "4:3",
+   "profit": -1.0,
+   "close_odds": 5.5,
+   "clv": -0.1882
   },
   {
    "id": "F1|2026-10-25|Marseille|Le Havre|market|1x2",
@@ -1381,8 +1465,12 @@
    "edge": 0.0709,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 5.5
+   "status": "lost",
+   "last_odds": 5.5,
+   "score": "4:3",
+   "profit": -1.0,
+   "close_odds": 5.5,
+   "clv": -0.1882
   },
   {
    "id": "F1|2026-10-25|Paris SG|Lyon|market|1x2",
@@ -1405,8 +1493,12 @@
    "edge": 0.0241,
    "grade": "few",
    "added": "2026-10-15T10:54+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "lost",
+   "last_odds": 7.0,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 7.0,
+   "clv": -0.1731
   },
   {
    "id": "T1|2026-10-17|Genclerbirligi|Galatasaray|model|1x2",
@@ -1981,8 +2073,12 @@
    "edge": 0.0378,
    "grade": "watch",
    "added": "2026-10-15T11:01+00:00",
-   "status": "open",
-   "last_odds": 6.5
+   "status": "lost",
+   "last_odds": 6.5,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 6.5,
+   "clv": 0.1394
   },
   {
    "id": "AUT|2026-10-17|A. Lustenau|LASK|model|1x2",
@@ -2061,8 +2157,12 @@
    "edge": 0.0512,
    "grade": "no",
    "added": "2026-10-16T00:59+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "won",
+   "last_odds": 5.0,
+   "score": "2:1",
+   "profit": 3.9,
+   "close_odds": 5.0,
+   "clv": 0.031
   },
   {
    "id": "D1|2026-10-17|Union Berlin|Dortmund|model|1x2",
@@ -2113,8 +2213,12 @@
    "edge": 0.0476,
    "grade": "watch",
    "added": "2026-10-16T00:59+00:00",
-   "status": "open",
-   "last_odds": 6.5
+   "status": "lost",
+   "last_odds": 6.5,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 6.5,
+   "clv": 0.1394
   },
   {
    "id": "SP1|2026-10-25|Ath Bilbao|Getafe|model|1x2",
@@ -2137,8 +2241,12 @@
    "edge": 0.0462,
    "grade": "watch",
    "added": "2026-10-16T00:59+00:00",
-   "status": "open",
-   "last_odds": 3.8
+   "status": "lost",
+   "last_odds": 3.8,
+   "score": "4:0",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": -0.0576
   },
   {
    "id": "F1|2026-10-17|Strasbourg|Paris SG|model|1x2",
@@ -2525,8 +2633,12 @@
    "edge": 0.1073,
    "grade": "watch",
    "added": "2026-10-16T00:59+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "3:2",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": 0.0153
   },
   {
    "id": "N1|2026-10-24|Willem II|Cambuur|model|1x2",
@@ -2549,8 +2661,12 @@
    "edge": 0.04,
    "grade": "watch",
    "added": "2026-10-16T00:59+00:00",
-   "status": "open",
-   "last_odds": 2.55
+   "status": "won",
+   "last_odds": 2.55,
+   "score": "1:6",
+   "profit": 1.8,
+   "close_odds": 2.55,
+   "clv": 0.0437
   },
   {
    "id": "N1|2026-10-25|For Sittard|Excelsior|model|1x2",
@@ -2573,8 +2689,12 @@
    "edge": 0.0439,
    "grade": "watch",
    "added": "2026-10-16T00:59+00:00",
-   "status": "open",
-   "last_odds": 2.25
+   "status": "won",
+   "last_odds": 2.25,
+   "score": "1:0",
+   "profit": 1.75,
+   "close_odds": 2.25,
+   "clv": -0.0398
   },
   {
    "id": "N1|2026-10-25|Sparta Rotterdam|Ajax|model|1x2",
@@ -2597,8 +2717,12 @@
    "edge": 0.2371,
    "grade": "watch",
    "added": "2026-10-16T00:59+00:00",
-   "status": "open",
-   "last_odds": 5.5
+   "status": "lost",
+   "last_odds": 5.5,
+   "score": "1:2",
+   "profit": -1.0,
+   "close_odds": 5.5,
+   "clv": 0.1399
   },
   {
    "id": "E0|2026-10-18|Nott'm Forest|Arsenal|model|1x2",
@@ -4105,8 +4229,12 @@
    "edge": 0.0454,
    "grade": "no",
    "added": "2026-10-17T01:00+00:00",
-   "status": "open",
-   "last_odds": 4.2
+   "status": "won",
+   "last_odds": 4.2,
+   "score": "0:2",
+   "profit": 3.2,
+   "close_odds": 4.2,
+   "clv": 0.0518
   },
   {
    "id": "E0|2026-10-24|Chelsea|Tottenham|market|1x2",
@@ -4129,8 +4257,12 @@
    "edge": 0.0266,
    "grade": "no",
    "added": "2026-10-17T01:00+00:00",
-   "status": "open",
-   "last_odds": 4.2
+   "status": "won",
+   "last_odds": 4.2,
+   "score": "0:2",
+   "profit": 3.2,
+   "close_odds": 4.2,
+   "clv": 0.0518
   },
   {
    "id": "E1|2026-10-17|Norwich|Portsmouth|model|1x2",
@@ -4517,8 +4649,12 @@
    "edge": 0.0227,
    "grade": "watch",
    "added": "2026-10-17T01:00+00:00",
-   "status": "open",
-   "last_odds": 4.5
+   "status": "lost",
+   "last_odds": 4.5,
+   "score": "4:4",
+   "profit": -1.0,
+   "close_odds": 4.5,
+   "clv": 0.4165
   },
   {
    "id": "SP1|2026-10-17|Betis|Barcelona|market",
@@ -4597,8 +4733,12 @@
    "edge": 0.0229,
    "grade": "watch",
    "added": "2026-10-17T01:00+00:00",
-   "status": "open",
-   "last_odds": 3.15
+   "status": "lost",
+   "last_odds": 3.15,
+   "score": "1:2",
+   "profit": -1.0,
+   "close_odds": 3.15,
+   "clv": -0.0167
   },
   {
    "id": "SP1|2026-10-25|Barcelona|Real Madrid|model|1x2",
@@ -4621,8 +4761,12 @@
    "edge": 0.0377,
    "grade": "watch",
    "added": "2026-10-17T01:00+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "won",
+   "last_odds": 4.33,
+   "score": "1:2",
+   "profit": 4.5,
+   "close_odds": 4.33,
+   "clv": 0.3098
   },
   {
    "id": "F1|2026-10-25|Paris SG|Lyon|model|1x2",
@@ -4645,8 +4789,12 @@
    "edge": 0.0401,
    "grade": "few",
    "added": "2026-10-17T01:00+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "lost",
+   "last_odds": 7.0,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 7.0,
+   "clv": -0.1731
   },
   {
    "id": "FIN|2026-10-17|Lahti|TPS|model",
@@ -4932,8 +5080,12 @@
    "edge": 0.0805,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 2.12
+   "status": "lost",
+   "last_odds": 2.12,
+   "score": "3:2",
+   "profit": -1.0,
+   "close_odds": 2.12,
+   "clv": -0.0427
   },
   {
    "id": "SC0|2026-10-24|St Mirren|Dundee|model",
@@ -4956,8 +5108,12 @@
    "edge": 0.1185,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 2.25
+   "status": "lost",
+   "last_odds": 2.25,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 2.25,
+   "clv": 0.0335
   },
   {
    "id": "SC0|2026-10-24|St Mirren|Dundee|market|1x2",
@@ -4980,8 +5136,12 @@
    "edge": 0.0236,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 4.0,
+   "clv": 0.0432
   },
   {
    "id": "I1|2026-10-18|Juventus|Lazio|market|1x2",
@@ -5144,8 +5304,12 @@
    "edge": 0.0565,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 6.5
+   "status": "lost",
+   "last_odds": 6.5,
+   "score": "5:0",
+   "profit": -1.0,
+   "close_odds": 6.5,
+   "clv": 0.113
   },
   {
    "id": "P1|2026-10-24|Estrela|Casa Pia|model",
@@ -5168,8 +5332,12 @@
    "edge": 0.0548,
    "grade": "few",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 1.87
+   "status": "won",
+   "last_odds": 1.87,
+   "score": "0:2",
+   "profit": 0.88,
+   "close_odds": 1.87,
+   "clv": -0.0742
   },
   {
    "id": "P1|2026-10-24|Gil Vicente|Porto|model|1x2",
@@ -5192,8 +5360,12 @@
    "edge": 0.0506,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 8.0
+   "status": "lost",
+   "last_odds": 8.0,
+   "score": "0:1",
+   "profit": -1.0,
+   "close_odds": 8.0,
+   "clv": 0.0642
   },
   {
    "id": "P1|2026-10-25|Nacional|Sp Braga|model|1x2",
@@ -5216,8 +5388,12 @@
    "edge": 0.0664,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "won",
+   "last_odds": 7.0,
+   "score": "1:0",
+   "profit": 6.0,
+   "close_odds": 7.0,
+   "clv": 0.0909
   },
   {
    "id": "P1|2026-10-25|Sp Lisbon|Academico Viseu|market|1x2",
@@ -5240,8 +5416,12 @@
    "edge": 0.0727,
    "grade": "no",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 14.0
+   "status": "won",
+   "last_odds": 14.0,
+   "score": "1:2",
+   "profit": 13.0,
+   "close_odds": 14.0,
+   "clv": 0.4112
   },
   {
    "id": "G1|2026-10-18|Panathinaikos|Asteras Tripolis|model",
@@ -5376,8 +5556,12 @@
    "edge": 0.2773,
    "grade": "watch",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 18.0
+   "status": "lost",
+   "last_odds": 18.0,
+   "score": "5:0",
+   "profit": -1.0,
+   "close_odds": 18.0,
+   "clv": -0.043
   },
   {
    "id": "G1|2026-10-24|AEK|Panetolikos|market|1x2",
@@ -5400,8 +5584,12 @@
    "edge": 0.2773,
    "grade": "watch",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 18.0
+   "status": "lost",
+   "last_odds": 18.0,
+   "score": "5:0",
+   "profit": -1.0,
+   "close_odds": 18.0,
+   "clv": -0.043
   },
   {
    "id": "G1|2026-10-25|Olympiakos|Kalamata|model|1x2",
@@ -5424,8 +5612,12 @@
    "edge": 0.0708,
    "grade": "watch",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 21.0
+   "status": "lost",
+   "last_odds": 21.0,
+   "score": "5:0",
+   "profit": -1.0,
+   "close_odds": 21.0,
+   "clv": 0.5193
   },
   {
    "id": "G1|2026-10-25|Olympiakos|Kalamata|market|1x2",
@@ -5448,8 +5640,12 @@
    "edge": 0.0708,
    "grade": "watch",
    "added": "2026-10-18T01:01+00:00",
-   "status": "open",
-   "last_odds": 21.0
+   "status": "lost",
+   "last_odds": 21.0,
+   "score": "5:0",
+   "profit": -1.0,
+   "close_odds": 21.0,
+   "clv": 0.5193
   },
   {
    "id": "JPN|2026-10-21|V-Varen Nagasaki|Sanfrecce Hiroshima|model|1x2",
@@ -5632,8 +5828,12 @@
    "edge": 0.1835,
    "grade": "no",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 10.0
+   "status": "lost",
+   "last_odds": 10.0,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 10.0,
+   "clv": 0.1382
   },
   {
    "id": "E0|2026-10-24|Arsenal|Everton|market|1x2",
@@ -5656,8 +5856,12 @@
    "edge": 0.1675,
    "grade": "no",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 10.0
+   "status": "lost",
+   "last_odds": 10.0,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 10.0,
+   "clv": 0.1382
   },
   {
    "id": "E0|2026-10-24|Coventry|Fulham|model",
@@ -5680,8 +5884,12 @@
    "edge": 0.0361,
    "grade": "few",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 2.08
+   "status": "won",
+   "last_odds": 2.08,
+   "score": "0:1",
+   "profit": 1.1,
+   "close_odds": 2.08,
+   "clv": -0.0626
   },
   {
    "id": "I1|2026-10-25|Lecce|Juventus|model|1x2",
@@ -5704,8 +5912,12 @@
    "edge": 0.0627,
    "grade": "watch",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 8.0
+   "status": "lost",
+   "last_odds": 8.0,
+   "score": "0:2",
+   "profit": -1.0,
+   "close_odds": 8.0,
+   "clv": 0.1382
   },
   {
    "id": "I1|2026-10-25|Lecce|Juventus|market|1x2",
@@ -5728,8 +5940,12 @@
    "edge": 0.0438,
    "grade": "watch",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 8.0
+   "status": "lost",
+   "last_odds": 8.0,
+   "score": "0:2",
+   "profit": -1.0,
+   "close_odds": 8.0,
+   "clv": 0.1382
   },
   {
    "id": "I1|2026-10-27|Roma|Cagliari|model|1x2",
@@ -5824,8 +6040,12 @@
    "edge": 0.0499,
    "grade": "watch",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": -0.1906
   },
   {
    "id": "SP1|2026-10-23|Alaves|Malaga|market|1x2",
@@ -5848,8 +6068,12 @@
    "edge": 0.0499,
    "grade": "watch",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": -0.1906
   },
   {
    "id": "SP1|2026-10-31|Barcelona|Alaves|model|1x2",
@@ -6024,8 +6248,12 @@
    "edge": 0.0329,
    "grade": "no",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 4.9
+   "status": "won",
+   "last_odds": 4.9,
+   "score": "0:2",
+   "profit": 3.9,
+   "close_odds": 4.9,
+   "clv": 0.0766
   },
   {
    "id": "P1|2026-10-25|Estoril|Moreirense|model|1x2",
@@ -6048,8 +6276,12 @@
    "edge": 0.0302,
    "grade": "no",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 4.2
+   "status": "won",
+   "last_odds": 4.2,
+   "score": "1:3",
+   "profit": 3.2,
+   "close_odds": 4.2,
+   "clv": -0.0277
   },
   {
    "id": "P1|2026-10-25|Sp Lisbon|Academico Viseu|model|1x2",
@@ -6072,8 +6304,12 @@
    "edge": 0.0487,
    "grade": "no",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 14.0
+   "status": "won",
+   "last_odds": 14.0,
+   "score": "1:2",
+   "profit": 13.0,
+   "close_odds": 14.0,
+   "clv": 0.4112
   },
   {
    "id": "P1|2026-10-26|Santa Clara|Benfica|model|1x2",
@@ -6096,8 +6332,12 @@
    "edge": 0.0824,
    "grade": "no",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 8.5
+   "status": "lost",
+   "last_odds": 8.5,
+   "score": "1:2",
+   "profit": -1.0,
+   "close_odds": 8.5,
+   "clv": 0.0471
   },
   {
    "id": "P1|2026-10-26|Santa Clara|Benfica|market|1x2",
@@ -6120,8 +6360,12 @@
    "edge": 0.0308,
    "grade": "no",
    "added": "2026-10-19T01:02+00:00",
-   "status": "open",
-   "last_odds": 8.5
+   "status": "lost",
+   "last_odds": 8.5,
+   "score": "1:2",
+   "profit": -1.0,
+   "close_odds": 8.5,
+   "clv": 0.0471
   },
   {
    "id": "ARG|2026-10-25|Rosario Central|Huracan|model|1x2",
@@ -6531,8 +6775,12 @@
    "edge": 0.0279,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "1:5",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": -0.1275
   },
   {
    "id": "E1|2026-10-24|Wolves|Watford|model|1x2",
@@ -6555,8 +6803,12 @@
    "edge": 0.0337,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 8.0
+   "status": "lost",
+   "last_odds": 8.0,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 8.0,
+   "clv": 0.1856
   },
   {
    "id": "E1|2026-10-24|Wolves|Watford|market|1x2",
@@ -6579,8 +6831,12 @@
    "edge": 0.0337,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 8.0
+   "status": "lost",
+   "last_odds": 8.0,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 8.0,
+   "clv": 0.1856
   },
   {
    "id": "E2|2026-10-20|Huddersfield|Peterboro|model|1x2",
@@ -6659,8 +6915,12 @@
    "edge": 0.0316,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 2.3
+   "status": "lost",
+   "last_odds": 2.3,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 2.3,
+   "clv": 0.0393
   },
   {
    "id": "E2|2026-10-24|Doncaster|Sheffield Weds|market|1x2",
@@ -6683,8 +6943,12 @@
    "edge": 0.0316,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 2.3
+   "status": "lost",
+   "last_odds": 2.3,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 2.3,
+   "clv": 0.0393
   },
   {
    "id": "E3|2026-10-20|Barnet|Swindon|market|1x2",
@@ -6903,8 +7167,12 @@
    "edge": 0.1129,
    "grade": "few",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 1.74
+   "status": "won",
+   "last_odds": 1.74,
+   "score": "2:0",
+   "profit": 0.81,
+   "close_odds": 1.74,
+   "clv": 0.0368
   },
   {
    "id": "E3|2026-10-24|Northampton|Colchester|market|1x2",
@@ -6927,8 +7195,12 @@
    "edge": 0.0257,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 2.2
+   "status": "won",
+   "last_odds": 2.2,
+   "score": "2:0",
+   "profit": 1.32,
+   "close_odds": 2.2,
+   "clv": 0.0615
   },
   {
    "id": "E3|2026-10-24|Rochdale|Accrington|model",
@@ -6951,8 +7223,12 @@
    "edge": 0.0616,
    "grade": "few",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 1.88
+   "status": "lost",
+   "last_odds": 1.88,
+   "score": "0:5",
+   "profit": -1.0,
+   "close_odds": 1.88,
+   "clv": -0.0497
   },
   {
    "id": "E3|2026-10-24|Rochdale|Accrington|model|1x2",
@@ -6975,8 +7251,12 @@
    "edge": 0.102,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 3.1
+   "status": "won",
+   "last_odds": 3.1,
+   "score": "0:5",
+   "profit": 2.45,
+   "close_odds": 3.1,
+   "clv": 0.3953
   },
   {
    "id": "E3|2026-10-24|Rochdale|Accrington|market|1x2",
@@ -6999,8 +7279,12 @@
    "edge": 0.102,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 3.1
+   "status": "won",
+   "last_odds": 3.1,
+   "score": "0:5",
+   "profit": 2.45,
+   "close_odds": 3.1,
+   "clv": 0.3953
   },
   {
    "id": "E3|2026-10-24|Crawley Town|Tranmere|model|1x2",
@@ -7023,8 +7307,12 @@
    "edge": 0.0333,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 2.45
+   "status": "lost",
+   "last_odds": 2.45,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.45,
+   "clv": -0.079
   },
   {
    "id": "E3|2026-10-24|Crawley Town|Tranmere|market|1x2",
@@ -7047,8 +7335,12 @@
    "edge": 0.0333,
    "grade": "no",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 2.45
+   "status": "lost",
+   "last_odds": 2.45,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.45,
+   "clv": -0.079
   },
   {
    "id": "E3|2026-10-24|Exeter|Fleetwood Town|model",
@@ -7071,8 +7363,12 @@
    "edge": 0.143,
    "grade": "few",
    "added": "2026-10-20T01:03+00:00",
-   "status": "open",
-   "last_odds": 1.77
+   "status": "lost",
+   "last_odds": 1.77,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 1.77,
+   "clv": -0.0572
   },
   {
    "id": "MEX|2026-10-26|Queretaro|Cruz Azul|model",
@@ -7143,8 +7439,12 @@
    "edge": 0.0606,
    "grade": "no",
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 2.28
+   "status": "won",
+   "last_odds": 2.28,
+   "score": "1:1",
+   "profit": 1.15,
+   "close_odds": 2.28,
+   "clv": -0.0936
   },
   {
    "id": "E1|2026-10-24|Cardiff|Birmingham|market|1x2",
@@ -7167,8 +7467,12 @@
    "edge": 0.0225,
    "grade": "no",
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 4.0,
+   "clv": 0.0066
   },
   {
    "id": "E2|2026-10-20|Burton|Bradford|market|1x2",
@@ -7471,8 +7775,12 @@
    "edge": 0.0476,
    "grade": "few",
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 1.91
+   "status": "won",
+   "last_odds": 1.91,
+   "score": "2:0",
+   "profit": 0.91,
+   "close_odds": 1.91,
+   "clv": -0.0594
   },
   {
    "id": "SC0|2026-10-24|St Mirren|Dundee|model|1x2",
@@ -7495,8 +7803,12 @@
    "edge": 0.0347,
    "grade": "no",
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 4.0,
+   "clv": 0.0432
   },
   {
    "id": "P1|2026-10-26|Santa Clara|Benfica|model",
@@ -7519,8 +7831,12 @@
    "edge": 0.037,
    "grade": "few",
    "added": "2026-10-20T13:04+00:00",
-   "status": "open",
-   "last_odds": 2.06
+   "status": "lost",
+   "last_odds": 2.06,
+   "score": "1:2",
+   "profit": -1.0,
+   "close_odds": 2.06,
+   "clv": -0.1612
   },
   {
    "id": "FIN|2026-10-21|PK-35|Jaro|model",
@@ -7809,8 +8125,12 @@
    "edge": 0.054,
    "grade": "no",
    "added": "2026-10-21T01:03+00:00",
-   "status": "open",
-   "last_odds": 2.15
+   "status": "lost",
+   "last_odds": 2.15,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.15,
+   "clv": 0.1073
   },
   {
    "id": "E2|2026-10-24|AFC Wimbledon|Wycombe|market|1x2",
@@ -7833,8 +8153,12 @@
    "edge": 0.054,
    "grade": "no",
    "added": "2026-10-21T01:03+00:00",
-   "status": "open",
-   "last_odds": 2.15
+   "status": "lost",
+   "last_odds": 2.15,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.15,
+   "clv": 0.1073
   },
   {
    "id": "SP1|2026-10-31|Levante|Ath Madrid|model|1x2",
@@ -8017,8 +8341,12 @@
    "edge": 0.0365,
    "grade": "no",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 3.6
+   "status": "lost",
+   "last_odds": 3.6,
+   "score": "0:3",
+   "profit": -1.0,
+   "close_odds": 3.6,
+   "clv": 0.1543
   },
   {
    "id": "E0|2026-10-25|Man United|Bournemouth|market|1x2",
@@ -8041,8 +8369,12 @@
    "edge": 0.0358,
    "grade": "no",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 3.6
+   "status": "lost",
+   "last_odds": 3.6,
+   "score": "0:3",
+   "profit": -1.0,
+   "close_odds": 3.6,
+   "clv": 0.1543
   },
   {
    "id": "E0|2026-10-25|Liverpool|Brighton|market|1x2",
@@ -8065,8 +8397,12 @@
    "edge": 0.0224,
    "grade": "no",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 3.2
+   "status": "lost",
+   "last_odds": 3.2,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 3.2,
+   "clv": -0.0855
   },
   {
    "id": "E2|2026-10-24|Bromley|Peterboro|market|1x2",
@@ -8089,8 +8425,12 @@
    "edge": 0.0221,
    "grade": "watch",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 2.25
+   "status": "lost",
+   "last_odds": 2.25,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.25,
+   "clv": 0.0835
   },
   {
    "id": "D2|2026-10-23|Darmstadt|St Pauli|model|1x2",
@@ -8113,8 +8453,12 @@
    "edge": 0.0769,
    "grade": "no",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 3.05
+   "status": "lost",
+   "last_odds": 3.05,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 3.05,
+   "clv": -0.009
   },
   {
    "id": "I1|2026-10-23|Torino|Monza|market",
@@ -8137,8 +8481,12 @@
    "edge": 0.0258,
    "grade": "few",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 2.0
+   "status": "won",
+   "last_odds": 2.0,
+   "score": "3:2",
+   "profit": 1.1,
+   "close_odds": 2.0,
+   "clv": 0.0579
   },
   {
    "id": "I1|2026-10-25|Atalanta|Frosinone|model|1x2",
@@ -8161,8 +8509,12 @@
    "edge": 0.0612,
    "grade": "watch",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 4.5
+   "status": "lost",
+   "last_odds": 4.5,
+   "score": "4:4",
+   "profit": -1.0,
+   "close_odds": 4.5,
+   "clv": 0.2749
   },
   {
    "id": "F1|2026-10-25|Monaco|Lille|market|1x2",
@@ -8185,8 +8537,12 @@
    "edge": 0.0255,
    "grade": "few",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 3.75
+   "status": "won",
+   "last_odds": 3.75,
+   "score": "1:1",
+   "profit": 2.75,
+   "close_odds": 3.75,
+   "clv": -0.0045
   },
   {
    "id": "F1|2026-10-25|Rennes|Strasbourg|model|1x2",
@@ -8209,8 +8565,12 @@
    "edge": 0.0372,
    "grade": "few",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "lost",
+   "last_odds": 4.33,
+   "score": "3:0",
+   "profit": -1.0,
+   "close_odds": 4.33,
+   "clv": 0.0304
   },
   {
    "id": "F1|2026-10-25|Rennes|Strasbourg|market|1x2",
@@ -8233,8 +8593,12 @@
    "edge": 0.0372,
    "grade": "few",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "lost",
+   "last_odds": 4.33,
+   "score": "3:0",
+   "profit": -1.0,
+   "close_odds": 4.33,
+   "clv": 0.0304
   },
   {
    "id": "N1|2026-10-25|PSV Eindhoven|Feyenoord|market|1x2",
@@ -8257,8 +8621,12 @@
    "edge": 0.0441,
    "grade": "watch",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 3.2
+   "status": "lost",
+   "last_odds": 3.2,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 3.2,
+   "clv": 0.0302
   },
   {
    "id": "G1|2026-10-25|Volos NFC|Panathinaikos|model|1x2",
@@ -8281,8 +8649,12 @@
    "edge": 0.0305,
    "grade": "watch",
    "added": "2026-10-21T09:28+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "0:1",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": -0.2255
   },
   {
    "id": "AUT|2026-10-24|SK Rapid|A. Lustenau|model|1x2",
@@ -8665,8 +9037,12 @@
    "edge": 0.0233,
    "grade": "watch",
    "added": "2026-10-21T13:05+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "lost",
+   "last_odds": 4.33,
+   "score": "3:2",
+   "profit": -1.0,
+   "close_odds": 4.33,
+   "clv": -0.0856
   },
   {
    "id": "N1|2026-10-25|Sparta Rotterdam|Ajax|market|1x2",
@@ -8689,8 +9065,12 @@
    "edge": 0.0209,
    "grade": "watch",
    "added": "2026-10-21T13:05+00:00",
-   "status": "open",
-   "last_odds": 6.1
+   "status": "lost",
+   "last_odds": 6.1,
+   "score": "1:2",
+   "profit": -1.0,
+   "close_odds": 6.1,
+   "clv": -0.0355
   },
   {
    "id": "B1|2026-10-23|Kortrijk|Mechelen|market",
@@ -8737,8 +9117,12 @@
    "edge": 0.0501,
    "grade": "no",
    "added": "2026-10-21T13:05+00:00",
-   "status": "open",
-   "last_odds": 3.25
+   "status": "lost",
+   "last_odds": 3.25,
+   "score": "1:3",
+   "profit": -1.0,
+   "close_odds": 3.25,
+   "clv": -0.0517
   },
   {
    "id": "T1|2026-10-24|Gaziantep|Erzurumspor|market|1x2",
@@ -8761,8 +9145,12 @@
    "edge": 0.0501,
    "grade": "no",
    "added": "2026-10-21T13:05+00:00",
-   "status": "open",
-   "last_odds": 3.25
+   "status": "lost",
+   "last_odds": 3.25,
+   "score": "1:3",
+   "profit": -1.0,
+   "close_odds": 3.25,
+   "clv": -0.0517
   },
   {
    "id": "E0|2026-10-24|Arsenal|Everton|model",
@@ -8785,8 +9173,12 @@
    "edge": 0.0312,
    "grade": "few",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 1.88
+   "status": "won",
+   "last_odds": 1.88,
+   "score": "2:0",
+   "profit": 1.02,
+   "close_odds": 1.88,
+   "clv": -0.1343
   },
   {
    "id": "E0|2026-10-31|Coventry|Sunderland|model",
@@ -8833,8 +9225,12 @@
    "edge": 0.048,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.32
+   "status": "lost",
+   "last_odds": 3.32,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 3.32,
+   "clv": 0.0285
   },
   {
    "id": "D2|2026-10-24|Heidenheim|Cottbus|model|1x2",
@@ -8857,8 +9253,12 @@
    "edge": 0.0864,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 4.25
+   "status": "lost",
+   "last_odds": 4.25,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 4.25,
+   "clv": -0.2675
   },
   {
    "id": "D2|2026-10-24|Heidenheim|Cottbus|market|1x2",
@@ -8881,8 +9281,12 @@
    "edge": 0.0649,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 4.25
+   "status": "lost",
+   "last_odds": 4.25,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 4.25,
+   "clv": -0.2675
   },
   {
    "id": "D2|2026-10-25|Braunschweig|Hannover|model|1x2",
@@ -8905,8 +9309,12 @@
    "edge": 0.0422,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.05
+   "status": "won",
+   "last_odds": 3.05,
+   "score": "2:0",
+   "profit": 2.05,
+   "close_odds": 3.05,
+   "clv": -0.0156
   },
   {
    "id": "D2|2026-10-25|Braunschweig|Hannover|market|1x2",
@@ -8929,8 +9337,12 @@
    "edge": 0.0208,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.05
+   "status": "won",
+   "last_odds": 3.05,
+   "score": "2:0",
+   "profit": 2.05,
+   "close_odds": 3.05,
+   "clv": -0.0156
   },
   {
    "id": "I1|2026-10-25|Genoa|Venezia|market|1x2",
@@ -8953,8 +9365,12 @@
    "edge": 0.0206,
    "grade": "watch",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.4
+   "status": "lost",
+   "last_odds": 3.4,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 3.4,
+   "clv": -0.0532
   },
   {
    "id": "I1|2026-10-27|Sassuolo|Lazio|market|1x2",
@@ -8978,7 +9394,7 @@
    "grade": "watch",
    "added": "2026-10-22T01:02+00:00",
    "status": "open",
-   "last_odds": 3.6
+   "last_odds": 3.7
   },
   {
    "id": "F1|2026-10-23|Brest|Nice|model|1x2",
@@ -9001,8 +9417,12 @@
    "edge": 0.0366,
    "grade": "few",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.6
+   "status": "lost",
+   "last_odds": 3.6,
+   "score": "1:2",
+   "profit": -1.0,
+   "close_odds": 3.6,
+   "clv": -0.0148
   },
   {
    "id": "F1|2026-10-23|Brest|Nice|market|1x2",
@@ -9025,8 +9445,12 @@
    "edge": 0.0366,
    "grade": "few",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.6
+   "status": "lost",
+   "last_odds": 3.6,
+   "score": "1:2",
+   "profit": -1.0,
+   "close_odds": 3.6,
+   "clv": -0.0148
   },
   {
    "id": "F1|2026-10-25|Monaco|Lille|model|1x2",
@@ -9049,8 +9473,12 @@
    "edge": 0.0483,
    "grade": "few",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.5
+   "status": "won",
+   "last_odds": 3.5,
+   "score": "1:1",
+   "profit": 2.5,
+   "close_odds": 3.5,
+   "clv": -0.0709
   },
   {
    "id": "N1|2026-10-31|Feyenoord|For Sittard|model|1x2",
@@ -9193,8 +9621,12 @@
    "edge": 0.0692,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 5.25
+   "status": "lost",
+   "last_odds": 5.25,
+   "score": "5:0",
+   "profit": -1.0,
+   "close_odds": 5.25,
+   "clv": 0.113
   },
   {
    "id": "P1|2026-10-24|Estrela|Casa Pia|market|1x2",
@@ -9217,8 +9649,12 @@
    "edge": 0.0214,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 4.7
+   "status": "won",
+   "last_odds": 4.7,
+   "score": "0:2",
+   "profit": 3.9,
+   "close_odds": 4.7,
+   "clv": 0.0766
   },
   {
    "id": "P1|2026-10-24|Alverca|Arouca|model|1x2",
@@ -9241,8 +9677,12 @@
    "edge": 0.0483,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.4
+   "status": "lost",
+   "last_odds": 3.4,
+   "score": "0:1",
+   "profit": -1.0,
+   "close_odds": 3.4,
+   "clv": -0.0011
   },
   {
    "id": "P1|2026-10-24|Alverca|Arouca|market|1x2",
@@ -9265,8 +9705,12 @@
    "edge": 0.0483,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 3.4
+   "status": "lost",
+   "last_odds": 3.4,
+   "score": "0:1",
+   "profit": -1.0,
+   "close_odds": 3.4,
+   "clv": -0.0011
   },
   {
    "id": "P1|2026-10-24|Gil Vicente|Porto|market|1x2",
@@ -9289,8 +9733,12 @@
    "edge": 0.0752,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 9.0
+   "status": "lost",
+   "last_odds": 9.0,
+   "score": "0:1",
+   "profit": -1.0,
+   "close_odds": 9.0,
+   "clv": 0.0642
   },
   {
    "id": "P1|2026-10-25|Nacional|Sp Braga|market|1x2",
@@ -9313,8 +9761,12 @@
    "edge": 0.1092,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 6.25
+   "status": "won",
+   "last_odds": 6.25,
+   "score": "1:0",
+   "profit": 5.75,
+   "close_odds": 6.25,
+   "clv": 0.052
   },
   {
    "id": "T1|2026-10-25|Konyaspor|Genclerbirligi|model|1x2",
@@ -9337,8 +9789,12 @@
    "edge": 0.1024,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 4.25
+   "status": "lost",
+   "last_odds": 4.25,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 4.25,
+   "clv": 0.0457
   },
   {
    "id": "T1|2026-10-25|Konyaspor|Genclerbirligi|market|1x2",
@@ -9361,8 +9817,12 @@
    "edge": 0.1024,
    "grade": "no",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 4.25
+   "status": "lost",
+   "last_odds": 4.25,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 4.25,
+   "clv": 0.0457
   },
   {
    "id": "MEX|2026-10-25|UNAM Pumas|Tigres UANL|market|1x2",
@@ -9530,7 +9990,7 @@
    "grade": "no",
    "added": "2026-10-23T01:06+00:00",
    "status": "open",
-   "last_odds": 6.0
+   "last_odds": 6.25
   },
   {
    "id": "D1|2026-11-01|Ein Frankfurt|Hamburg|model|1x2",
@@ -9601,8 +10061,12 @@
    "edge": 0.0282,
    "grade": "no",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 3.0
+   "status": "lost",
+   "last_odds": 3.0,
+   "score": "3:0",
+   "profit": -1.0,
+   "close_odds": 3.0,
+   "clv": -0.0093
   },
   {
    "id": "I1|2026-10-24|Cagliari|Bologna|model|1x2",
@@ -9625,8 +10089,12 @@
    "edge": 0.0435,
    "grade": "watch",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 3.0
+   "status": "lost",
+   "last_odds": 3.0,
+   "score": "0:2",
+   "profit": -1.0,
+   "close_odds": 3.0,
+   "clv": 0.0238
   },
   {
    "id": "I1|2026-10-24|Cagliari|Bologna|market|1x2",
@@ -9649,8 +10117,12 @@
    "edge": 0.0435,
    "grade": "watch",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 3.0
+   "status": "lost",
+   "last_odds": 3.0,
+   "score": "0:2",
+   "profit": -1.0,
+   "close_odds": 3.0,
+   "clv": 0.0238
   },
   {
    "id": "N1|2026-10-25|Nijmegen|Groningen|market|1x2",
@@ -9673,8 +10145,12 @@
    "edge": 0.0229,
    "grade": "watch",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 2.8
+   "status": "lost",
+   "last_odds": 2.8,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 2.8,
+   "clv": -0.194
   },
   {
    "id": "N1|2026-11-01|Groningen|Sparta Rotterdam|model|1x2",
@@ -9745,8 +10221,12 @@
    "edge": 0.0367,
    "grade": "no",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 2.17
+   "status": "won",
+   "last_odds": 2.17,
+   "score": "1:2",
+   "profit": 1.17,
+   "close_odds": 2.17,
+   "clv": -0.1093
   },
   {
    "id": "T1|2026-10-24|Samsunspor|Amedspor|market|1x2",
@@ -9769,8 +10249,12 @@
    "edge": 0.0367,
    "grade": "no",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 2.17
+   "status": "won",
+   "last_odds": 2.17,
+   "score": "1:2",
+   "profit": 1.17,
+   "close_odds": 2.17,
+   "clv": -0.1093
   },
   {
    "id": "T1|2026-10-26|Besiktas|Buyuksehyr|model|1x2",
@@ -9793,8 +10277,12 @@
    "edge": 0.1005,
    "grade": "no",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": 0.0708
   },
   {
    "id": "T1|2026-10-26|Besiktas|Buyuksehyr|market|1x2",
@@ -9817,8 +10305,12 @@
    "edge": 0.1005,
    "grade": "no",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": 0.0708
   },
   {
    "id": "G1|2026-10-24|Asteras Tripolis|Levadeiakos|model|1x2",
@@ -9841,8 +10333,12 @@
    "edge": 0.0994,
    "grade": "watch",
    "added": "2026-10-23T01:06+00:00",
-   "status": "open",
-   "last_odds": 4.15
+   "status": "lost",
+   "last_odds": 4.15,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 4.15,
+   "clv": 0.0542
   },
   {
    "id": "ARG|2026-10-23|Gimnasia L.P.|Sarmiento Junin|model|1x2",
@@ -11137,8 +11633,12 @@
    "edge": 0.0351,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.75
+   "status": "lost",
+   "last_odds": 5.75,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 4.2,
+   "clv": 0.2986
   },
   {
    "id": "E2|2026-10-24|Notts County|Stockport|market|1x2",
@@ -11161,8 +11661,12 @@
    "edge": 0.0351,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.75
+   "status": "lost",
+   "last_odds": 5.75,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 4.2,
+   "clv": 0.2986
   },
   {
    "id": "E3|2026-10-24|Cheltenham|Newport County|model|1x2",
@@ -11185,8 +11689,12 @@
    "edge": 0.0318,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 2.55
+   "status": "won",
+   "last_odds": 2.55,
+   "score": "1:0",
+   "profit": 1.55,
+   "close_odds": 2.55,
+   "clv": -0.0664
   },
   {
    "id": "E3|2026-10-24|Cheltenham|Newport County|market|1x2",
@@ -11209,8 +11717,12 @@
    "edge": 0.0318,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 2.55
+   "status": "won",
+   "last_odds": 2.55,
+   "score": "1:0",
+   "profit": 1.55,
+   "close_odds": 2.55,
+   "clv": -0.0664
   },
   {
    "id": "E3|2026-10-24|Northampton|Colchester|model|1x2",
@@ -11233,8 +11745,12 @@
    "edge": 0.033,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 3.75
+   "status": "lost",
+   "last_odds": 3.75,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 3.7,
+   "clv": -0.0509
   },
   {
    "id": "E3|2026-10-24|Barnet|Oldham|model|1x2",
@@ -11257,8 +11773,12 @@
    "edge": 0.1049,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "lost",
+   "last_odds": 4.33,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": 0.0044
   },
   {
    "id": "E3|2026-10-24|Barnet|Oldham|market|1x2",
@@ -11281,8 +11801,12 @@
    "edge": 0.1049,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "lost",
+   "last_odds": 4.33,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": 0.0044
   },
   {
    "id": "E3|2026-10-24|Chesterfield|Crewe|model|1x2",
@@ -11305,8 +11829,12 @@
    "edge": 0.1346,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "5:1",
+   "profit": -1.0,
+   "close_odds": 4.75,
+   "clv": 0.134
   },
   {
    "id": "E3|2026-10-24|Chesterfield|Crewe|market|1x2",
@@ -11329,8 +11857,12 @@
    "edge": 0.1346,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "5:1",
+   "profit": -1.0,
+   "close_odds": 4.75,
+   "clv": 0.134
   },
   {
    "id": "E3|2026-10-24|Gillingham|Grimsby|market",
@@ -11353,8 +11885,12 @@
    "edge": 0.022,
    "grade": "few",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 1.91
+   "status": "won",
+   "last_odds": 1.91,
+   "score": "1:4",
+   "profit": 0.91,
+   "close_odds": 1.91,
+   "clv": 0.0078
   },
   {
    "id": "I1|2026-10-25|Udinese|Milan|model|1x2",
@@ -11377,8 +11913,12 @@
    "edge": 0.0594,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.5
+   "status": "lost",
+   "last_odds": 5.5,
+   "score": "0:2",
+   "profit": -1.0,
+   "close_odds": 4.75,
+   "clv": 0.1461
   },
   {
    "id": "I1|2026-10-25|Udinese|Milan|market|1x2",
@@ -11401,8 +11941,12 @@
    "edge": 0.0594,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.5
+   "status": "lost",
+   "last_odds": 5.5,
+   "score": "0:2",
+   "profit": -1.0,
+   "close_odds": 4.75,
+   "clv": 0.1461
   },
   {
    "id": "SP1|2026-10-25|Sociedad|Levante|model|1x2",
@@ -11425,8 +11969,12 @@
    "edge": 0.0474,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.25
+   "status": "lost",
+   "last_odds": 5.25,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": -0.0571
   },
   {
    "id": "SP1|2026-10-25|Sociedad|Levante|market|1x2",
@@ -11449,8 +11997,12 @@
    "edge": 0.0474,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.25
+   "status": "lost",
+   "last_odds": 5.25,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": -0.0571
   },
   {
    "id": "SP2|2026-10-24|Las Palmas|Sociedad B|market|1x2",
@@ -11473,8 +12025,12 @@
    "edge": 0.0216,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 1.96
+   "status": "won",
+   "last_odds": 1.96,
+   "score": "1:0",
+   "profit": 0.96,
+   "close_odds": 2.1,
+   "clv": -0.1496
   },
   {
    "id": "SP2|2026-10-24|Almeria|Oviedo|model|1x2",
@@ -11497,8 +12053,12 @@
    "edge": 0.0573,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 4.33,
+   "clv": 0.0752
   },
   {
    "id": "SP2|2026-10-24|Almeria|Oviedo|market|1x2",
@@ -11521,8 +12081,12 @@
    "edge": 0.0573,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 4.33,
+   "clv": 0.0752
   },
   {
    "id": "SP2|2026-10-25|Sabadell|Tenerife|model",
@@ -11545,8 +12109,12 @@
    "edge": 0.25,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 2.5
+   "status": "lost",
+   "last_odds": 2.5,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.6,
+   "clv": -0.0888
   },
   {
    "id": "SP2|2026-10-25|Sabadell|Tenerife|market",
@@ -11569,8 +12137,12 @@
    "edge": 0.25,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 2.5
+   "status": "lost",
+   "last_odds": 2.5,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 2.6,
+   "clv": -0.0888
   },
   {
    "id": "SP2|2026-10-25|Sabadell|Tenerife|model|1x2",
@@ -11593,8 +12165,12 @@
    "edge": 0.1457,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "lost",
+   "last_odds": 4.33,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 4.75,
+   "clv": -0.1376
   },
   {
    "id": "SP2|2026-10-25|Sabadell|Tenerife|market|1x2",
@@ -11617,8 +12193,12 @@
    "edge": 0.1457,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 4.33
+   "status": "lost",
+   "last_odds": 4.33,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 4.75,
+   "clv": -0.1376
   },
   {
    "id": "SP2|2026-10-25|Cadiz|Ceuta|model",
@@ -11641,8 +12221,12 @@
    "edge": 0.2369,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 1.9
+   "status": "lost",
+   "last_odds": 1.9,
+   "score": "3:1",
+   "profit": -1.0,
+   "close_odds": 1.95,
+   "clv": -0.0596
   },
   {
    "id": "SP2|2026-10-25|Cadiz|Ceuta|market",
@@ -11665,8 +12249,12 @@
    "edge": 0.2369,
    "grade": "no",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 1.9
+   "status": "lost",
+   "last_odds": 1.9,
+   "score": "3:1",
+   "profit": -1.0,
+   "close_odds": 1.95,
+   "clv": -0.0596
   },
   {
    "id": "F1|2026-10-26|Paris SG|Lyon|market|1x2",
@@ -11689,8 +12277,12 @@
    "edge": 0.0212,
    "grade": "few",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 6.5
+   "status": "lost",
+   "last_odds": 6.5,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 9.0,
+   "clv": -0.2322
   },
   {
    "id": "F2|2026-10-26|Montpellier|Red Star|model",
@@ -11713,8 +12305,12 @@
    "edge": 0.0444,
    "grade": "few",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 1.95
+   "status": "lost",
+   "last_odds": 1.95,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 1.98,
+   "clv": -0.0644
   },
   {
    "id": "F2|2026-10-26|Montpellier|Red Star|market",
@@ -11737,8 +12333,12 @@
    "edge": 0.0444,
    "grade": "few",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 1.95
+   "status": "lost",
+   "last_odds": 1.95,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 1.98,
+   "clv": -0.0644
   },
   {
    "id": "N1|2026-10-23|Go Ahead Eagles|Telstar|market",
@@ -11761,8 +12361,12 @@
    "edge": 0.0208,
    "grade": "few",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 3.1
+   "status": "lost",
+   "last_odds": 3.1,
+   "score": "3:2",
+   "profit": -1.0,
+   "close_odds": 3.1,
+   "clv": -0.0674
   },
   {
    "id": "P1|2026-10-23|Guimaraes|Maritimo|model",
@@ -11785,8 +12389,12 @@
    "edge": 0.0437,
    "grade": "few",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 1.98
+   "status": "lost",
+   "last_odds": 1.98,
+   "score": "5:0",
+   "profit": -1.0,
+   "close_odds": 2.0,
+   "clv": -0.0574
   },
   {
    "id": "P1|2026-10-23|Guimaraes|Maritimo|market",
@@ -11809,8 +12417,12 @@
    "edge": 0.0437,
    "grade": "few",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 1.98
+   "status": "lost",
+   "last_odds": 1.98,
+   "score": "5:0",
+   "profit": -1.0,
+   "close_odds": 2.0,
+   "clv": -0.0574
   },
   {
    "id": "G1|2026-10-25|OFI Crete|PAOK|model|1x2",
@@ -11833,8 +12445,12 @@
    "edge": 0.0719,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.25
+   "status": "won",
+   "last_odds": 5.25,
+   "score": "2:1",
+   "profit": 4.25,
+   "close_odds": 4.75,
+   "clv": 0.0457
   },
   {
    "id": "G1|2026-10-25|OFI Crete|PAOK|market|1x2",
@@ -11857,8 +12473,12 @@
    "edge": 0.0685,
    "grade": "watch",
    "added": "2026-10-23T16:53+00:00",
-   "status": "open",
-   "last_odds": 5.25
+   "status": "won",
+   "last_odds": 5.25,
+   "score": "2:1",
+   "profit": 4.25,
+   "close_odds": 4.75,
+   "clv": 0.0457
   },
   {
    "id": "E0|2026-10-31|Bournemouth|Leeds|market|1x2",
@@ -11905,8 +12525,12 @@
    "edge": 0.0385,
    "grade": "few",
    "added": "2026-10-24T01:08+00:00",
-   "status": "open",
-   "last_odds": 5.5
+   "status": "lost",
+   "last_odds": 5.5,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 5.75,
+   "clv": -0.0229
   },
   {
    "id": "F1|2026-10-25|Toulouse|Troyes|market|1x2",
@@ -11929,8 +12553,12 @@
    "edge": 0.0385,
    "grade": "few",
    "added": "2026-10-24T01:08+00:00",
-   "status": "open",
-   "last_odds": 5.5
+   "status": "lost",
+   "last_odds": 5.5,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 5.75,
+   "clv": -0.0229
   },
   {
    "id": "B1|2026-10-25|Club Brugge|St Truiden|model|1x2",
@@ -11953,8 +12581,12 @@
    "edge": 0.0812,
    "grade": "few",
    "added": "2026-10-24T01:08+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "3:2",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": -0.0029
   },
   {
    "id": "B1|2026-10-25|Club Brugge|St Truiden|market|1x2",
@@ -11977,8 +12609,12 @@
    "edge": 0.0812,
    "grade": "few",
    "added": "2026-10-24T01:08+00:00",
-   "status": "open",
-   "last_odds": 7.5
+   "status": "lost",
+   "last_odds": 7.5,
+   "score": "3:2",
+   "profit": -1.0,
+   "close_odds": 7.5,
+   "clv": -0.0029
   },
   {
    "id": "B1|2026-10-25|St. Gilloise|Cercle Brugge|model|1x2",
@@ -12001,8 +12637,12 @@
    "edge": 0.0365,
    "grade": "few",
    "added": "2026-10-24T01:08+00:00",
-   "status": "open",
-   "last_odds": 9.0
+   "status": "lost",
+   "last_odds": 9.0,
+   "score": "5:2",
+   "profit": -1.0,
+   "close_odds": 9.0,
+   "clv": 0.0472
   },
   {
    "id": "B1|2026-10-25|St. Gilloise|Cercle Brugge|market|1x2",
@@ -12025,8 +12665,12 @@
    "edge": 0.0365,
    "grade": "few",
    "added": "2026-10-24T01:08+00:00",
-   "status": "open",
-   "last_odds": 9.0
+   "status": "lost",
+   "last_odds": 9.0,
+   "score": "5:2",
+   "profit": -1.0,
+   "close_odds": 9.0,
+   "clv": 0.0472
   },
   {
    "id": "E0|2026-10-31|Chelsea|Man United|model|1x2",
@@ -12146,7 +12790,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.7
+   "last_odds": 3.4
   },
   {
    "id": "SC0|2026-10-28|Dundee|Kilmarnock|market|1x2",
@@ -12170,7 +12814,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.7
+   "last_odds": 3.4
   },
   {
    "id": "SC0|2026-10-31|Kilmarnock|St Johnstone|model|1x2",
@@ -12265,8 +12909,12 @@
    "edge": 0.0246,
    "grade": "few",
    "added": "2026-10-25T00:58+00:00",
-   "status": "open",
-   "last_odds": 1.85
+   "status": "lost",
+   "last_odds": 1.85,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 1.91,
+   "clv": -0.082
   },
   {
    "id": "SP1|2026-10-25|Celta|Betis|market|1x2",
@@ -12289,8 +12937,12 @@
    "edge": 0.0244,
    "grade": "watch",
    "added": "2026-10-25T00:58+00:00",
-   "status": "open",
-   "last_odds": 2.38
+   "status": "lost",
+   "last_odds": 2.38,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 2.7,
+   "clv": -0.1607
   },
   {
    "id": "N1|2026-10-31|Heerenveen|Nijmegen|model|1x2",
@@ -12530,7 +13182,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 4.9
+   "last_odds": 5.2
   },
   {
    "id": "USA|2026-10-28|Inter Miami|FC Cincinnati|market|1x2",
@@ -12554,7 +13206,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 4.9
+   "last_odds": 5.2
   },
   {
    "id": "USA|2026-10-29|FC Dallas|Columbus Crew|model|1x2",
@@ -12626,7 +13278,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.9
+   "last_odds": 3.8
   },
   {
    "id": "I1|2026-11-02|Atalanta|Parma|model|1x2",
@@ -12650,7 +13302,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 6.0
   },
   {
    "id": "I1|2026-11-02|Atalanta|Parma|market|1x2",
@@ -12674,7 +13326,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 6.0
   },
   {
    "id": "I2|2026-10-28|Pisa|Palermo|model|1x2",
@@ -12770,7 +13422,7 @@
    "grade": "few",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 2.02
+   "last_odds": 1.93
   },
   {
    "id": "SP2|2026-10-26|Andorra|Burgos|model|1x2",
@@ -12793,8 +13445,12 @@
    "edge": 0.0519,
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 3.6
+   "status": "lost",
+   "last_odds": 3.6,
+   "score": "2:3",
+   "profit": -1.0,
+   "close_odds": 3.3,
+   "clv": 0.0405
   },
   {
    "id": "SP2|2026-10-26|Andorra|Burgos|market|1x2",
@@ -12817,8 +13473,12 @@
    "edge": 0.0519,
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 3.6
+   "status": "lost",
+   "last_odds": 3.6,
+   "score": "2:3",
+   "profit": -1.0,
+   "close_odds": 3.3,
+   "clv": 0.0405
   },
   {
    "id": "F1|2026-11-07|Paris SG|Troyes|model|1x2",
@@ -12937,8 +13597,12 @@
    "edge": 0.0259,
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 3.8
+   "status": "lost",
+   "last_odds": 3.8,
+   "score": "3:4",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": -0.0816
   },
   {
    "id": "ARG|2026-10-26|Union de Santa Fe|Estudiantes L.P.|model|1x2",
@@ -13010,7 +13674,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 5.25
+   "last_odds": 4.5
   },
   {
    "id": "ARG|2026-10-30|Estudiantes Rio Cuarto|Gimnasia L.P.|market|1x2",
@@ -13034,7 +13698,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 5.25
+   "last_odds": 4.5
   },
   {
    "id": "ARG|2026-10-31|Sarmiento Junin|Rosario Central|market|1x2",
@@ -13058,7 +13722,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 2.1
+   "last_odds": 2.05
   },
   {
    "id": "ARG|2026-11-01|Belgrano|Barracas Central|market|1x2",
@@ -13082,7 +13746,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 5.5
+   "last_odds": 4.8
   },
   {
    "id": "ARG|2026-11-01|Lanus|Gimnasia Mendoza|market|1x2",
@@ -13106,7 +13770,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 1.73
+   "last_odds": 1.67
   },
   {
    "id": "BRA|2026-11-04|Athletico-PR|Vasco|model|1x2",
@@ -13130,7 +13794,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.3
+   "last_odds": 3.2
   },
   {
    "id": "BRA|2026-11-04|Athletico-PR|Vasco|market|1x2",
@@ -13154,7 +13818,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.3
+   "last_odds": 3.2
   },
   {
    "id": "BRA|2026-11-04|Flamengo RJ|Gremio|model|1x2",
@@ -13274,7 +13938,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 2.9
+   "last_odds": 2.8
   },
   {
    "id": "MEX|2026-10-31|Atl. San Luis|Atlas|market|1x2",
@@ -13298,7 +13962,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 2.9
+   "last_odds": 2.8
   },
   {
    "id": "USA|2026-10-29|St. Louis City|Portland Timbers|model|1x2",
@@ -13371,41 +14035,305 @@
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
    "last_odds": 6.0
+  },
+  {
+   "id": "E0|2026-11-01|Liverpool|Arsenal|model",
+   "match": "E0|2026-11-01|Liverpool|Arsenal",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-01",
+   "time": "16:30",
+   "ko": "2026-11-01T16:30+00:00",
+   "home": "Liverpool",
+   "away": "Arsenal",
+   "side": "Under",
+   "prob": 0.5007,
+   "odds": 2.08,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0414,
+   "grade": "few",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 2.08
+  },
+  {
+   "id": "E2|2026-10-31|Plymouth|Reading|market|1x2",
+   "match": "E2|2026-10-31|Plymouth|Reading",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E2",
+   "league_name": "Anglia · League One",
+   "date": "2026-10-31",
+   "time": "12:30",
+   "ko": "2026-10-31T12:30+00:00",
+   "home": "Plymouth",
+   "away": "Reading",
+   "side": "1",
+   "prob": 0.4288,
+   "odds": 2.38,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0206,
+   "grade": "watch",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 2.38
+  },
+  {
+   "id": "E2|2026-10-31|Barnsley|Oxford|market|1x2",
+   "match": "E2|2026-10-31|Barnsley|Oxford",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E2",
+   "league_name": "Anglia · League One",
+   "date": "2026-10-31",
+   "time": "15:00",
+   "ko": "2026-10-31T15:00+00:00",
+   "home": "Barnsley",
+   "away": "Oxford",
+   "side": "X",
+   "prob": 0.2554,
+   "odds": 4.0,
+   "book": "Bet Victor",
+   "book_key": "betvictor",
+   "user_book": true,
+   "edge": 0.0215,
+   "grade": "watch",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 4.0
+  },
+  {
+   "id": "SC0|2026-11-01|Falkirk|Celtic|model|1x2",
+   "match": "SC0|2026-11-01|Falkirk|Celtic",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "SC0",
+   "league_name": "Szkocja · Premiership",
+   "date": "2026-11-01",
+   "time": "13:00",
+   "ko": "2026-11-01T13:00+00:00",
+   "home": "Falkirk",
+   "away": "Celtic",
+   "side": "X",
+   "prob": 0.1949,
+   "odds": 5.6,
+   "book": "LeoVegas",
+   "book_key": "leovegas",
+   "user_book": false,
+   "edge": 0.0912,
+   "grade": "no",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 5.6
+  },
+  {
+   "id": "SC0|2026-11-01|Falkirk|Celtic|market|1x2",
+   "match": "SC0|2026-11-01|Falkirk|Celtic",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "SC0",
+   "league_name": "Szkocja · Premiership",
+   "date": "2026-11-01",
+   "time": "13:00",
+   "ko": "2026-11-01T13:00+00:00",
+   "home": "Falkirk",
+   "away": "Celtic",
+   "side": "X",
+   "prob": 0.1904,
+   "odds": 5.6,
+   "book": "LeoVegas",
+   "book_key": "leovegas",
+   "user_book": false,
+   "edge": 0.0662,
+   "grade": "no",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 5.6
+  },
+  {
+   "id": "BRA|2026-10-29|Remo|Botafogo RJ|model",
+   "match": "BRA|2026-10-29|Remo|Botafogo RJ",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-10-29",
+   "time": "00:30",
+   "ko": "2026-10-29T00:30+00:00",
+   "home": "Remo",
+   "away": "Botafogo RJ",
+   "side": "Under",
+   "prob": 0.4623,
+   "odds": 2.23,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.031,
+   "grade": null,
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 2.23
+  },
+  {
+   "id": "BRA|2026-10-30|Gremio|Athletico-PR|model|1x2",
+   "match": "BRA|2026-10-30|Gremio|Athletico-PR",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-10-30",
+   "time": "00:30",
+   "ko": "2026-10-30T00:30+00:00",
+   "home": "Gremio",
+   "away": "Athletico-PR",
+   "side": "2",
+   "prob": 0.3733,
+   "odds": 2.8,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0454,
+   "grade": "no",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 2.8
+  },
+  {
+   "id": "BRA|2026-10-30|Gremio|Athletico-PR|market|1x2",
+   "match": "BRA|2026-10-30|Gremio|Athletico-PR",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-10-30",
+   "time": "00:30",
+   "ko": "2026-10-30T00:30+00:00",
+   "home": "Gremio",
+   "away": "Athletico-PR",
+   "side": "2",
+   "prob": 0.3733,
+   "odds": 2.8,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0454,
+   "grade": "no",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 2.8
+  },
+  {
+   "id": "MEX|2026-11-02|Cruz Azul|Club Leon|market",
+   "match": "MEX|2026-11-02|Cruz Azul|Club Leon",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-11-02",
+   "time": "01:00",
+   "ko": "2026-11-02T01:00+00:00",
+   "home": "Cruz Azul",
+   "away": "Club Leon",
+   "side": "Over",
+   "prob": 0.6408,
+   "odds": 1.6,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0253,
+   "grade": null,
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 1.6
+  },
+  {
+   "id": "USA|2026-10-28|Charlotte|CF Montreal|model|1x2",
+   "match": "USA|2026-10-28|Charlotte|CF Montreal",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "USA",
+   "league_name": "USA · MLS",
+   "date": "2026-10-28",
+   "time": "23:30",
+   "ko": "2026-10-28T23:30+00:00",
+   "home": "Charlotte",
+   "away": "CF Montreal",
+   "side": "2",
+   "prob": 0.1741,
+   "odds": 6.0,
+   "book": "Bet Victor",
+   "book_key": "betvictor",
+   "user_book": true,
+   "edge": 0.0445,
+   "grade": "no",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 6.0
+  },
+  {
+   "id": "USA|2026-10-28|Charlotte|CF Montreal|market|1x2",
+   "match": "USA|2026-10-28|Charlotte|CF Montreal",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "USA",
+   "league_name": "USA · MLS",
+   "date": "2026-10-28",
+   "time": "23:30",
+   "ko": "2026-10-28T23:30+00:00",
+   "home": "Charlotte",
+   "away": "CF Montreal",
+   "side": "2",
+   "prob": 0.1741,
+   "odds": 6.0,
+   "book": "Bet Victor",
+   "book_key": "betvictor",
+   "user_book": true,
+   "edge": 0.0445,
+   "grade": "no",
+   "added": "2026-10-27T01:08+00:00",
+   "status": "open",
+   "last_odds": 6.0
   }
  ],
  "summary": {
   "model_ou": {
-   "settled": 31,
-   "won": 12,
-   "open": 19,
-   "profit": -6.85,
-   "roi": -0.221,
-   "clv": -0.0303
+   "settled": 46,
+   "won": 18,
+   "open": 6,
+   "profit": -9.98,
+   "roi": -0.217,
+   "clv": -0.0408
   },
   "model_x": {
-   "settled": 63,
-   "won": 16,
-   "open": 153,
-   "profit": 17.3,
-   "roi": 0.2746,
-   "clv": 0.0108
+   "settled": 132,
+   "won": 32,
+   "open": 87,
+   "profit": 25.52,
+   "roi": 0.1933,
+   "clv": 0.028
   },
   "market_ou": {
-   "settled": 11,
-   "won": 4,
-   "open": 10,
-   "profit": -2.63,
-   "roi": -0.2391,
-   "clv": -0.0235
+   "settled": 19,
+   "won": 6,
+   "open": 3,
+   "profit": -6.62,
+   "roi": -0.3484,
+   "clv": -0.0322
   },
   "market_x": {
-   "settled": 80,
-   "won": 19,
-   "open": 160,
-   "profit": 18.9,
-   "roi": 0.2362,
-   "clv": 0.0237
+   "settled": 154,
+   "won": 34,
+   "open": 91,
+   "profit": 16.65,
+   "roi": 0.1081,
+   "clv": 0.0274
   }
  },
- "updated": "2026-10-26T01:14+00:00"
+ "updated": "2026-10-27T01:08+00:00"
 }
