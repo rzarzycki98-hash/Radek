@@ -13123,7 +13123,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.4
+   "last_odds": 3.5
   },
   {
    "id": "SC0|2026-10-28|Dundee|Kilmarnock|market|1x2",
@@ -13147,7 +13147,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.4
+   "last_odds": 3.5
   },
   {
    "id": "SC0|2026-10-31|Kilmarnock|St Johnstone|model|1x2",
@@ -13171,7 +13171,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 2.8
+   "last_odds": 2.87
   },
   {
    "id": "D1|2026-10-31|M'gladbach|Paderborn|model|1x2",
@@ -13527,7 +13527,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 5.2
+   "last_odds": 6.0
   },
   {
    "id": "USA|2026-10-28|Inter Miami|FC Cincinnati|market|1x2",
@@ -13551,7 +13551,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 5.2
+   "last_odds": 6.0
   },
   {
    "id": "USA|2026-10-29|FC Dallas|Columbus Crew|model|1x2",
@@ -13575,7 +13575,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.45
+   "last_odds": 3.35
   },
   {
    "id": "USA|2026-10-29|FC Dallas|Columbus Crew|market|1x2",
@@ -13599,7 +13599,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.45
+   "last_odds": 3.35
   },
   {
    "id": "I1|2026-10-27|Torino|Como|market|1x2",
@@ -13695,7 +13695,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.4
+   "last_odds": 3.5
   },
   {
    "id": "I2|2026-10-28|Pisa|Palermo|market|1x2",
@@ -13719,7 +13719,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.4
+   "last_odds": 3.5
   },
   {
    "id": "I2|2026-10-28|Carrarese|Arezzo|market|1x2",
@@ -13743,7 +13743,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 2.43
+   "last_odds": 2.33
   },
   {
    "id": "I2|2026-10-28|Juve Stabia|Verona|market",
@@ -14147,7 +14147,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.2
+   "last_odds": 3.3
   },
   {
    "id": "BRA|2026-11-04|Athletico-PR|Vasco|market|1x2",
@@ -14171,7 +14171,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.2
+   "last_odds": 3.3
   },
   {
    "id": "BRA|2026-11-04|Flamengo RJ|Gremio|model|1x2",
@@ -14347,7 +14347,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 4.25
+   "last_odds": 4.35
   },
   {
    "id": "USA|2026-10-29|St. Louis City|Portland Timbers|market|1x2",
@@ -14371,7 +14371,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 4.25
+   "last_odds": 4.35
   },
   {
    "id": "USA|2026-10-29|Vancouver Whitecaps|San Diego FC|market|1x2",
@@ -14539,7 +14539,7 @@
    "grade": null,
    "added": "2026-10-27T01:08+00:00",
    "status": "open",
-   "last_odds": 2.23
+   "last_odds": 2.2
   },
   {
    "id": "BRA|2026-10-30|Gremio|Athletico-PR|model|1x2",
@@ -14563,7 +14563,7 @@
    "grade": "no",
    "added": "2026-10-27T01:08+00:00",
    "status": "open",
-   "last_odds": 2.8
+   "last_odds": 2.75
   },
   {
    "id": "BRA|2026-10-30|Gremio|Athletico-PR|market|1x2",
@@ -14587,7 +14587,7 @@
    "grade": "no",
    "added": "2026-10-27T01:08+00:00",
    "status": "open",
-   "last_odds": 2.8
+   "last_odds": 2.75
   },
   {
    "id": "MEX|2026-11-02|Cruz Azul|Club Leon|market",
@@ -14611,7 +14611,7 @@
    "grade": null,
    "added": "2026-10-27T01:08+00:00",
    "status": "open",
-   "last_odds": 1.6
+   "last_odds": 1.48
   },
   {
    "id": "USA|2026-10-28|Charlotte|CF Montreal|model|1x2",
@@ -15068,6 +15068,126 @@
    "added": "2026-10-27T13:07+00:00",
    "status": "open",
    "last_odds": 4.0
+  },
+  {
+   "id": "SC0|2026-10-28|Hearts|Rangers|market",
+   "match": "SC0|2026-10-28|Hearts|Rangers",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "SC0",
+   "league_name": "Szkocja · Premiership",
+   "date": "2026-10-28",
+   "time": "20:00",
+   "ko": "2026-10-28T20:00+00:00",
+   "home": "Hearts",
+   "away": "Rangers",
+   "side": "Over",
+   "prob": 0.612,
+   "odds": 1.67,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.022,
+   "grade": "few",
+   "added": "2026-10-28T01:20+00:00",
+   "status": "open",
+   "last_odds": 1.67
+  },
+  {
+   "id": "I1|2026-10-28|Milan|Bologna|market|1x2",
+   "match": "I1|2026-10-28|Milan|Bologna",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-10-28",
+   "time": "17:30",
+   "ko": "2026-10-28T17:30+00:00",
+   "home": "Milan",
+   "away": "Bologna",
+   "side": "2",
+   "prob": 0.1929,
+   "odds": 5.75,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.109,
+   "grade": "watch",
+   "added": "2026-10-28T01:20+00:00",
+   "status": "open",
+   "last_odds": 5.75
+  },
+  {
+   "id": "BRA|2026-11-05|Botafogo RJ|Atletico-MG|model|1x2",
+   "match": "BRA|2026-11-05|Botafogo RJ|Atletico-MG",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-11-05",
+   "time": "00:30",
+   "ko": "2026-11-05T00:30+00:00",
+   "home": "Botafogo RJ",
+   "away": "Atletico-MG",
+   "side": "2",
+   "prob": 0.3061,
+   "odds": 3.5,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0713,
+   "grade": "no",
+   "added": "2026-10-28T01:20+00:00",
+   "status": "open",
+   "last_odds": 3.5
+  },
+  {
+   "id": "BRA|2026-11-05|Botafogo RJ|Atletico-MG|market|1x2",
+   "match": "BRA|2026-11-05|Botafogo RJ|Atletico-MG",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-11-05",
+   "time": "00:30",
+   "ko": "2026-11-05T00:30+00:00",
+   "home": "Botafogo RJ",
+   "away": "Atletico-MG",
+   "side": "2",
+   "prob": 0.3061,
+   "odds": 3.5,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0713,
+   "grade": "no",
+   "added": "2026-10-28T01:20+00:00",
+   "status": "open",
+   "last_odds": 3.5
+  },
+  {
+   "id": "MEX|2026-10-29|Club America|Club Tijuana|market|1x2",
+   "match": "MEX|2026-10-29|Club America|Club Tijuana",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "MEX",
+   "league_name": "Meksyk · Liga MX",
+   "date": "2026-10-29",
+   "time": "03:00",
+   "ko": "2026-10-29T03:00+00:00",
+   "home": "Club America",
+   "away": "Club Tijuana",
+   "side": "2",
+   "prob": 0.1462,
+   "odds": 7.0,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0235,
+   "grade": "no",
+   "added": "2026-10-28T01:20+00:00",
+   "status": "open",
+   "last_odds": 7.0
   }
  ],
  "summary": {
@@ -15082,7 +15202,7 @@
   "model_x": {
    "settled": 174,
    "won": 43,
-   "open": 53,
+   "open": 54,
    "profit": 29.17,
    "roi": 0.1676,
    "clv": 0.0192
@@ -15090,7 +15210,7 @@
   "market_ou": {
    "settled": 19,
    "won": 6,
-   "open": 3,
+   "open": 4,
    "profit": -6.62,
    "roi": -0.3484,
    "clv": -0.0322
@@ -15098,11 +15218,11 @@
   "market_x": {
    "settled": 200,
    "won": 43,
-   "open": 54,
+   "open": 57,
    "profit": 11.4,
    "roi": 0.057,
    "clv": 0.0183
   }
  },
- "updated": "2026-10-27T17:02+00:00"
+ "updated": "2026-10-28T01:20+00:00"
 }
