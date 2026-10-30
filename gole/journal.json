@@ -9335,7 +9335,7 @@
    "grade": "few",
    "added": "2026-10-22T01:02+00:00",
    "status": "open",
-   "last_odds": 1.92
+   "last_odds": 1.86
   },
   {
    "id": "D2|2026-10-23|Bochum|Wolfsburg|model|1x2",
@@ -9687,7 +9687,7 @@
    "grade": "watch",
    "added": "2026-10-22T01:02+00:00",
    "status": "open",
-   "last_odds": 26.0
+   "last_odds": 23.0
   },
   {
    "id": "N1|2026-10-31|PSV Eindhoven|Willem II|market|1x2",
@@ -9711,7 +9711,7 @@
    "grade": "watch",
    "added": "2026-10-22T01:02+00:00",
    "status": "open",
-   "last_odds": 26.0
+   "last_odds": 23.0
   },
   {
    "id": "N1|2026-10-31|Cambuur|Go Ahead Eagles|market|1x2",
@@ -9735,7 +9735,7 @@
    "grade": "watch",
    "added": "2026-10-22T01:02+00:00",
    "status": "open",
-   "last_odds": 2.05
+   "last_odds": 2.2
   },
   {
    "id": "P1|2026-10-23|Guimaraes|Maritimo|market|1x2",
@@ -10323,7 +10323,7 @@
    "grade": "watch",
    "added": "2026-10-23T01:06+00:00",
    "status": "open",
-   "last_odds": 4.4
+   "last_odds": 3.8
   },
   {
    "id": "N1|2026-11-01|Groningen|Sparta Rotterdam|market|1x2",
@@ -10347,7 +10347,7 @@
    "grade": "watch",
    "added": "2026-10-23T01:06+00:00",
    "status": "open",
-   "last_odds": 4.4
+   "last_odds": 3.8
   },
   {
    "id": "T1|2026-10-24|Samsunspor|Amedspor|model|1x2",
@@ -12855,7 +12855,7 @@
    "grade": "no",
    "added": "2026-10-24T01:08+00:00",
    "status": "open",
-   "last_odds": 3.6
+   "last_odds": 3.45
   },
   {
    "id": "F1|2026-10-25|Toulouse|Troyes|model|1x2",
@@ -13047,7 +13047,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 4.1
+   "last_odds": 3.85
   },
   {
    "id": "E0|2026-10-31|Chelsea|Man United|market|1x2",
@@ -13071,7 +13071,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 4.1
+   "last_odds": 3.85
   },
   {
    "id": "E0|2026-11-07|Arsenal|Hull|model|1x2",
@@ -13199,7 +13199,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 2.87
+   "last_odds": 2.3
   },
   {
    "id": "D1|2026-10-31|M'gladbach|Paderborn|model|1x2",
@@ -13223,7 +13223,7 @@
    "grade": "few",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.65
+   "last_odds": 3.5
   },
   {
    "id": "D1|2026-10-31|M'gladbach|Paderborn|market|1x2",
@@ -13247,7 +13247,7 @@
    "grade": "few",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.65
+   "last_odds": 3.5
   },
   {
    "id": "SP1|2026-10-25|Celta|Betis|market",
@@ -13327,7 +13327,7 @@
    "grade": "watch",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.8
+   "last_odds": 3.0
   },
   {
    "id": "N1|2026-10-31|Cambuur|Go Ahead Eagles|model|1x2",
@@ -13351,7 +13351,7 @@
    "grade": "watch",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 3.45
+   "last_odds": 2.85
   },
   {
    "id": "G1|2026-10-31|Kifisia|Olympiakos|model|1x2",
@@ -13375,7 +13375,7 @@
    "grade": "watch",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 7.5
+   "last_odds": 7.0
   },
   {
    "id": "G1|2026-10-31|Kifisia|Olympiakos|market|1x2",
@@ -13399,7 +13399,7 @@
    "grade": "watch",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 7.5
+   "last_odds": 7.0
   },
   {
    "id": "MEX|2026-10-25|UNAM Pumas|Tigres UANL|model|1x2",
@@ -14467,7 +14467,7 @@
    "grade": "few",
    "added": "2026-10-27T01:08+00:00",
    "status": "open",
-   "last_odds": 2.08
+   "last_odds": 1.93
   },
   {
    "id": "E2|2026-10-31|Plymouth|Reading|market|1x2",
@@ -14539,7 +14539,7 @@
    "grade": "no",
    "added": "2026-10-27T01:08+00:00",
    "status": "open",
-   "last_odds": 5.6
+   "last_odds": 5.0
   },
   {
    "id": "SC0|2026-11-01|Falkirk|Celtic|market|1x2",
@@ -14563,7 +14563,7 @@
    "grade": "no",
    "added": "2026-10-27T01:08+00:00",
    "status": "open",
-   "last_odds": 5.6
+   "last_odds": 5.0
   },
   {
    "id": "BRA|2026-10-29|Remo|Botafogo RJ|model",
@@ -15515,7 +15515,7 @@
    "grade": "watch",
    "added": "2026-10-28T13:16+00:00",
    "status": "open",
-   "last_odds": 7.5
+   "last_odds": 7.0
   },
   {
    "id": "T1|2026-10-30|Konyaspor|Galatasaray|model|1x2",
@@ -15587,7 +15587,7 @@
    "grade": "no",
    "added": "2026-10-28T13:16+00:00",
    "status": "open",
-   "last_odds": 9.0
+   "last_odds": 8.5
   },
   {
    "id": "T1|2026-11-01|Trabzonspor|Gaziantep|market|1x2",
@@ -15611,7 +15611,7 @@
    "grade": "no",
    "added": "2026-10-28T13:16+00:00",
    "status": "open",
-   "last_odds": 9.0
+   "last_odds": 8.5
   },
   {
    "id": "D1|2026-11-06|Hamburg|M'gladbach|model|1x2",
@@ -15635,7 +15635,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 2.9
+   "last_odds": 2.8
   },
   {
    "id": "D1|2026-11-06|Hamburg|M'gladbach|market|1x2",
@@ -15659,7 +15659,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 2.9
+   "last_odds": 2.8
   },
   {
    "id": "D1|2026-11-07|Mainz|Bayern Munich|model|1x2",
@@ -15683,7 +15683,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 5.8
+   "last_odds": 5.3
   },
   {
    "id": "D1|2026-11-07|Mainz|Bayern Munich|market|1x2",
@@ -15707,7 +15707,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 5.8
+   "last_odds": 5.3
   },
   {
    "id": "D2|2026-10-31|Wolfsburg|Osnabruck|model|1x2",
@@ -15875,7 +15875,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 6.75
+   "last_odds": 7.5
   },
   {
    "id": "B1|2026-10-30|Waregem|Club Brugge|market|1x2",
@@ -15899,7 +15899,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 6.75
+   "last_odds": 7.5
   },
   {
    "id": "P1|2026-10-31|Porto|Estoril|model",
@@ -15923,7 +15923,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 2.35
+   "last_odds": 2.2
   },
   {
    "id": "P1|2026-10-31|Porto|Estoril|market",
@@ -15947,7 +15947,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 2.35
+   "last_odds": 2.2
   },
   {
    "id": "P1|2026-11-01|Academico Viseu|Rio Ave|market|1x2",
@@ -15971,7 +15971,7 @@
    "grade": "no",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 2.08
+   "last_odds": 1.94
   },
   {
    "id": "P1|2026-11-02|Benfica|Alverca|model|1x2",
@@ -16356,13 +16356,565 @@
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
    "last_odds": 7.0
+  },
+  {
+   "id": "E0|2026-10-31|Man City|Brighton|model",
+   "match": "E0|2026-10-31|Man City|Brighton",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-10-31",
+   "time": "15:00",
+   "ko": "2026-10-31T15:00+00:00",
+   "home": "Man City",
+   "away": "Brighton",
+   "side": "Under",
+   "prob": 0.3728,
+   "odds": 2.8,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.0438,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 2.8
+  },
+  {
+   "id": "E0|2026-10-31|Tottenham|Crystal Palace|model",
+   "match": "E0|2026-10-31|Tottenham|Crystal Palace",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-10-31",
+   "time": "17:30",
+   "ko": "2026-10-31T17:30+00:00",
+   "home": "Tottenham",
+   "away": "Crystal Palace",
+   "side": "Under",
+   "prob": 0.4425,
+   "odds": 2.38,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.0531,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 2.38
+  },
+  {
+   "id": "E0|2026-11-06|Everton|Coventry|model",
+   "match": "E0|2026-11-06|Everton|Coventry",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-06",
+   "time": "20:00",
+   "ko": "2026-11-06T20:00+00:00",
+   "home": "Everton",
+   "away": "Coventry",
+   "side": "Under",
+   "prob": 0.515,
+   "odds": 2.1,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.0816,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 2.1
+  },
+  {
+   "id": "E0|2026-11-07|Arsenal|Hull|model",
+   "match": "E0|2026-11-07|Arsenal|Hull",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-07",
+   "time": "15:00",
+   "ko": "2026-11-07T15:00+00:00",
+   "home": "Arsenal",
+   "away": "Hull",
+   "side": "Under",
+   "prob": 0.4727,
+   "odds": 2.6,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.229,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 2.6
+  },
+  {
+   "id": "E0|2026-11-07|Nott'm Forest|Man City|model",
+   "match": "E0|2026-11-07|Nott'm Forest|Man City",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-07",
+   "time": "17:30",
+   "ko": "2026-11-07T17:30+00:00",
+   "home": "Nott'm Forest",
+   "away": "Man City",
+   "side": "Under",
+   "prob": 0.4465,
+   "odds": 2.33,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0403,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 2.33
+  },
+  {
+   "id": "E0|2026-11-08|Crystal Palace|Liverpool|model|1x2",
+   "match": "E0|2026-11-08|Crystal Palace|Liverpool",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-08",
+   "time": "14:00",
+   "ko": "2026-11-08T14:00+00:00",
+   "home": "Crystal Palace",
+   "away": "Liverpool",
+   "side": "1",
+   "prob": 0.2213,
+   "odds": 4.75,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.051,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 4.75
+  },
+  {
+   "id": "D1|2026-11-07|Stuttgart|Werder Bremen|model|1x2",
+   "match": "D1|2026-11-07|Stuttgart|Werder Bremen",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "D1",
+   "league_name": "Niemcy · Bundesliga",
+   "date": "2026-11-07",
+   "time": "17:30",
+   "ko": "2026-11-07T17:30+00:00",
+   "home": "Stuttgart",
+   "away": "Werder Bremen",
+   "side": "2",
+   "prob": 0.179,
+   "odds": 5.8,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.038,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 5.8
+  },
+  {
+   "id": "D1|2026-11-07|Stuttgart|Werder Bremen|market|1x2",
+   "match": "D1|2026-11-07|Stuttgart|Werder Bremen",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "D1",
+   "league_name": "Niemcy · Bundesliga",
+   "date": "2026-11-07",
+   "time": "17:30",
+   "ko": "2026-11-07T17:30+00:00",
+   "home": "Stuttgart",
+   "away": "Werder Bremen",
+   "side": "2",
+   "prob": 0.179,
+   "odds": 5.8,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.038,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 5.8
+  },
+  {
+   "id": "F1|2026-10-30|Le Havre|Paris SG|model|1x2",
+   "match": "F1|2026-10-30|Le Havre|Paris SG",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-10-30",
+   "time": "18:00",
+   "ko": "2026-10-30T18:00+00:00",
+   "home": "Le Havre",
+   "away": "Paris SG",
+   "side": "1",
+   "prob": 0.0996,
+   "odds": 10.5,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0458,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 10.5
+  },
+  {
+   "id": "F1|2026-10-30|Le Havre|Paris SG|market|1x2",
+   "match": "F1|2026-10-30|Le Havre|Paris SG",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-10-30",
+   "time": "18:00",
+   "ko": "2026-10-30T18:00+00:00",
+   "home": "Le Havre",
+   "away": "Paris SG",
+   "side": "1",
+   "prob": 0.0996,
+   "odds": 10.5,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0458,
+   "grade": "few",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 10.5
+  },
+  {
+   "id": "N1|2026-11-08|Twente|Ajax|model|1x2",
+   "match": "N1|2026-11-08|Twente|Ajax",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "N1",
+   "league_name": "Holandia · Eredivisie",
+   "date": "2026-11-08",
+   "time": "13:30",
+   "ko": "2026-11-08T13:30+00:00",
+   "home": "Twente",
+   "away": "Ajax",
+   "side": "1",
+   "prob": 0.4176,
+   "odds": 2.5,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.0441,
+   "grade": "watch",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 2.5
+  },
+  {
+   "id": "N1|2026-11-08|Twente|Ajax|market|1x2",
+   "match": "N1|2026-11-08|Twente|Ajax",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "N1",
+   "league_name": "Holandia · Eredivisie",
+   "date": "2026-11-08",
+   "time": "13:30",
+   "ko": "2026-11-08T13:30+00:00",
+   "home": "Twente",
+   "away": "Ajax",
+   "side": "1",
+   "prob": 0.4213,
+   "odds": 2.5,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.0532,
+   "grade": "watch",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 2.5
+  },
+  {
+   "id": "G1|2026-11-01|Levadeiakos|Aris|model|1x2",
+   "match": "G1|2026-11-01|Levadeiakos|Aris",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "G1",
+   "league_name": "Grecja · Super League",
+   "date": "2026-11-01",
+   "time": "15:00",
+   "ko": "2026-11-01T15:00+00:00",
+   "home": "Levadeiakos",
+   "away": "Aris",
+   "side": "1",
+   "prob": 0.2679,
+   "odds": 3.89,
+   "book": "Pinnacle",
+   "book_key": "pinnacle",
+   "user_book": false,
+   "edge": 0.042,
+   "grade": "watch",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 3.89
+  },
+  {
+   "id": "G1|2026-11-01|Panetolikos|OFI Crete|model|1x2",
+   "match": "G1|2026-11-01|Panetolikos|OFI Crete",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "G1",
+   "league_name": "Grecja · Super League",
+   "date": "2026-11-01",
+   "time": "16:00",
+   "ko": "2026-11-01T16:00+00:00",
+   "home": "Panetolikos",
+   "away": "OFI Crete",
+   "side": "X",
+   "prob": 0.3304,
+   "odds": 3.15,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0409,
+   "grade": "watch",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 3.15
+  },
+  {
+   "id": "G1|2026-11-01|Panetolikos|OFI Crete|market|1x2",
+   "match": "G1|2026-11-01|Panetolikos|OFI Crete",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "G1",
+   "league_name": "Grecja · Super League",
+   "date": "2026-11-01",
+   "time": "16:00",
+   "ko": "2026-11-01T16:00+00:00",
+   "home": "Panetolikos",
+   "away": "OFI Crete",
+   "side": "X",
+   "prob": 0.3407,
+   "odds": 3.15,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0731,
+   "grade": "watch",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 3.15
+  },
+  {
+   "id": "AUT|2026-10-30|Grazer AK|Hartberg|model|1x2",
+   "match": "AUT|2026-10-30|Grazer AK|Hartberg",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "AUT",
+   "league_name": "Austria · Bundesliga",
+   "date": "2026-10-30",
+   "time": "18:30",
+   "ko": "2026-10-30T18:30+00:00",
+   "home": "Grazer AK",
+   "away": "Hartberg",
+   "side": "2",
+   "prob": 0.306,
+   "odds": 3.38,
+   "book": "Pinnacle",
+   "book_key": "pinnacle",
+   "user_book": false,
+   "edge": 0.0344,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 3.38
+  },
+  {
+   "id": "AUT|2026-10-31|Altach|Ried|model|1x2",
+   "match": "AUT|2026-10-31|Altach|Ried",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "AUT",
+   "league_name": "Austria · Bundesliga",
+   "date": "2026-10-31",
+   "time": "16:00",
+   "ko": "2026-10-31T16:00+00:00",
+   "home": "Altach",
+   "away": "Ried",
+   "side": "2",
+   "prob": 0.3226,
+   "odds": 3.4,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.097,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 3.4
+  },
+  {
+   "id": "AUT|2026-10-31|Altach|Ried|market|1x2",
+   "match": "AUT|2026-10-31|Altach|Ried",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "AUT",
+   "league_name": "Austria · Bundesliga",
+   "date": "2026-10-31",
+   "time": "16:00",
+   "ko": "2026-10-31T16:00+00:00",
+   "home": "Altach",
+   "away": "Ried",
+   "side": "2",
+   "prob": 0.3131,
+   "odds": 3.4,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0644,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 3.4
+  },
+  {
+   "id": "AUT|2026-10-31|LASK|Tirol|model|1x2",
+   "match": "AUT|2026-10-31|LASK|Tirol",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "AUT",
+   "league_name": "Austria · Bundesliga",
+   "date": "2026-10-31",
+   "time": "18:30",
+   "ko": "2026-10-31T18:30+00:00",
+   "home": "LASK",
+   "away": "Tirol",
+   "side": "2",
+   "prob": 0.1415,
+   "odds": 8.5,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.2024,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 8.5
+  },
+  {
+   "id": "AUT|2026-10-31|LASK|Tirol|market|1x2",
+   "match": "AUT|2026-10-31|LASK|Tirol",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "AUT",
+   "league_name": "Austria · Bundesliga",
+   "date": "2026-10-31",
+   "time": "18:30",
+   "ko": "2026-10-31T18:30+00:00",
+   "home": "LASK",
+   "away": "Tirol",
+   "side": "2",
+   "prob": 0.1282,
+   "odds": 8.5,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0901,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 8.5
+  },
+  {
+   "id": "AUT|2026-11-01|Salzburg|A. Lustenau|model|1x2",
+   "match": "AUT|2026-11-01|Salzburg|A. Lustenau",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "AUT",
+   "league_name": "Austria · Bundesliga",
+   "date": "2026-11-01",
+   "time": "13:30",
+   "ko": "2026-11-01T13:30+00:00",
+   "home": "Salzburg",
+   "away": "A. Lustenau",
+   "side": "X",
+   "prob": 0.1281,
+   "odds": 8.09,
+   "book": "Pinnacle",
+   "book_key": "pinnacle",
+   "user_book": false,
+   "edge": 0.036,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 8.09
+  },
+  {
+   "id": "AUT|2026-11-01|Wolfsberger AC|Sturm Graz|model|1x2",
+   "match": "AUT|2026-11-01|Wolfsberger AC|Sturm Graz",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "AUT",
+   "league_name": "Austria · Bundesliga",
+   "date": "2026-11-01",
+   "time": "13:30",
+   "ko": "2026-11-01T13:30+00:00",
+   "home": "Wolfsberger AC",
+   "away": "Sturm Graz",
+   "side": "1",
+   "prob": 0.2407,
+   "odds": 4.39,
+   "book": "Pinnacle",
+   "book_key": "pinnacle",
+   "user_book": false,
+   "edge": 0.0569,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 4.39
+  },
+  {
+   "id": "AUT|2026-11-01|Austria Vienna|SK Rapid|model|1x2",
+   "match": "AUT|2026-11-01|Austria Vienna|SK Rapid",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "AUT",
+   "league_name": "Austria · Bundesliga",
+   "date": "2026-11-01",
+   "time": "16:00",
+   "ko": "2026-11-01T16:00+00:00",
+   "home": "Austria Vienna",
+   "away": "SK Rapid",
+   "side": "1",
+   "prob": 0.2419,
+   "odds": 4.87,
+   "book": "Pinnacle",
+   "book_key": "pinnacle",
+   "user_book": false,
+   "edge": 0.1782,
+   "grade": "no",
+   "added": "2026-10-30T01:21+00:00",
+   "status": "open",
+   "last_odds": 4.87
   }
  ],
  "summary": {
   "model_ou": {
    "settled": 51,
    "won": 19,
-   "open": 5,
+   "open": 10,
    "profit": -13.25,
    "roi": -0.2598,
    "clv": -0.0331
@@ -16370,7 +16922,7 @@
   "model_x": {
    "settled": 182,
    "won": 45,
-   "open": 62,
+   "open": 74,
    "profit": 30.07,
    "roi": 0.1652,
    "clv": 0.0188
@@ -16386,11 +16938,11 @@
   "market_x": {
    "settled": 213,
    "won": 47,
-   "open": 64,
+   "open": 70,
    "profit": 15.98,
    "roi": 0.075,
    "clv": 0.0179
   }
  },
- "updated": "2026-10-29T13:19+00:00"
+ "updated": "2026-10-30T01:21+00:00"
 }
