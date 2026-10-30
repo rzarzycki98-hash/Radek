@@ -10734,8 +10734,12 @@
    "edge": 0.0315,
    "grade": "watch",
    "added": "2026-10-23T13:01+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 4.0,
+   "clv": -0.0187
   },
   {
    "id": "ARG|2026-10-27|Argentinos Jrs|Ind. Rivadavia|market|1x2",
@@ -10758,8 +10762,12 @@
    "edge": 0.0514,
    "grade": "watch",
    "added": "2026-10-23T13:01+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 4.0,
+   "clv": -0.0187
   },
   {
    "id": "AUT|2026-10-23|Altach|Austria Vienna|model|1x2",
@@ -13506,8 +13514,12 @@
    "edge": 0.0331,
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
-   "status": "open",
-   "last_odds": 4.1
+   "status": "lost",
+   "last_odds": 4.1,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 4.1,
+   "clv": -0.0973
   },
   {
    "id": "USA|2026-10-28|New York City|Atlanta Utd|market|1x2",
@@ -13530,8 +13542,12 @@
    "edge": 0.0331,
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
-   "status": "open",
-   "last_odds": 4.1
+   "status": "lost",
+   "last_odds": 4.1,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 4.1,
+   "clv": -0.0973
   },
   {
    "id": "USA|2026-10-28|Inter Miami|FC Cincinnati|model|1x2",
@@ -13554,8 +13570,12 @@
    "edge": 0.1392,
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
-   "status": "open",
-   "last_odds": 6.0
+   "status": "lost",
+   "last_odds": 6.0,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 6.0,
+   "clv": 0.1542
   },
   {
    "id": "USA|2026-10-28|Inter Miami|FC Cincinnati|market|1x2",
@@ -13578,8 +13598,12 @@
    "edge": 0.1392,
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
-   "status": "open",
-   "last_odds": 6.0
+   "status": "lost",
+   "last_odds": 6.0,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 6.0,
+   "clv": 0.1542
   },
   {
    "id": "USA|2026-10-29|FC Dallas|Columbus Crew|model|1x2",
@@ -13602,8 +13626,12 @@
    "edge": 0.0729,
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
-   "status": "open",
-   "last_odds": 3.35
+   "status": "won",
+   "last_odds": 3.35,
+   "score": "0:2",
+   "profit": 2.45,
+   "close_odds": 3.35,
+   "clv": 0.1367
   },
   {
    "id": "USA|2026-10-29|FC Dallas|Columbus Crew|market|1x2",
@@ -13626,8 +13654,12 @@
    "edge": 0.0729,
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
-   "status": "open",
-   "last_odds": 3.35
+   "status": "won",
+   "last_odds": 3.35,
+   "score": "0:2",
+   "profit": 2.45,
+   "close_odds": 3.35,
+   "clv": 0.1367
   },
   {
    "id": "I1|2026-10-27|Torino|Como|market|1x2",
@@ -14394,8 +14426,12 @@
    "edge": 0.037,
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 4.35
+   "status": "won",
+   "last_odds": 4.35,
+   "score": "2:3",
+   "profit": 3.25,
+   "close_odds": 4.35,
+   "clv": 0.1604
   },
   {
    "id": "USA|2026-10-29|St. Louis City|Portland Timbers|market|1x2",
@@ -14418,8 +14454,12 @@
    "edge": 0.037,
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 4.35
+   "status": "won",
+   "last_odds": 4.35,
+   "score": "2:3",
+   "profit": 3.25,
+   "close_odds": 4.35,
+   "clv": 0.1604
   },
   {
    "id": "USA|2026-10-29|Vancouver Whitecaps|San Diego FC|market|1x2",
@@ -14442,8 +14482,12 @@
    "edge": 0.0243,
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 6.0
+   "status": "lost",
+   "last_odds": 6.0,
+   "score": "4:1",
+   "profit": -1.0,
+   "close_odds": 6.0,
+   "clv": 0.1533
   },
   {
    "id": "E0|2026-11-01|Liverpool|Arsenal|model",
@@ -14586,8 +14630,11 @@
    "edge": 0.031,
    "grade": null,
    "added": "2026-10-27T01:08+00:00",
-   "status": "open",
-   "last_odds": 2.2
+   "status": "lost",
+   "last_odds": 2.2,
+   "score": "2:1",
+   "profit": -1.0,
+   "close_odds": 2.2
   },
   {
    "id": "BRA|2026-10-30|Gremio|Athletico-PR|model|1x2",
@@ -14610,8 +14657,12 @@
    "edge": 0.0454,
    "grade": "no",
    "added": "2026-10-27T01:08+00:00",
-   "status": "open",
-   "last_odds": 2.8
+   "status": "lost",
+   "last_odds": 2.8,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 2.8,
+   "clv": -0.1363
   },
   {
    "id": "BRA|2026-10-30|Gremio|Athletico-PR|market|1x2",
@@ -14634,8 +14685,12 @@
    "edge": 0.0454,
    "grade": "no",
    "added": "2026-10-27T01:08+00:00",
-   "status": "open",
-   "last_odds": 2.8
+   "status": "lost",
+   "last_odds": 2.8,
+   "score": "2:0",
+   "profit": -1.0,
+   "close_odds": 2.8,
+   "clv": -0.1363
   },
   {
    "id": "MEX|2026-11-02|Cruz Azul|Club Leon|market",
@@ -14682,8 +14737,12 @@
    "edge": 0.0445,
    "grade": "no",
    "added": "2026-10-27T01:08+00:00",
-   "status": "open",
-   "last_odds": 6.0
+   "status": "lost",
+   "last_odds": 6.0,
+   "score": "4:0",
+   "profit": -1.0,
+   "close_odds": 6.0,
+   "clv": 0.3099
   },
   {
    "id": "USA|2026-10-28|Charlotte|CF Montreal|market|1x2",
@@ -14706,8 +14765,12 @@
    "edge": 0.0445,
    "grade": "no",
    "added": "2026-10-27T01:08+00:00",
-   "status": "open",
-   "last_odds": 6.0
+   "status": "lost",
+   "last_odds": 6.0,
+   "score": "4:0",
+   "profit": -1.0,
+   "close_odds": 6.0,
+   "clv": 0.3099
   },
   {
    "id": "I1|2026-10-28|Venezia|Inter|model|1x2",
@@ -14898,8 +14961,12 @@
    "edge": 0.032,
    "grade": "no",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 3.9
+   "status": "lost",
+   "last_odds": 3.9,
+   "score": "1:4",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": -0.2178
   },
   {
    "id": "BRA|2026-10-29|Vasco|Flamengo RJ|market|1x2",
@@ -14922,8 +14989,12 @@
    "edge": 0.032,
    "grade": "no",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 3.9
+   "status": "lost",
+   "last_odds": 3.9,
+   "score": "1:4",
+   "profit": -1.0,
+   "close_odds": 5.0,
+   "clv": -0.2178
   },
   {
    "id": "BRA|2026-10-31|Coritiba|Vitoria|market|1x2",
@@ -14970,8 +15041,12 @@
    "edge": 0.0595,
    "grade": "few",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 3.4
+   "status": "lost",
+   "last_odds": 3.4,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 3.2,
+   "clv": 0.0041
   },
   {
    "id": "SWE|2026-10-27|AIK|Elfsborg|market|1x2",
@@ -14994,8 +15069,12 @@
    "edge": 0.0595,
    "grade": "few",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 3.4
+   "status": "lost",
+   "last_odds": 3.4,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 3.2,
+   "clv": 0.0041
   },
   {
    "id": "SWE|2026-10-28|Halmstad|Malmo FF|model|1x2",
@@ -15018,8 +15097,12 @@
    "edge": 0.0325,
    "grade": "few",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 4.75
+   "status": "lost",
+   "last_odds": 4.75,
+   "score": "0:3",
+   "profit": -1.0,
+   "close_odds": 4.75,
+   "clv": -0.0111
   },
   {
    "id": "SWE|2026-10-28|Halmstad|Malmo FF|market|1x2",
@@ -15042,8 +15125,12 @@
    "edge": 0.0325,
    "grade": "few",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 4.75
+   "status": "lost",
+   "last_odds": 4.75,
+   "score": "0:3",
+   "profit": -1.0,
+   "close_odds": 4.75,
+   "clv": -0.0111
   },
   {
    "id": "USA|2026-10-29|Chicago Fire|Orlando City|model|1x2",
@@ -15066,8 +15153,12 @@
    "edge": 0.0711,
    "grade": "no",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 5.75,
+   "clv": -0.1106
   },
   {
    "id": "USA|2026-10-29|Chicago Fire|Orlando City|market|1x2",
@@ -15090,8 +15181,12 @@
    "edge": 0.0711,
    "grade": "no",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 5.0
+   "status": "lost",
+   "last_odds": 5.0,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 5.75,
+   "clv": -0.1106
   },
   {
    "id": "USA|2026-10-29|Nashville SC|Philadelphia Union|model|1x2",
@@ -15114,8 +15209,12 @@
    "edge": 0.0424,
    "grade": "no",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": 0.0249
   },
   {
    "id": "USA|2026-10-29|Nashville SC|Philadelphia Union|market|1x2",
@@ -15138,8 +15237,12 @@
    "edge": 0.0424,
    "grade": "no",
    "added": "2026-10-27T13:07+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 3.8,
+   "clv": 0.0249
   },
   {
    "id": "SC0|2026-10-28|Hearts|Rangers|market",
@@ -15266,8 +15369,12 @@
    "edge": 0.0235,
    "grade": "no",
    "added": "2026-10-28T01:20+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "lost",
+   "last_odds": 7.0,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 5.75,
+   "clv": 0.2222
   },
   {
    "id": "SC0|2026-10-28|Celtic|Dundee United|market",
@@ -16138,8 +16245,12 @@
    "edge": 0.2444,
    "grade": "no",
    "added": "2026-10-29T01:18+00:00",
-   "status": "open",
-   "last_odds": 7.0
+   "status": "lost",
+   "last_odds": 7.0,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 5.75,
+   "clv": 0.2222
   },
   {
    "id": "POL|2026-10-31|Wisla Plock|Piast Gliwice|model",
@@ -16210,8 +16321,12 @@
    "edge": 0.0452,
    "grade": "no",
    "added": "2026-10-29T01:18+00:00",
-   "status": "open",
-   "last_odds": 3.1
+   "status": "lost",
+   "last_odds": 3.1,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 3.1,
+   "clv": -0.0161
   },
   {
    "id": "USA|2026-10-29|San Jose Earthquakes|Colorado Rapids|market|1x2",
@@ -16234,8 +16349,12 @@
    "edge": 0.0452,
    "grade": "no",
    "added": "2026-10-29T01:18+00:00",
-   "status": "open",
-   "last_odds": 3.1
+   "status": "lost",
+   "last_odds": 3.1,
+   "score": "2:2",
+   "profit": -1.0,
+   "close_odds": 3.1,
+   "clv": -0.0161
   },
   {
    "id": "USA|2026-10-31|FC Cincinnati|Philadelphia Union|market|1x2",
@@ -18568,20 +18687,20 @@
  ],
  "summary": {
   "model_ou": {
-   "settled": 51,
+   "settled": 52,
    "won": 19,
-   "open": 17,
-   "profit": -13.25,
-   "roi": -0.2598,
-   "clv": -0.0331
+   "open": 16,
+   "profit": -14.25,
+   "roi": -0.274,
+   "clv": -0.0322
   },
   "model_x": {
-   "settled": 182,
-   "won": 45,
-   "open": 96,
-   "profit": 30.07,
-   "roi": 0.1652,
-   "clv": 0.0188
+   "settled": 196,
+   "won": 47,
+   "open": 82,
+   "profit": 23.77,
+   "roi": 0.1213,
+   "clv": 0.0195
   },
   "market_ou": {
    "settled": 24,
@@ -18592,13 +18711,13 @@
    "clv": -0.0153
   },
   "market_x": {
-   "settled": 213,
-   "won": 47,
-   "open": 102,
-   "profit": 15.98,
-   "roi": 0.075,
-   "clv": 0.0179
+   "settled": 228,
+   "won": 49,
+   "open": 87,
+   "profit": 8.68,
+   "roi": 0.0381,
+   "clv": 0.0191
   }
  },
- "updated": "2026-10-30T13:16+00:00"
+ "updated": "2026-10-30T17:00+00:00"
 }
