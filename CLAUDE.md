@@ -84,6 +84,17 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   z 24.10 najwcześniej 27.10 ok. 15:00 (72 h) – sprawdzić we wtorek, czy zadziałało (`res_src: "ESPN"`). ClubElo nadal
   nie działa (502, bez znaczenia). Limit kursów: 163 zapytania (ok. 6 dni miesiąca do końca = OK). Bez zmian w kodzie i zasadach.
 
+- **2.11 – poniedziałkowe sprawdzenie (rutyna):** 6 ostatnich aktualizacji GitHuba zielonych, 0 błędów agenta, kod bez zmian
+  od 26.10 (testów nie puszczano). Portfel £1037.67 (+£37.67), rozliczone 11 (7 trafionych; NBA 1 – Under 76ers–Knicks +£14.03),
+  otwarte 7 (4 mecze z 31.10 rozegrane, czekają na wynik; 3 przyszłe). „Vs zamknięcie” −4.9% (piłka −5.4%) – kursy wciąż
+  gorsze niż zamknięcie, gotowość na prawdziwe pieniądze: nie (dzień 16/90, zakłady 11/200). Raport tygodnia 26.10–1.11 jest
+  (7 rozliczonych, 5 trafionych, 7 nowych: 1 Over / 6 Under). Over/Under: oceny 7 dni 118/70, zakłady 1/5 – pierwszy Over
+  postawiony (Volos – Kifisia). Wszystkie rozliczone zakłady z football-data (ESPN jeszcze nie był potrzebny; 72 h dla
+  meczów z 31.10 mija 3.11 ok. 15:00 – sprawdzić we wtorek `res_src: "ESPN"`). **Do uwagi:** football-data nadal spóźnia się
+  z wynikami (E0, D1, N1, B1 do 25.10, F1, P1, SP1, T1 do 26.10; 6 lig z `stale`). Zapytania o kursy: 469 (nowy miesiąc),
+  agent ma kursy we wszystkich 11 ligach; HTTP 429 tylko dla lig spoza agenta (ARG, CHN, POL) – „Zdrowie” pokazuje 4 przebiegi
+  z problemem `odds`, bez wpływu na agenta. ClubElo nadal 502. Bez zmian w kodzie i zasadach.
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
