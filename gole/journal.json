@@ -13103,7 +13103,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 15.0
+   "last_odds": 18.0
   },
   {
    "id": "E0|2026-11-07|Arsenal|Hull|market|1x2",
@@ -13127,7 +13127,7 @@
    "grade": "no",
    "added": "2026-10-25T00:58+00:00",
    "status": "open",
-   "last_odds": 15.0
+   "last_odds": 18.0
   },
   {
    "id": "SC0|2026-10-28|Dundee|Kilmarnock|model|1x2",
@@ -13711,7 +13711,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 6.0
+   "last_odds": 5.5
   },
   {
    "id": "I1|2026-11-02|Atalanta|Parma|market|1x2",
@@ -13735,7 +13735,7 @@
    "grade": "watch",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 6.0
+   "last_odds": 5.5
   },
   {
    "id": "I2|2026-10-28|Pisa|Palermo|model|1x2",
@@ -16102,7 +16102,7 @@
    "grade": "no",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 15.0
+   "last_odds": 16.0
   },
   {
    "id": "P1|2026-11-02|Benfica|Alverca|market|1x2",
@@ -16126,7 +16126,7 @@
    "grade": "no",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 15.0
+   "last_odds": 16.0
   },
   {
    "id": "BRA|2026-11-05|Palmeiras|Remo|model|1x2",
@@ -16594,7 +16594,7 @@
    "grade": "few",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 2.33
+   "last_odds": 2.28
   },
   {
    "id": "E0|2026-11-08|Crystal Palace|Liverpool|model|1x2",
@@ -16618,7 +16618,7 @@
    "grade": "no",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 4.6
+   "last_odds": 4.75
   },
   {
    "id": "D1|2026-11-07|Stuttgart|Werder Bremen|model|1x2",
@@ -18850,7 +18850,7 @@
    "grade": "watch",
    "added": "2026-10-31T01:20+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 9.0
   },
   {
    "id": "SP1|2026-11-07|Valencia|Real Madrid|market|1x2",
@@ -18874,7 +18874,7 @@
    "grade": "watch",
    "added": "2026-10-31T01:20+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 9.0
   },
   {
    "id": "B1|2026-10-31|Anderlecht|Westerlo|model|1x2",
@@ -19643,6 +19643,270 @@
    "added": "2026-11-01T05:05+00:00",
    "status": "open",
    "last_odds": 2.1
+  },
+  {
+   "id": "E0|2026-11-08|Sunderland|Chelsea|model|1x2",
+   "match": "E0|2026-11-08|Sunderland|Chelsea",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-08",
+   "time": "14:00",
+   "ko": "2026-11-08T14:00+00:00",
+   "home": "Sunderland",
+   "away": "Chelsea",
+   "side": "1",
+   "prob": 0.2803,
+   "odds": 3.85,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0793,
+   "grade": "no",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 3.85
+  },
+  {
+   "id": "E0|2026-11-08|Sunderland|Chelsea|market|1x2",
+   "match": "E0|2026-11-08|Sunderland|Chelsea",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-08",
+   "time": "14:00",
+   "ko": "2026-11-08T14:00+00:00",
+   "home": "Sunderland",
+   "away": "Chelsea",
+   "side": "1",
+   "prob": 0.2737,
+   "odds": 3.85,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0536,
+   "grade": "no",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 3.85
+  },
+  {
+   "id": "I1|2026-11-08|Napoli|Lazio|model|1x2",
+   "match": "I1|2026-11-08|Napoli|Lazio",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-11-08",
+   "time": "11:30",
+   "ko": "2026-11-08T11:30+00:00",
+   "home": "Napoli",
+   "away": "Lazio",
+   "side": "2",
+   "prob": 0.2851,
+   "odds": 3.7,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.055,
+   "grade": "watch",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 3.7
+  },
+  {
+   "id": "I1|2026-11-08|Napoli|Lazio|market|1x2",
+   "match": "I1|2026-11-08|Napoli|Lazio",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-11-08",
+   "time": "11:30",
+   "ko": "2026-11-08T11:30+00:00",
+   "home": "Napoli",
+   "away": "Lazio",
+   "side": "2",
+   "prob": 0.2851,
+   "odds": 3.7,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.055,
+   "grade": "watch",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 3.7
+  },
+  {
+   "id": "P1|2026-11-02|Gil Vicente|Guimaraes|market|1x2",
+   "match": "P1|2026-11-02|Gil Vicente|Guimaraes",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "P1",
+   "league_name": "Portugalia · Liga Portugal",
+   "date": "2026-11-02",
+   "time": "20:15",
+   "ko": "2026-11-02T20:15+00:00",
+   "home": "Gil Vicente",
+   "away": "Guimaraes",
+   "side": "X",
+   "prob": 0.3145,
+   "odds": 3.25,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.022,
+   "grade": "no",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 3.25
+  },
+  {
+   "id": "P1|2026-11-07|Sp Lisbon|Moreirense|model|1x2",
+   "match": "P1|2026-11-07|Sp Lisbon|Moreirense",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "P1",
+   "league_name": "Portugalia · Liga Portugal",
+   "date": "2026-11-07",
+   "time": "20:30",
+   "ko": "2026-11-07T20:30+00:00",
+   "home": "Sp Lisbon",
+   "away": "Moreirense",
+   "side": "2",
+   "prob": 0.0663,
+   "odds": 16.0,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0608,
+   "grade": "no",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 16.0
+  },
+  {
+   "id": "P1|2026-11-07|Sp Lisbon|Moreirense|market|1x2",
+   "match": "P1|2026-11-07|Sp Lisbon|Moreirense",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "P1",
+   "league_name": "Portugalia · Liga Portugal",
+   "date": "2026-11-07",
+   "time": "20:30",
+   "ko": "2026-11-07T20:30+00:00",
+   "home": "Sp Lisbon",
+   "away": "Moreirense",
+   "side": "2",
+   "prob": 0.0663,
+   "odds": 16.0,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0608,
+   "grade": "no",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 16.0
+  },
+  {
+   "id": "T1|2026-11-07|Samsunspor|Konyaspor|market|1x2",
+   "match": "T1|2026-11-07|Samsunspor|Konyaspor",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "T1",
+   "league_name": "Turcja · Süper Lig",
+   "date": "2026-11-07",
+   "time": "13:00",
+   "ko": "2026-11-07T13:00+00:00",
+   "home": "Samsunspor",
+   "away": "Konyaspor",
+   "side": "1",
+   "prob": 0.4186,
+   "odds": 2.45,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0256,
+   "grade": "no",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 2.45
+  },
+  {
+   "id": "G1|2026-11-08|AEK|Levadeiakos|model|1x2",
+   "match": "G1|2026-11-08|AEK|Levadeiakos",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "G1",
+   "league_name": "Grecja · Super League",
+   "date": "2026-11-08",
+   "time": "15:00",
+   "ko": "2026-11-08T15:00+00:00",
+   "home": "AEK",
+   "away": "Levadeiakos",
+   "side": "2",
+   "prob": 0.0724,
+   "odds": 17.0,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.2312,
+   "grade": "watch",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 17.0
+  },
+  {
+   "id": "G1|2026-11-08|AEK|Levadeiakos|market|1x2",
+   "match": "G1|2026-11-08|AEK|Levadeiakos",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "G1",
+   "league_name": "Grecja · Super League",
+   "date": "2026-11-08",
+   "time": "15:00",
+   "ko": "2026-11-08T15:00+00:00",
+   "home": "AEK",
+   "away": "Levadeiakos",
+   "side": "2",
+   "prob": 0.0613,
+   "odds": 17.0,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.0424,
+   "grade": "watch",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 17.0
+  },
+  {
+   "id": "G1|2026-11-08|Olympiakos|PAOK|market|1x2",
+   "match": "G1|2026-11-08|Olympiakos|PAOK",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "G1",
+   "league_name": "Grecja · Super League",
+   "date": "2026-11-08",
+   "time": "19:00",
+   "ko": "2026-11-08T19:00+00:00",
+   "home": "Olympiakos",
+   "away": "PAOK",
+   "side": "1",
+   "prob": 0.5864,
+   "odds": 1.74,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0204,
+   "grade": "watch",
+   "added": "2026-11-02T01:27+00:00",
+   "status": "open",
+   "last_odds": 1.74
   }
  ],
  "summary": {
@@ -19657,7 +19921,7 @@
   "model_x": {
    "settled": 196,
    "won": 47,
-   "open": 105,
+   "open": 109,
    "profit": 23.77,
    "roi": 0.1213,
    "clv": 0.0195
@@ -19673,11 +19937,11 @@
   "market_x": {
    "settled": 228,
    "won": 49,
-   "open": 101,
+   "open": 108,
    "profit": 8.68,
    "roi": 0.0381,
    "clv": 0.0191
   }
  },
- "updated": "2026-11-01T05:05+00:00"
+ "updated": "2026-11-02T01:27+00:00"
 }
