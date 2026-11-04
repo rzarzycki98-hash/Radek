@@ -102,7 +102,8 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   (instalacja do repo `-a claude-code --copy -y`, nigdy `-g`; gdy skills.sh zablokowane – WebSearch + GitHub; przed
   poleceniem czyta skill i odrzuca podejrzane; tylko darmowe), test `.claude/testy/test_skille.py` (nagłówki wszystkich
   skilli w `.claude/skills` + poprawka; sprawdzony też na wersji bez poprawki – łapie brak) i przebieg „Skille Claude –
-  test” (`.github/workflows/claude-skille.yml`). Agent i jego dane bez zmian. **Czeka na Radka:** odblokować `skills.sh`
+  test” (`.github/workflows/claude-skille.yml`) – pierwszy przebieg na `main` zielony, GitHub Pages przebudowane bez
+  błędów. Agent i jego dane bez zmian. **Czeka na Radka:** odblokować `skills.sh`
   i `www.skills.sh` w ustawieniach środowiska (Network access → Custom, z zaznaczoną domyślną listą).
 
 **Do sprawdzenia w najbliższych dniach:**
