@@ -1,0 +1,23 @@
+name: Skille Claude – test
+
+# Checks every skill in .claude/skills (header, name, description) and the cloud fix in find-skills.
+# Runs only when skills, this test or this workflow change – never touches the agent or its data.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: [".claude/skills/**", ".claude/testy/**", ".github/workflows/claude-skille.yml"]
+  push:
+    branches: [main, "claude/**"]
+    paths: [".claude/skills/**", ".claude/testy/**", ".github/workflows/claude-skille.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test skilli Claude (.claude/testy/test_skille.py)
+        run: python3 .claude/testy/test_skille.py

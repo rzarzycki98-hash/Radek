@@ -95,6 +95,16 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   agent ma kursy we wszystkich 11 ligach; HTTP 429 tylko dla lig spoza agenta (ARG, CHN, POL) – „Zdrowie” pokazuje 4 przebiegi
   z problemem `odds`, bez wpływu na agenta. ClubElo nadal 502. Bez zmian w kodzie i zasadach.
 
+- **4.11 – find-skills w chmurze** (Radek w czacie w aplikacji Claude: „zainstaluj skill /find skill”): skill był już
+  od 25.10 (kopia 1:1 oryginału Vercel), ale w chmurze nie działał – `npx skills find` nie dochodzi do skills.sh (proxy),
+  a `npx skills add -g` instaluje do folderu, który znika po rozmowie. Radek wybrał (z opcji): poprawka + odblokowanie,
+  zapis prosto na `main`. Zrobione: sekcja „Poprawka dla tego repo” na końcu `.claude/skills/find-skills/SKILL.md`
+  (instalacja do repo `-a claude-code --copy -y`, nigdy `-g`; gdy skills.sh zablokowane – WebSearch + GitHub; przed
+  poleceniem czyta skill i odrzuca podejrzane; tylko darmowe), test `.claude/testy/test_skille.py` (nagłówki wszystkich
+  skilli w `.claude/skills` + poprawka; sprawdzony też na wersji bez poprawki – łapie brak) i przebieg „Skille Claude –
+  test” (`.github/workflows/claude-skille.yml`). Agent i jego dane bez zmian. **Czeka na Radka:** odblokować `skills.sh`
+  i `www.skills.sh` w ustawieniach środowiska (Network access → Custom, z zaznaczoną domyślną listą).
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
@@ -116,6 +126,8 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
    Strojenie modelu NBA (np. Pinnacle jako uczciwa linia) – później.
 6. **Limit kursów:** 21.10 zostało 318 zapytań do końca miesiąca (ok. 26 dziennie).
 7. **Pierwsza nauka:** po 30 rozliczonych zakładach w danym sporcie agent zacznie sam zmieniać zasady.
+8. **find-skills (4.11):** gdy Radek odblokuje skills.sh – w nowej sesji w chmurze `npx skills find playwright` powinno
+   pokazać listę skilli (wcześniej błąd sieci). Przebieg „Skille Claude – test” przy zmianach w `.claude/skills` – zielony.
 
 ## Szybki start w nowej rozmowie
 
@@ -154,7 +166,8 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 | `.github/workflows/linia-goli.yml` | automatyczna aktualizacja |
 | `.github/workflows/linia-goli-testy.yml` | testy przy każdej zmianie kodu (test_skills.py + strona 390 px w Chromium) |
 | `.github/workflows/linia-goli-diagnoza.yml` | diagnoza tylko do odczytu: model na historii i źródła danych |
-| `.claude/skills/`, `.claude/hooks/straznik.py`, `.claude/settings.json` | komendy-skille i bezpieczniki dla Claude (patrz „Skille i bezpieczniki Claude”) |
+| `.github/workflows/claude-skille.yml` | test skilli Claude (`.claude/testy/test_skille.py`) przy każdej zmianie w `.claude/skills` |
+| `.claude/skills/`, `.claude/hooks/straznik.py`, `.claude/settings.json`, `.claude/testy/` | komendy-skille, bezpieczniki i test skilli dla Claude (patrz „Skille i bezpieczniki Claude”) |
 
 ## Jak to działa automatycznie
 
@@ -167,6 +180,8 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
 - Bot commituje dane („Linia Goli: aktualizacja danych …”), GitHub Pages publikuje stronę.
 - „Linia Goli – testy” (`linia-goli-testy.yml`): przy pushu kodu (`gole/*.py`, `gole/index.html`, `gole/testy/`) na `main`
   i `claude/**` oraz przy PR – `test_skills.py` i `test_page.py` (Chromium, 390 px); zrzuty strony w artefaktach przebiegu.
+- „Skille Claude – test” (`claude-skille.yml`, od 4.11): przy zmianach w `.claude/skills/`, `.claude/testy/` albo w samym
+  workflow (push na `main` i `claude/**`, PR) – `python3 .claude/testy/test_skille.py`; kilkanaście sekund, bez danych agenta.
 - Agent nie może zatrzymać aplikacji: jego wywołania są w try/except, błędy trafiają do `agent.json` → `status.errors`.
 - Zadania zaplanowane w Claude: brak aktywnych – „Linia Goli: poniedziałkowe sprawdzenie” czeka, aż Radek utworzy ją
   w zakładce Routines (patrz „Skille i bezpieczniki Claude”). Wcześniej: brak aktywnych (dokończenie „Sprawdzenia rozliczeń Linii Goli” odbyło się 20.10 ok. 10:30 czasu UK,
@@ -254,7 +269,8 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   albo z `--out gole`, ręczne zmiany `gole/agent.json` / `gole/agent_analizy.json` (Edit/Write, `>`, `sed -i`, `rm`, `mv`,
   `cp` na nie) i force push. Czytanie i kopiowanie tych plików do folderu tymczasowego działa. Uwaga: blokuje też polecenia,
   które tylko zawierają taki tekst (np. test z napisem force push) – takie rzeczy rób przez plik ze skryptem.
-- **Testy automatyczne**: „Linia Goli – testy” na GitHubie (wyżej, „Jak to działa automatycznie”).
+- **Testy automatyczne**: „Linia Goli – testy” i (od 4.11) „Skille Claude – test” na GitHubie (wyżej, „Jak to działa
+  automatycznie”). Nowy skill w `.claude/skills` → najpierw `python3 .claude/testy/test_skille.py`.
 - **Wtyczki Claude Code (23.10.2026, Radek wysłał screen z filmu i napisał „zainstaluj te wtyczki”)** – włączone
   w `.claude/settings.json` (`enabledPlugins` + `extraKnownMarketplaces`), więc każdy wątek projektu ładuje je sam:
   `claude-code-setup` (podpowiada automatyzacje dla repo), `document-skills` (Word, Excel, PowerPoint, PDF) i `skill-creator`
@@ -286,8 +302,9 @@ Dla Claude pracującego nad tym repozytorium (każdy wątek projektu je ma):
   `claude-seo`, `repomix` (3, w tym serwer MCP przez npx) i `andrej-karpathy-skills`. **gstack** (garrytan/gstack, 60+ skilli
   jak `/review`, `/qa`, `/ship`, `/investigate`) to nie wtyczka: `.claude/hooks/gstack.sh` (SessionStart) w chmurze klonuje go
   w tle do `~/.claude/skills/gstack` i uruchamia `./setup` (ok. 40 s, 1.8 GB; skille pojawiają się same, przeglądarka gstack
-  w chmurze się nie instaluje). **find-skills** (Vercel, MIT) skopiowany do `.claude/skills/find-skills` – w chmurze `npx skills
-  find` nie działa (proxy blokuje skills.sh). Pominięte z paczek: `protect-mcp` i `review-agent-governance` (po każdym
+  w chmurze się nie instaluje). **find-skills** (Vercel, MIT) skopiowany do `.claude/skills/find-skills`; 4.11 dopisana na końcu poprawka
+  na chmurę (instaluje do repo, nie `-g`; bez skills.sh szuka przez WebSearch i GitHub) – sam `npx skills find` zadziała
+  dopiero po odblokowaniu `skills.sh` i `www.skills.sh` w ustawieniach środowiska (czeka na Radka). Pominięte z paczek: `protect-mcp` i `review-agent-governance` (po każdym
   narzędziu `npx protect-mcp sign` zapisywał `receipts/` i klucz w repozytorium), `caveman` (odrzucony 24.10), `seo-cockpit`
   (płatne API SEO i konto Google). Z grafiki już były: superpowers, frontend-design, skill-creator, anthropic skills, GitHub
   (wbudowany), Playwright (testy strony), humanizer (odrzucony 24.10). Niemożliwe/bez sensu: granola, slack, notion, kondo,

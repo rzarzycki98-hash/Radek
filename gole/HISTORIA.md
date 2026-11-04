@@ -157,6 +157,15 @@ osi czasu.
   dopiero, gdy instaluje je skrypt instalacyjny środowiska (`.claude/instaluj-wtyczki.sh`) – Radek musi go wpisać w ustawieniach.
   Wersje wszystkich zewnętrznych wtyczek i gstack są przypięte do sprawdzonych commitów.
 
+### 4.11.2026 – find-skills w chmurze
+
+- Radek (w czacie w aplikacji Claude): „zainstaluj skill /find skill”. Ustalone z opcji: chodzi o find-skills od Vercel
+  dla Claude Code w chmurze na tym repo. Skill był tu już od 25.10 (kopia 1:1), ale w chmurze nie szukał (proxy blokuje
+  skills.sh) i instalował znalezione skille do folderu, który znika po rozmowie.
+- **Decyzja Radka:** poprawka w skillu + odblokowanie skills.sh w ustawieniach środowiska (robi sam), zapis prosto
+  na `main`. Doszedł test skilli Claude z przebiegiem na GitHubie. W sieci krążą podróbki find-skills (jedna każe wysłać
+  nazwę komputera na fałszywy adres udający Vercel), dlatego poprawka każe przeczytać każdy skill przed instalacją.
+
 ## Pomysły Radka – co się z nimi stało
 
 | Pomysł | Co się stało |
@@ -177,6 +186,7 @@ osi czasu.
 | Wtyczki z filmu o Claude Code (23.10) | Zrobione: claude-code-setup, document-skills i skill-creator („Agent Skills”), frontend-design, security-guidance – włączone w `.claude/settings.json`, działają w każdym wątku projektu. Potem „wszystkie możliwe”: Radek wybrał wszystkie darmowe działające bez kont (razem 16) i styl tłumaczący; ok. 270 łączników do firm pominięte |
 | Wtyczki z TikToka (24.10) | Zrobione: superpowers, impeccable, ponytail (wybór Radka); OmniRoute i Caveman odradzone, reszta niepotrzebna |
 | „32 things to install in Claude” (25.10) | Zrobione: wszystko, co darmowe i działa bez kont (ok. 200 wtyczek, gstack, find-skills); łączniki do firm (Slack, Notion, Zapier i inne) pominięte |
+| find-skills w chmurze (4.11) | Zrobione: poprawka (instalacja do repo, zapasowe szukanie, sprawdzenie bezpieczeństwa) i test na GitHubie; odblokowanie skills.sh czeka na Radka |
 | Over, gdy model spodziewa się 2.6+ gola (21.10) | Na historii traciło (−3.7%); dodane jako taktyka na sucho `xg` – pieniądze tylko, jeśli się sprawdzi |
 | Wynik 1X2 dla agenta | Odrzucone – Radek wybrał gole |
 | Powiadomienia na telefon | Odrzucone – Radek wybrał raport tylko na stronie |

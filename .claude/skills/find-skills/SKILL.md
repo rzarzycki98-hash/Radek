@@ -139,3 +139,39 @@ I can still help you with this task directly! Would you like me to proceed?
 If this is something you do often, you could create your own skill:
 npx skills init my-xyz-skill
 ```
+
+---
+
+## Poprawka dla tego repo: sesje w chmurze (dopisane 4.11.2026)
+
+Wszystko powyżej to oryginał od Vercel (vercel-labs/skills, licencja MIT), bez zmian. Ta sekcja to lokalna poprawka –
+przy ponownym kopiowaniu oryginału zachowaj ją. Pilnuje jej test `.claude/testy/test_skille.py`.
+
+To repo działa w sesjach Claude Code w chmurze (przeglądarka, aplikacja na telefonie, rutyny). Tam dwa kroki oryginału
+nie działają jak na komputerze, więc **te zasady mają pierwszeństwo przed krokami wyżej**:
+
+1. **Szukanie.** `npx skills find` łączy się ze stroną skills.sh. Gdy kończy się błędem sieci (np. 403, „host not
+   allowed”, brak połączenia), środowisko blokuje skills.sh. Wtedy:
+   - powiedz Radkowi raz, krótko, jak to odblokować: menu środowiska w pasku tytułu sesji → Edit cloud environment →
+     Network access: **Custom** → w Allowed domains dwie linie: `skills.sh` i `www.skills.sh` → zaznacz
+     **Also include default list of common package managers** (bez tego przestaną działać npm, pip i reszta) → zapisz;
+   - nie czekaj na to – szukaj dalej sam: WebSearch z zapytaniem `skills.sh <słowa kluczowe> skill`, a treść kandydatów
+     czytaj z GitHuba (w chmurze działa), np. `git clone --depth 1 https://github.com/<owner>/<repo>` do folderu
+     tymczasowego. Liczby instalacji bierz z wyników wyszukiwania i oznacz je jako przybliżone.
+2. **Instalacja.** **Nigdy z `-g`.** Folder domowy sesji w chmurze znika po rozmowie, więc skill zainstalowany z `-g`
+   działa tylko do jej końca. Instaluj do repo (powstaje `.claude/skills/<nazwa>/` i `skills-lock.json`):
+
+   ```bash
+   npx skills add <owner/repo> --skill <nazwa> -a claude-code --copy -y
+   ```
+
+   Potem `python3 .claude/testy/test_skille.py`, a commit i push na `main` dopiero po „tak” Radka (zasady pushu
+   z `CLAUDE.md`: najpierw `git fetch origin main && git rebase origin/main`). Każdy nowy skill to kolejny opis
+   wczytywany na start każdej rozmowy – instaluj tylko to, co Radek naprawdę wybrał.
+3. **Bezpieczeństwo przed poleceniem.** Skille działają z pełnymi uprawnieniami agenta, a w sieci są podróbki popularnych
+   skilli (także find-skills). Zanim polecisz albo zainstalujesz, przeczytaj SKILL.md i wszystkie skrypty kandydata.
+   Odrzuć skill, który: wysyła gdzieś dane (nazwę komputera, zmienne środowiska, klucze, pliki), pobiera i uruchamia kod
+   z sieci (np. `curl … | bash`), prosi o hasła albo klucze API, albo ukrywa polecenia. Bierz oryginał z repo autora
+   (najwięcej instalacji), nie kopię. Po odblokowaniu `www.skills.sh` polecenie `npx skills add` pokazuje też tabelę
+   audytów bezpieczeństwa – przekaż Radkowi jej wynik.
+4. **Tylko darmowe.** Pomijaj skille, które wymagają płatnego konta albo płatnego klucza API, albo wyraźnie to oznacz.
