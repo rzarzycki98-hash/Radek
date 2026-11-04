@@ -14415,7 +14415,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.2
+   "last_odds": 3.3
   },
   {
    "id": "BRA|2026-11-04|Athletico-PR|Vasco|market|1x2",
@@ -14439,7 +14439,7 @@
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
    "status": "open",
-   "last_odds": 3.2
+   "last_odds": 3.3
   },
   {
    "id": "BRA|2026-11-04|Flamengo RJ|Gremio|model|1x2",
@@ -15545,7 +15545,7 @@
    "grade": "no",
    "added": "2026-10-28T01:20+00:00",
    "status": "open",
-   "last_odds": 3.4
+   "last_odds": 4.6
   },
   {
    "id": "BRA|2026-11-05|Botafogo RJ|Atletico-MG|market|1x2",
@@ -15569,7 +15569,7 @@
    "grade": "no",
    "added": "2026-10-28T01:20+00:00",
    "status": "open",
-   "last_odds": 3.4
+   "last_odds": 4.6
   },
   {
    "id": "MEX|2026-10-29|Club America|Club Tijuana|market|1x2",
@@ -20728,7 +20728,7 @@
    "grade": "no",
    "added": "2026-11-03T01:24+00:00",
    "status": "open",
-   "last_odds": 3.65
+   "last_odds": 3.55
   },
   {
    "id": "BRA|2026-11-05|Sao Paulo|Corinthians|market|1x2",
@@ -20752,7 +20752,7 @@
    "grade": "no",
    "added": "2026-11-03T01:24+00:00",
    "status": "open",
-   "last_odds": 3.65
+   "last_odds": 3.55
   },
   {
    "id": "SWE|2026-11-06|Hammarby|Elfsborg|model|1x2",
@@ -21017,6 +21017,54 @@
    "added": "2026-11-03T13:26+00:00",
    "status": "open",
    "last_odds": 4.75
+  },
+  {
+   "id": "E1|2026-11-06|Derby|Bolton|market|1x2",
+   "match": "E1|2026-11-06|Derby|Bolton",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E1",
+   "league_name": "Anglia · Championship",
+   "date": "2026-11-06",
+   "time": "20:00",
+   "ko": "2026-11-06T20:00+00:00",
+   "home": "Derby",
+   "away": "Bolton",
+   "side": "2",
+   "prob": 0.3473,
+   "odds": 2.95,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0247,
+   "grade": "no",
+   "added": "2026-11-04T01:25+00:00",
+   "status": "open",
+   "last_odds": 2.95
+  },
+  {
+   "id": "BRA|2026-11-05|Sao Paulo|Corinthians|market",
+   "match": "BRA|2026-11-05|Sao Paulo|Corinthians",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-11-05",
+   "time": "00:30",
+   "ko": "2026-11-05T00:30+00:00",
+   "home": "Sao Paulo",
+   "away": "Corinthians",
+   "side": "Over",
+   "prob": 0.4139,
+   "odds": 2.48,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0266,
+   "grade": null,
+   "added": "2026-11-04T01:25+00:00",
+   "status": "open",
+   "last_odds": 2.48
   }
  ],
  "summary": {
@@ -21039,7 +21087,7 @@
   "market_ou": {
    "settled": 35,
    "won": 13,
-   "open": 3,
+   "open": 4,
    "profit": -9.94,
    "roi": -0.284,
    "clv": -0.0237
@@ -21047,11 +21095,11 @@
   "market_x": {
    "settled": 314,
    "won": 69,
-   "open": 29,
+   "open": 30,
    "profit": 3.76,
    "roi": 0.012,
    "clv": 0.0187
   }
  },
- "updated": "2026-11-03T17:14+00:00"
+ "updated": "2026-11-04T01:25+00:00"
 }
