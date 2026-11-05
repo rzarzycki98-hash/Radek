@@ -15985,7 +15985,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 2.8
+   "last_odds": 2.75
   },
   {
    "id": "D1|2026-11-06|Hamburg|M'gladbach|market|1x2",
@@ -16009,7 +16009,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 2.8
+   "last_odds": 2.75
   },
   {
    "id": "D1|2026-11-07|Mainz|Bayern Munich|model|1x2",
@@ -16033,7 +16033,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 5.75
+   "last_odds": 6.5
   },
   {
    "id": "D1|2026-11-07|Mainz|Bayern Munich|market|1x2",
@@ -16057,7 +16057,7 @@
    "grade": "few",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 5.75
+   "last_odds": 6.5
   },
   {
    "id": "D2|2026-10-31|Wolfsburg|Osnabruck|model|1x2",
@@ -16900,7 +16900,7 @@
    "grade": "few",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 2.6
+   "last_odds": 2.62
   },
   {
    "id": "E0|2026-11-07|Nott'm Forest|Man City|model",
@@ -16924,7 +16924,7 @@
    "grade": "few",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 2.28
+   "last_odds": 2.25
   },
   {
    "id": "E0|2026-11-08|Crystal Palace|Liverpool|model|1x2",
@@ -16948,7 +16948,7 @@
    "grade": "no",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 4.75
+   "last_odds": 5.0
   },
   {
    "id": "D1|2026-11-07|Stuttgart|Werder Bremen|model|1x2",
@@ -16972,7 +16972,7 @@
    "grade": "few",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 5.8
+   "last_odds": 4.8
   },
   {
    "id": "D1|2026-11-07|Stuttgart|Werder Bremen|market|1x2",
@@ -16996,7 +16996,7 @@
    "grade": "few",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 5.8
+   "last_odds": 4.8
   },
   {
    "id": "F1|2026-10-30|Le Havre|Paris SG|model|1x2",
@@ -17076,7 +17076,7 @@
    "grade": "watch",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 2.5
+   "last_odds": 2.2
   },
   {
    "id": "N1|2026-11-08|Twente|Ajax|market|1x2",
@@ -17100,7 +17100,7 @@
    "grade": "watch",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 2.5
+   "last_odds": 2.2
   },
   {
    "id": "G1|2026-11-01|Levadeiakos|Aris|model|1x2",
@@ -20176,7 +20176,7 @@
    "grade": "watch",
    "added": "2026-11-01T05:05+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 7.5
   },
   {
    "id": "N1|2026-11-08|Cambuur|PSV Eindhoven|market|1x2",
@@ -20200,7 +20200,7 @@
    "grade": "watch",
    "added": "2026-11-01T05:05+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 7.5
   },
   {
    "id": "B1|2026-11-01|Cercle Brugge|Antwerp|model|1x2",
@@ -20412,7 +20412,7 @@
    "grade": "no",
    "added": "2026-11-02T01:27+00:00",
    "status": "open",
-   "last_odds": 3.85
+   "last_odds": 3.7
   },
   {
    "id": "E0|2026-11-08|Sunderland|Chelsea|market|1x2",
@@ -20436,7 +20436,7 @@
    "grade": "no",
    "added": "2026-11-02T01:27+00:00",
    "status": "open",
-   "last_odds": 3.85
+   "last_odds": 3.7
   },
   {
    "id": "I1|2026-11-08|Napoli|Lazio|model|1x2",
@@ -20460,7 +20460,7 @@
    "grade": "watch",
    "added": "2026-11-02T01:27+00:00",
    "status": "open",
-   "last_odds": 3.7
+   "last_odds": 3.2
   },
   {
    "id": "I1|2026-11-08|Napoli|Lazio|market|1x2",
@@ -20484,7 +20484,7 @@
    "grade": "watch",
    "added": "2026-11-02T01:27+00:00",
    "status": "open",
-   "last_odds": 3.7
+   "last_odds": 3.2
   },
   {
    "id": "P1|2026-11-02|Gil Vicente|Guimaraes|market|1x2",
@@ -20680,7 +20680,7 @@
    "grade": "few",
    "added": "2026-11-03T01:24+00:00",
    "status": "open",
-   "last_odds": 8.5
+   "last_odds": 7.5
   },
   {
    "id": "B1|2026-11-08|Gent|Kortrijk|market|1x2",
@@ -20704,7 +20704,7 @@
    "grade": "few",
    "added": "2026-11-03T01:24+00:00",
    "status": "open",
-   "last_odds": 8.5
+   "last_odds": 7.5
   },
   {
    "id": "BRA|2026-11-05|Sao Paulo|Corinthians|model|1x2",
@@ -20895,8 +20895,12 @@
    "edge": 0.0646,
    "grade": "no",
    "added": "2026-11-03T13:26+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "2:3",
+   "profit": -1.0,
+   "close_odds": 4.0,
+   "clv": 0.0072
   },
   {
    "id": "E1|2026-11-03|Preston|Sheffield Utd|market|1x2",
@@ -20919,8 +20923,12 @@
    "edge": 0.0646,
    "grade": "no",
    "added": "2026-11-03T13:26+00:00",
-   "status": "open",
-   "last_odds": 4.0
+   "status": "lost",
+   "last_odds": 4.0,
+   "score": "2:3",
+   "profit": -1.0,
+   "close_odds": 4.0,
+   "clv": 0.0072
   },
   {
    "id": "E2|2026-11-03|Huddersfield|Luton|model",
@@ -20943,8 +20951,12 @@
    "edge": 0.0354,
    "grade": "few",
    "added": "2026-11-03T13:26+00:00",
-   "status": "open",
-   "last_odds": 1.7
+   "status": "lost",
+   "last_odds": 1.7,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 1.62,
+   "clv": 0.0034
   },
   {
    "id": "E2|2026-11-03|Huddersfield|Luton|market",
@@ -20967,8 +20979,12 @@
    "edge": 0.0354,
    "grade": "few",
    "added": "2026-11-03T13:26+00:00",
-   "status": "open",
-   "last_odds": 1.7
+   "status": "lost",
+   "last_odds": 1.7,
+   "score": "1:1",
+   "profit": -1.0,
+   "close_odds": 1.62,
+   "clv": 0.0034
   },
   {
    "id": "BRA|2026-11-06|Cruzeiro|Bahia|model|1x2",
@@ -21087,8 +21103,12 @@
    "edge": 0.0563,
    "grade": "few",
    "added": "2026-11-04T13:27+00:00",
-   "status": "open",
-   "last_odds": 2.55
+   "status": "lost",
+   "last_odds": 2.55,
+   "score": "1:3",
+   "profit": -1.0,
+   "close_odds": 2.25,
+   "clv": 0.0041
   },
   {
    "id": "B1|2026-11-04|Kortrijk|KV Mechelen|market|1x2",
@@ -21111,8 +21131,12 @@
    "edge": 0.0563,
    "grade": "few",
    "added": "2026-11-04T13:27+00:00",
-   "status": "open",
-   "last_odds": 2.55
+   "status": "lost",
+   "last_odds": 2.55,
+   "score": "1:3",
+   "profit": -1.0,
+   "close_odds": 2.25,
+   "clv": 0.0041
   },
   {
    "id": "T1|2026-11-08|Corum|Fenerbahce|model|1x2",
@@ -21136,7 +21160,7 @@
    "grade": "no",
    "added": "2026-11-04T13:27+00:00",
    "status": "open",
-   "last_odds": 4.6
+   "last_odds": 4.7
   },
   {
    "id": "T1|2026-11-08|Corum|Fenerbahce|market|1x2",
@@ -21160,42 +21184,450 @@
    "grade": "no",
    "added": "2026-11-04T13:27+00:00",
    "status": "open",
-   "last_odds": 4.6
+   "last_odds": 4.7
+  },
+  {
+   "id": "E0|2026-11-21|Bournemouth|Nott'm Forest|market|1x2",
+   "match": "E0|2026-11-21|Bournemouth|Nott'm Forest",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-21",
+   "time": "15:00",
+   "ko": "2026-11-21T15:00+00:00",
+   "home": "Bournemouth",
+   "away": "Nott'm Forest",
+   "side": "2",
+   "prob": 0.26,
+   "odds": 3.95,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.027,
+   "grade": "no",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 3.95
+  },
+  {
+   "id": "E0|2026-11-21|Coventry|Crystal Palace|model",
+   "match": "E0|2026-11-21|Coventry|Crystal Palace",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-21",
+   "time": "15:00",
+   "ko": "2026-11-21T15:00+00:00",
+   "home": "Coventry",
+   "away": "Crystal Palace",
+   "side": "Under",
+   "prob": 0.5005,
+   "odds": 2.12,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.061,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 2.12
+  },
+  {
+   "id": "E0|2026-11-21|Newcastle|Arsenal|model",
+   "match": "E0|2026-11-21|Newcastle|Arsenal",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-21",
+   "time": "17:30",
+   "ko": "2026-11-21T17:30+00:00",
+   "home": "Newcastle",
+   "away": "Arsenal",
+   "side": "Under",
+   "prob": 0.4865,
+   "odds": 2.17,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0557,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 2.17
+  },
+  {
+   "id": "E0|2026-11-21|Newcastle|Arsenal|model|1x2",
+   "match": "E0|2026-11-21|Newcastle|Arsenal",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-21",
+   "time": "17:30",
+   "ko": "2026-11-21T17:30+00:00",
+   "home": "Newcastle",
+   "away": "Arsenal",
+   "side": "1",
+   "prob": 0.1879,
+   "odds": 5.5,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0332,
+   "grade": "no",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 5.5
+  },
+  {
+   "id": "E0|2026-11-22|Hull|Brighton|model",
+   "match": "E0|2026-11-22|Hull|Brighton",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-22",
+   "time": "14:00",
+   "ko": "2026-11-22T14:00+00:00",
+   "home": "Hull",
+   "away": "Brighton",
+   "side": "Under",
+   "prob": 0.4765,
+   "odds": 2.2,
+   "book": "LeoVegas",
+   "book_key": "leovegas",
+   "user_book": false,
+   "edge": 0.0484,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 2.2
+  },
+  {
+   "id": "E0|2026-11-22|Hull|Brighton|model|1x2",
+   "match": "E0|2026-11-22|Hull|Brighton",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-22",
+   "time": "14:00",
+   "ko": "2026-11-22T14:00+00:00",
+   "home": "Hull",
+   "away": "Brighton",
+   "side": "1",
+   "prob": 0.175,
+   "odds": 6.1,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0676,
+   "grade": "no",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 6.1
+  },
+  {
+   "id": "E0|2026-11-23|Brentford|Everton|model",
+   "match": "E0|2026-11-23|Brentford|Everton",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-23",
+   "time": "20:00",
+   "ko": "2026-11-23T20:00+00:00",
+   "home": "Brentford",
+   "away": "Everton",
+   "side": "Under",
+   "prob": 0.4854,
+   "odds": 2.18,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0582,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 2.18
+  },
+  {
+   "id": "D1|2026-11-20|Bayern Munich|FC Koln|model|1x2",
+   "match": "D1|2026-11-20|Bayern Munich|FC Koln",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "D1",
+   "league_name": "Niemcy · Bundesliga",
+   "date": "2026-11-20",
+   "time": "19:30",
+   "ko": "2026-11-20T19:30+00:00",
+   "home": "Bayern Munich",
+   "away": "FC Koln",
+   "side": "2",
+   "prob": 0.0448,
+   "odds": 26.0,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.164,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 26.0
+  },
+  {
+   "id": "D1|2026-11-20|Bayern Munich|FC Koln|market|1x2",
+   "match": "D1|2026-11-20|Bayern Munich|FC Koln",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "D1",
+   "league_name": "Niemcy · Bundesliga",
+   "date": "2026-11-20",
+   "time": "19:30",
+   "ko": "2026-11-20T19:30+00:00",
+   "home": "Bayern Munich",
+   "away": "FC Koln",
+   "side": "2",
+   "prob": 0.0448,
+   "odds": 26.0,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.164,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 26.0
+  },
+  {
+   "id": "F1|2026-11-21|Nice|Paris SG|model|1x2",
+   "match": "F1|2026-11-21|Nice|Paris SG",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-11-21",
+   "time": "16:15",
+   "ko": "2026-11-21T16:15+00:00",
+   "home": "Nice",
+   "away": "Paris SG",
+   "side": "1",
+   "prob": 0.164,
+   "odds": 6.75,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.1072,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 6.75
+  },
+  {
+   "id": "F1|2026-11-21|Nice|Paris SG|market|1x2",
+   "match": "F1|2026-11-21|Nice|Paris SG",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-11-21",
+   "time": "16:15",
+   "ko": "2026-11-21T16:15+00:00",
+   "home": "Nice",
+   "away": "Paris SG",
+   "side": "1",
+   "prob": 0.164,
+   "odds": 6.75,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.1072,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 6.75
+  },
+  {
+   "id": "F1|2026-11-21|Lille|Lyon|model",
+   "match": "F1|2026-11-21|Lille|Lyon",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-11-21",
+   "time": "19:45",
+   "ko": "2026-11-21T19:45+00:00",
+   "home": "Lille",
+   "away": "Lyon",
+   "side": "Under",
+   "prob": 0.5065,
+   "odds": 2.1,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0637,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 2.1
+  },
+  {
+   "id": "F1|2026-11-21|Lille|Lyon|market",
+   "match": "F1|2026-11-21|Lille|Lyon",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-11-21",
+   "time": "19:45",
+   "ko": "2026-11-21T19:45+00:00",
+   "home": "Lille",
+   "away": "Lyon",
+   "side": "Under",
+   "prob": 0.5065,
+   "odds": 2.1,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0637,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 2.1
+  },
+  {
+   "id": "F1|2026-11-22|Paris FC|Angers|model",
+   "match": "F1|2026-11-22|Paris FC|Angers",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-11-22",
+   "time": "14:00",
+   "ko": "2026-11-22T14:00+00:00",
+   "home": "Paris FC",
+   "away": "Angers",
+   "side": "Under",
+   "prob": 0.4218,
+   "odds": 2.48,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.046,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 2.48
+  },
+  {
+   "id": "F1|2026-11-22|Paris FC|Angers|market",
+   "match": "F1|2026-11-22|Paris FC|Angers",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "F1",
+   "league_name": "Francja · Ligue 1",
+   "date": "2026-11-22",
+   "time": "14:00",
+   "ko": "2026-11-22T14:00+00:00",
+   "home": "Paris FC",
+   "away": "Angers",
+   "side": "Under",
+   "prob": 0.4218,
+   "odds": 2.48,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.046,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 2.48
+  },
+  {
+   "id": "B1|2026-11-08|Club Brugge|Anderlecht|model|1x2",
+   "match": "B1|2026-11-08|Club Brugge|Anderlecht",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "B1",
+   "league_name": "Belgia · Pro League",
+   "date": "2026-11-08",
+   "time": "12:30",
+   "ko": "2026-11-08T12:30+00:00",
+   "home": "Club Brugge",
+   "away": "Anderlecht",
+   "side": "2",
+   "prob": 0.1846,
+   "odds": 5.8,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0707,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 5.8
+  },
+  {
+   "id": "B1|2026-11-08|Club Brugge|Anderlecht|market|1x2",
+   "match": "B1|2026-11-08|Club Brugge|Anderlecht",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "B1",
+   "league_name": "Belgia · Pro League",
+   "date": "2026-11-08",
+   "time": "12:30",
+   "ko": "2026-11-08T12:30+00:00",
+   "home": "Club Brugge",
+   "away": "Anderlecht",
+   "side": "2",
+   "prob": 0.1846,
+   "odds": 5.8,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0707,
+   "grade": "few",
+   "added": "2026-11-05T01:28+00:00",
+   "status": "open",
+   "last_odds": 5.8
   }
  ],
  "summary": {
   "model_ou": {
-   "settled": 65,
+   "settled": 66,
    "won": 25,
-   "open": 5,
-   "profit": -13.77,
-   "roi": -0.2118,
-   "clv": -0.0346
+   "open": 10,
+   "profit": -14.77,
+   "roi": -0.2238,
+   "clv": -0.034
   },
   "model_x": {
-   "settled": 274,
+   "settled": 276,
    "won": 64,
-   "open": 39,
-   "profit": 19.87,
-   "roi": 0.0725,
-   "clv": 0.0239
+   "open": 42,
+   "profit": 17.87,
+   "roi": 0.0647,
+   "clv": 0.0238
   },
   "market_ou": {
-   "settled": 35,
+   "settled": 36,
    "won": 13,
-   "open": 4,
-   "profit": -9.94,
-   "roi": -0.284,
-   "clv": -0.0237
+   "open": 5,
+   "profit": -10.94,
+   "roi": -0.3039,
+   "clv": -0.023
   },
   "market_x": {
-   "settled": 314,
+   "settled": 316,
    "won": 69,
-   "open": 32,
-   "profit": 3.76,
-   "roi": 0.012,
-   "clv": 0.0187
+   "open": 34,
+   "profit": 1.76,
+   "roi": 0.0056,
+   "clv": 0.0186
   }
  },
- "updated": "2026-11-04T13:27+00:00"
+ "updated": "2026-11-05T01:28+00:00"
 }
