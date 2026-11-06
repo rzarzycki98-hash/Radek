@@ -14414,8 +14414,12 @@
    "edge": 0.1854,
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 3.3
+   "status": "won",
+   "last_odds": 3.3,
+   "score": "1:3",
+   "profit": 2.3,
+   "close_odds": 3.3,
+   "clv": 0.1105
   },
   {
    "id": "BRA|2026-11-04|Athletico-PR|Vasco|market|1x2",
@@ -14438,8 +14442,12 @@
    "edge": 0.1854,
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 3.3
+   "status": "won",
+   "last_odds": 3.3,
+   "score": "1:3",
+   "profit": 2.3,
+   "close_odds": 3.3,
+   "clv": 0.1105
   },
   {
    "id": "BRA|2026-11-04|Flamengo RJ|Gremio|model|1x2",
@@ -14462,8 +14470,12 @@
    "edge": 0.1401,
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 14.0
+   "status": "lost",
+   "last_odds": 14.0,
+   "score": "3:1",
+   "profit": -1.0,
+   "close_odds": 14.0,
+   "clv": -0.1668
   },
   {
    "id": "BRA|2026-11-04|Flamengo RJ|Gremio|market|1x2",
@@ -14486,8 +14498,12 @@
    "edge": 0.1401,
    "grade": "no",
    "added": "2026-10-26T01:14+00:00",
-   "status": "open",
-   "last_odds": 14.0
+   "status": "lost",
+   "last_odds": 14.0,
+   "score": "3:1",
+   "profit": -1.0,
+   "close_odds": 14.0,
+   "clv": -0.1668
   },
   {
    "id": "DNK|2026-10-26|FC Copenhagen|Odense|model|1x2",
@@ -15544,8 +15560,12 @@
    "edge": 0.0713,
    "grade": "no",
    "added": "2026-10-28T01:20+00:00",
-   "status": "open",
-   "last_odds": 4.6
+   "status": "lost",
+   "last_odds": 4.6,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 4.6,
+   "clv": -0.3607
   },
   {
    "id": "BRA|2026-11-05|Botafogo RJ|Atletico-MG|market|1x2",
@@ -15568,8 +15588,12 @@
    "edge": 0.0713,
    "grade": "no",
    "added": "2026-10-28T01:20+00:00",
-   "status": "open",
-   "last_odds": 4.6
+   "status": "lost",
+   "last_odds": 4.6,
+   "score": "1:0",
+   "profit": -1.0,
+   "close_odds": 4.6,
+   "clv": -0.3607
   },
   {
    "id": "MEX|2026-10-29|Club America|Club Tijuana|market|1x2",
@@ -16436,8 +16460,12 @@
    "edge": 0.113,
    "grade": "no",
    "added": "2026-10-29T01:18+00:00",
-   "status": "open",
-   "last_odds": 11.0
+   "status": "lost",
+   "last_odds": 11.0,
+   "score": "6:1",
+   "profit": -1.0,
+   "close_odds": 11.0,
+   "clv": 0.117
   },
   {
    "id": "BRA|2026-11-05|Palmeiras|Remo|market|1x2",
@@ -16460,8 +16488,12 @@
    "edge": 0.113,
    "grade": "no",
    "added": "2026-10-29T01:18+00:00",
-   "status": "open",
-   "last_odds": 11.0
+   "status": "lost",
+   "last_odds": 11.0,
+   "score": "6:1",
+   "profit": -1.0,
+   "close_odds": 11.0,
+   "clv": 0.117
   },
   {
    "id": "DNK|2026-11-02|Sonderjyske|FC Copenhagen|model|1x2",
@@ -20727,8 +20759,12 @@
    "edge": 0.0395,
    "grade": "no",
    "added": "2026-11-03T01:24+00:00",
-   "status": "open",
-   "last_odds": 3.55
+   "status": "lost",
+   "last_odds": 3.55,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 3.55,
+   "clv": 0.1566
   },
   {
    "id": "BRA|2026-11-05|Sao Paulo|Corinthians|market|1x2",
@@ -20751,8 +20787,12 @@
    "edge": 0.0395,
    "grade": "no",
    "added": "2026-11-03T01:24+00:00",
-   "status": "open",
-   "last_odds": 3.55
+   "status": "lost",
+   "last_odds": 3.55,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 3.55,
+   "clv": 0.1566
   },
   {
    "id": "SWE|2026-11-06|Hammarby|Elfsborg|model|1x2",
@@ -21007,8 +21047,12 @@
    "edge": 0.035,
    "grade": "no",
    "added": "2026-11-03T13:26+00:00",
-   "status": "open",
-   "last_odds": 4.75
+   "status": "lost",
+   "last_odds": 4.75,
+   "score": "3:2",
+   "profit": -1.0,
+   "close_odds": 4.33,
+   "clv": 0.0933
   },
   {
    "id": "BRA|2026-11-06|Cruzeiro|Bahia|market|1x2",
@@ -21031,8 +21075,12 @@
    "edge": 0.035,
    "grade": "no",
    "added": "2026-11-03T13:26+00:00",
-   "status": "open",
-   "last_odds": 4.75
+   "status": "lost",
+   "last_odds": 4.75,
+   "score": "3:2",
+   "profit": -1.0,
+   "close_odds": 4.33,
+   "clv": 0.0933
   },
   {
    "id": "E1|2026-11-06|Derby|Bolton|market|1x2",
@@ -21079,8 +21127,11 @@
    "edge": 0.0266,
    "grade": null,
    "added": "2026-11-04T01:25+00:00",
-   "status": "open",
-   "last_odds": 2.48
+   "status": "lost",
+   "last_odds": 2.48,
+   "score": "0:0",
+   "profit": -1.0,
+   "close_odds": 2.48
   },
   {
    "id": "B1|2026-11-04|Kortrijk|KV Mechelen|model|1x2",
@@ -23693,29 +23744,29 @@
    "clv": -0.034
   },
   "model_x": {
-   "settled": 276,
-   "won": 64,
-   "open": 72,
-   "profit": 17.87,
-   "roi": 0.0647,
-   "clv": 0.0238
+   "settled": 282,
+   "won": 65,
+   "open": 66,
+   "profit": 15.17,
+   "roi": 0.0538,
+   "clv": 0.0231
   },
   "market_ou": {
-   "settled": 36,
+   "settled": 37,
    "won": 13,
-   "open": 15,
-   "profit": -10.94,
-   "roi": -0.3039,
-   "clv": -0.023
+   "open": 14,
+   "profit": -11.94,
+   "roi": -0.3227,
+   "clv": -0.0223
   },
   "market_x": {
-   "settled": 316,
-   "won": 69,
-   "open": 71,
-   "profit": 1.76,
-   "roi": 0.0056,
-   "clv": 0.0186
+   "settled": 322,
+   "won": 70,
+   "open": 65,
+   "profit": -0.94,
+   "roi": -0.0029,
+   "clv": 0.0181
   }
  },
- "updated": "2026-11-06T13:27+00:00"
+ "updated": "2026-11-06T17:10+00:00"
 }
