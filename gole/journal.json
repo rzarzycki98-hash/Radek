@@ -16217,7 +16217,7 @@
    "grade": "watch",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 3.2
+   "last_odds": 3.35
   },
   {
    "id": "SP1|2026-11-08|Elche|Betis|market|1x2",
@@ -16241,7 +16241,7 @@
    "grade": "watch",
    "added": "2026-10-29T01:18+00:00",
    "status": "open",
-   "last_odds": 3.2
+   "last_odds": 3.35
   },
   {
    "id": "B1|2026-10-30|Waregem|Club Brugge|model|1x2",
@@ -16980,7 +16980,7 @@
    "grade": "no",
    "added": "2026-10-30T01:21+00:00",
    "status": "open",
-   "last_odds": 5.5
+   "last_odds": 5.8
   },
   {
    "id": "D1|2026-11-07|Stuttgart|Werder Bremen|model|1x2",
@@ -20208,7 +20208,7 @@
    "grade": "watch",
    "added": "2026-11-01T05:05+00:00",
    "status": "open",
-   "last_odds": 7.5
+   "last_odds": 7.0
   },
   {
    "id": "N1|2026-11-08|Cambuur|PSV Eindhoven|market|1x2",
@@ -20232,7 +20232,7 @@
    "grade": "watch",
    "added": "2026-11-01T05:05+00:00",
    "status": "open",
-   "last_odds": 7.5
+   "last_odds": 7.0
   },
   {
    "id": "B1|2026-11-01|Cercle Brugge|Antwerp|model|1x2",
@@ -20444,7 +20444,7 @@
    "grade": "no",
    "added": "2026-11-02T01:27+00:00",
    "status": "open",
-   "last_odds": 3.9
+   "last_odds": 3.85
   },
   {
    "id": "E0|2026-11-08|Sunderland|Chelsea|market|1x2",
@@ -20468,7 +20468,7 @@
    "grade": "no",
    "added": "2026-11-02T01:27+00:00",
    "status": "open",
-   "last_odds": 3.9
+   "last_odds": 3.85
   },
   {
    "id": "I1|2026-11-08|Napoli|Lazio|model|1x2",
@@ -20492,7 +20492,7 @@
    "grade": "watch",
    "added": "2026-11-02T01:27+00:00",
    "status": "open",
-   "last_odds": 2.95
+   "last_odds": 2.88
   },
   {
    "id": "I1|2026-11-08|Napoli|Lazio|market|1x2",
@@ -20516,7 +20516,7 @@
    "grade": "watch",
    "added": "2026-11-02T01:27+00:00",
    "status": "open",
-   "last_odds": 2.95
+   "last_odds": 2.88
   },
   {
    "id": "P1|2026-11-02|Gil Vicente|Guimaraes|market|1x2",
@@ -20712,7 +20712,7 @@
    "grade": "few",
    "added": "2026-11-03T01:24+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 7.5
   },
   {
    "id": "B1|2026-11-08|Gent|Kortrijk|market|1x2",
@@ -20736,7 +20736,7 @@
    "grade": "few",
    "added": "2026-11-03T01:24+00:00",
    "status": "open",
-   "last_odds": 8.0
+   "last_odds": 7.5
   },
   {
    "id": "BRA|2026-11-05|Sao Paulo|Corinthians|model|1x2",
@@ -21211,7 +21211,7 @@
    "grade": "no",
    "added": "2026-11-04T13:27+00:00",
    "status": "open",
-   "last_odds": 4.3
+   "last_odds": 4.75
   },
   {
    "id": "T1|2026-11-08|Corum|Fenerbahce|market|1x2",
@@ -21235,7 +21235,7 @@
    "grade": "no",
    "added": "2026-11-04T13:27+00:00",
    "status": "open",
-   "last_odds": 4.3
+   "last_odds": 4.75
   },
   {
    "id": "E0|2026-11-21|Bournemouth|Nott'm Forest|market|1x2",
@@ -21403,7 +21403,7 @@
    "grade": "few",
    "added": "2026-11-05T01:28+00:00",
    "status": "open",
-   "last_odds": 2.18
+   "last_odds": 2.17
   },
   {
    "id": "D1|2026-11-20|Bayern Munich|FC Koln|model|1x2",
@@ -21475,7 +21475,7 @@
    "grade": "few",
    "added": "2026-11-05T01:28+00:00",
    "status": "open",
-   "last_odds": 6.0
+   "last_odds": 6.1
   },
   {
    "id": "F1|2026-11-21|Nice|Paris SG|market|1x2",
@@ -21499,7 +21499,7 @@
    "grade": "few",
    "added": "2026-11-05T01:28+00:00",
    "status": "open",
-   "last_odds": 6.0
+   "last_odds": 6.1
   },
   {
    "id": "F1|2026-11-21|Lille|Lyon|model",
@@ -21523,7 +21523,7 @@
    "grade": "few",
    "added": "2026-11-05T01:28+00:00",
    "status": "open",
-   "last_odds": 1.88
+   "last_odds": 1.89
   },
   {
    "id": "F1|2026-11-21|Lille|Lyon|market",
@@ -21547,7 +21547,7 @@
    "grade": "few",
    "added": "2026-11-05T01:28+00:00",
    "status": "open",
-   "last_odds": 1.88
+   "last_odds": 1.89
   },
   {
    "id": "F1|2026-11-22|Paris FC|Angers|model",
@@ -23876,6 +23876,150 @@
    "added": "2026-11-07T01:21+00:00",
    "status": "open",
    "last_odds": 5.5
+  },
+  {
+   "id": "E0|2026-11-21|Coventry|Crystal Palace|model|1x2",
+   "match": "E0|2026-11-21|Coventry|Crystal Palace",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-21",
+   "time": "15:00",
+   "ko": "2026-11-21T15:00+00:00",
+   "home": "Coventry",
+   "away": "Crystal Palace",
+   "side": "2",
+   "prob": 0.3564,
+   "odds": 2.9,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0336,
+   "grade": "no",
+   "added": "2026-11-08T01:27+00:00",
+   "status": "open",
+   "last_odds": 2.9
+  },
+  {
+   "id": "E0|2026-11-21|Coventry|Crystal Palace|market|1x2",
+   "match": "E0|2026-11-21|Coventry|Crystal Palace",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "E0",
+   "league_name": "Anglia · Premier League",
+   "date": "2026-11-21",
+   "time": "15:00",
+   "ko": "2026-11-21T15:00+00:00",
+   "home": "Coventry",
+   "away": "Crystal Palace",
+   "side": "2",
+   "prob": 0.355,
+   "odds": 2.9,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0294,
+   "grade": "no",
+   "added": "2026-11-08T01:27+00:00",
+   "status": "open",
+   "last_odds": 2.9
+  },
+  {
+   "id": "I1|2026-11-08|Monza|Atalanta|market",
+   "match": "I1|2026-11-08|Monza|Atalanta",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "I1",
+   "league_name": "Włochy · Serie A",
+   "date": "2026-11-08",
+   "time": "14:00",
+   "ko": "2026-11-08T14:00+00:00",
+   "home": "Monza",
+   "away": "Atalanta",
+   "side": "Over",
+   "prob": 0.6507,
+   "odds": 1.57,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0216,
+   "grade": "few",
+   "added": "2026-11-08T01:27+00:00",
+   "status": "open",
+   "last_odds": 1.57
+  },
+  {
+   "id": "SP1|2026-11-08|Sociedad|Vallecano|model|1x2",
+   "match": "SP1|2026-11-08|Sociedad|Vallecano",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "SP1",
+   "league_name": "Hiszpania · LaLiga",
+   "date": "2026-11-08",
+   "time": "15:15",
+   "ko": "2026-11-08T15:15+00:00",
+   "home": "Sociedad",
+   "away": "Vallecano",
+   "side": "2",
+   "prob": 0.2237,
+   "odds": 4.75,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0625,
+   "grade": "watch",
+   "added": "2026-11-08T01:27+00:00",
+   "status": "open",
+   "last_odds": 4.75
+  },
+  {
+   "id": "SP1|2026-11-08|Sociedad|Vallecano|market|1x2",
+   "match": "SP1|2026-11-08|Sociedad|Vallecano",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "SP1",
+   "league_name": "Hiszpania · LaLiga",
+   "date": "2026-11-08",
+   "time": "15:15",
+   "ko": "2026-11-08T15:15+00:00",
+   "home": "Sociedad",
+   "away": "Vallecano",
+   "side": "2",
+   "prob": 0.2237,
+   "odds": 4.75,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0625,
+   "grade": "watch",
+   "added": "2026-11-08T01:27+00:00",
+   "status": "open",
+   "last_odds": 4.75
+  },
+  {
+   "id": "B1|2026-11-08|St. Gilloise|Genk|market|1x2",
+   "match": "B1|2026-11-08|St. Gilloise|Genk",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "B1",
+   "league_name": "Belgia · Pro League",
+   "date": "2026-11-08",
+   "time": "17:30",
+   "ko": "2026-11-08T17:30+00:00",
+   "home": "St. Gilloise",
+   "away": "Genk",
+   "side": "2",
+   "prob": 0.183,
+   "odds": 5.6,
+   "book": "Casumo",
+   "book_key": "casumo",
+   "user_book": false,
+   "edge": 0.0248,
+   "grade": "few",
+   "added": "2026-11-08T01:27+00:00",
+   "status": "open",
+   "last_odds": 5.6
   }
  ],
  "summary": {
@@ -23890,7 +24034,7 @@
   "model_x": {
    "settled": 282,
    "won": 65,
-   "open": 70,
+   "open": 72,
    "profit": 15.17,
    "roi": 0.0538,
    "clv": 0.0231
@@ -23898,7 +24042,7 @@
   "market_ou": {
    "settled": 37,
    "won": 13,
-   "open": 14,
+   "open": 15,
    "profit": -11.94,
    "roi": -0.3227,
    "clv": -0.0223
@@ -23906,11 +24050,11 @@
   "market_x": {
    "settled": 322,
    "won": 70,
-   "open": 67,
+   "open": 70,
    "profit": -0.94,
    "roi": -0.0029,
    "clv": 0.0181
   }
  },
- "updated": "2026-11-07T01:21+00:00"
+ "updated": "2026-11-08T01:27+00:00"
 }
