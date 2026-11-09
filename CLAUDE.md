@@ -106,6 +106,16 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   błędów. Agent i jego dane bez zmian. **Czeka na Radka:** odblokować `skills.sh`
   i `www.skills.sh` w ustawieniach środowiska (Network access → Custom, z zaznaczoną domyślną listą).
 
+- **9.11 – poniedziałkowe sprawdzenie (rutyna):** aktualizacje GitHuba (ostatnie 4 pary) zielone, 0 błędów agenta, kod bez zmian
+  od 4.11 (testów nie puszczano). Portfel £1053.86 (+£53.86), rozliczone 17 (10 trafionych; NBA 3), otwarte 11 (3 piłkarskie
+  z 6–7.11 czekają na wynik, 1 NBA, 7 na 21–23.11 – wszystkie Under). „Vs zamknięcie” −4.8% (piłka −5.9%) – wciąż gorsze niż
+  zamknięcie; gotowość na prawdziwe pieniądze: nie (dzień 23/90, zakłady 17/200). Raport tygodnia 2–8.11 jest (6 rozliczonych,
+  3 trafione, 9 nowych: 0 Over / 9 Under). Over/Under piłka: oceny 7 dni 86/58, zakłady 0/7 (30 dni 2/22) – oceny wskazują Over,
+  a agent stawia Under (nie zmieniano; do obserwacji). **Do uwagi:** football-data nadal spóźnia się z wynikami (najnowszy 4.11,
+  10 lig `stale`); ESPN jeszcze nie rozliczył żadnego meczu (`res_src` wszędzie football-data) – mecz z 6.11 20:00 dojdzie do
+  progu 72 h 9.11 ok. 20:00, sprawdzić we wtorek. Zapytania o kursy: 367 (OK), HTTP 429 tylko dla SWE (poza agentem). ClubElo nadal 502.
+  Skills.sh nadal czeka na odblokowanie przez Radka. Bez zmian w kodzie i zasadach.
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
