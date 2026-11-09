@@ -116,6 +116,17 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   progu 72 h 9.11 ok. 20:00, sprawdzić we wtorek. Zapytania o kursy: 367 (OK), HTTP 429 tylko dla SWE (poza agentem). ClubElo nadal 502.
   Skills.sh nadal czeka na odblokowanie przez Radka. Bez zmian w kodzie i zasadach.
 
+- **9.11 – Godziny: zarobek na rękę** (poza agentem; Radek z czatu w aplikacji, na podstawie jednego paska, „później wyślę
+  więcej”). Strona `godziny/` (wersja 4, `sw.js` → `godziny-v4`) liczy dla każdego tygodnia kwotę na rękę: godziny po przerwie
+  (2 miejsca po przecinku) × stawka + holiday pay za godzinę, podatek PAYE 2026/27 jak przy kodzie 1257L w1m1 (każdy tydzień
+  osobno: wolne £12579/52, dochód do opodatkowania w dół do pełnych funtów, 20% do £725, 40%, 45%), NI tabela A (8% od £242
+  do £967, 2% powyżej). Widać: karta tygodnia (brutto, podatek, NI, wypłata ok. w piątek po tygodniu), lista tygodni, suma
+  miesiąca (tygodnie kończące się w miesiącu), tekst do wysłania. **Stawki nie ma w kodzie** (repo publiczne) – Radek wpisuje
+  ją raz w Ustawieniach (zapis w telefonie, `rate`, `hol`); bez stawki strona prosi o nią. Wzór zgodny z paskiem co do pensa
+  (sprawdzone poza repo); test: `godziny/testy/test_zarobek.py` (zmyślone stawki, Chromium 390 px, jasny i ciemny; sprawdzony
+  też na zepsutej stawce podatku – łapie). **Gdy Radek przyśle kolejne paski:** porównać kwoty, sprawdzić nadgodziny/inne
+  stawki i czy kod podatkowy nadal ma w1m1.
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
@@ -155,7 +166,8 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   `manifest.webmanifest`, `icons/`): Radek wpisuje każdy dzień „od – do”, strona odejmuje przerwę (domyślnie 45 min,
   do zmiany w Ustawieniach; każdy dzień pamięta przerwę z chwili wpisu) i liczy sumę tygodnia (pon–nd), listę tygodni
   i sumę miesiąca. Koniec przed początkiem = zmiana przez północ. Dane tylko w telefonie (localStorage `godziny-v1`),
-  kopia do pliku JSON; „Wyślij podsumowanie tygodnia” udostępnia albo kopiuje tekst. Adres:
+  kopia do pliku JSON; „Wyślij podsumowanie tygodnia” udostępnia albo kopiuje tekst. Od 9.11 też kwota na rękę
+  (stawka i holiday pay wpisane w Ustawieniach, podatek i NI jak na pasku; test `godziny/testy/test_zarobek.py`). Adres:
   https://rzarzycki98-hash.github.io/Radek/godziny/ (działa po wejściu zmian do `main`).
 - **`gole/`: Linia Goli + agent.**
 

@@ -267,6 +267,12 @@
 
     .version { margin-top: 28px; text-align: center; }
 
+    .pay { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.3); }
+    .pay .money { font-size: 1.6rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+    .pay .sub { font-variant-numeric: tabular-nums; }
+    .weeks .h small { display: block; text-align: right; font-weight: 400; }
+    .setting + .setting { margin-top: 8px; }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -296,6 +302,11 @@
       <div class="label">Razem w tym tygodniu (po odjęciu przerw)</div>
       <div id="week-total" class="total"></div>
       <div id="week-sub" class="sub"></div>
+      <div id="week-pay" class="pay" hidden>
+        <div class="label">Na rękę (szacunek)</div>
+        <div id="pay-net" class="money"></div>
+        <div id="pay-sub" class="sub"></div>
+      </div>
     </section>
 
     <ul id="days" class="days"></ul>
@@ -315,6 +326,17 @@
       <input id="break" type="number" min="0" max="240" step="5" inputmode="numeric">
     </label>
     <p class="muted">Zmiana przerwy działa dla nowych wpisów – już wpisane dni zostają policzone tak jak wcześniej.</p>
+    <label class="setting">
+      <span>Stawka za godzinę (£)</span>
+      <input id="rate" type="number" min="0" max="200" step="0.01" inputmode="decimal">
+    </label>
+    <label class="setting">
+      <span>Holiday pay za godzinę (£)</span>
+      <input id="hol" type="number" min="0" max="50" step="0.01" inputmode="decimal">
+    </label>
+    <p class="muted">Na rękę liczone tak jak na pasku z 25.10.2026: godziny po odjęciu
+      przerwy × stawka + holiday pay, minus podatek (kod 1257L w1m1 – każdy tydzień osobno) i National Insurance
+      (tabela A), rok podatkowy 2026/27. To szacunek – liczy się kwota na prawdziwym pasku.</p>
 
     <h2>Kopia zapasowa</h2>
     <p class="muted">Godziny zapisują się tylko w tym telefonie. Co jakiś czas zapisz kopię do pliku.</p>
@@ -324,7 +346,7 @@
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
 
-    <p class="muted version">Wersja 3 · 24.10.2026</p>
+    <p class="muted version">Wersja 4 · 9.11.2026</p>
   </main>
 
   <div id="toast" class="toast" role="status" hidden></div>
@@ -342,6 +364,14 @@
   <script>
     const STORAGE_KEY = 'godziny-v1';
     const DEFAULT_BREAK = 45;
+    // Pay rates are typed in on the phone only (public repository: no private data in the code).
+    // UK PAYE 2026/27, England, weekly, tax code 1257L on a week1/month1 basis, NI category A.
+    const TAX = {
+      free: 12579 / 52,               // weekly free pay for code 1257L
+      basic: 37700 / 52,              // 20% band (taxable pay per week)
+      higher: (125140 - 12570) / 52,  // 40% up to here, 45% above
+      niPT: 242, niUEL: 967,          // employee NI: 8% between PT and UEL, 2% above
+    };
     const DAY_NAMES = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
     const SHORT_DAYS = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'];
     const MONTHS = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia',
@@ -359,9 +389,9 @@
     function load() {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (saved && saved.days) return saved;
+        if (saved && saved.days) return Object.assign({ rate: 0, hol: 0 }, saved);
       } catch (e) {}
-      return { brk: DEFAULT_BREAK, days: {} };
+      return { brk: DEFAULT_BREAK, rate: 0, hol: 0, days: {} };
     }
 
     function save() {
@@ -440,6 +470,27 @@
         net += r.net; gross += r.gross; brk += r.brk; days += 1;
       }
       return { net, gross, brk, days };
+    }
+
+    const r2 = (x) => Math.round(x * 100 + 1e-9) / 100;
+
+    // Weekly take-home pay the way the payslip works it out: hours (2 decimals) × rate + holiday pay,
+    // taxable pay rounded down to whole pounds, tax by band, NI on gross pay.
+    function payFor(netMin) {
+      const hours = r2(netMin / 60);
+      const basicPay = r2(hours * state.rate);
+      const holPay = r2(hours * state.hol);
+      const gross = r2(basicPay + holPay);
+      const taxable = Math.max(0, Math.floor(gross - TAX.free + 1e-9));
+      const tax = r2(Math.min(taxable, TAX.basic) * 0.2
+        + Math.max(0, Math.min(taxable, TAX.higher) - TAX.basic) * 0.4
+        + Math.max(0, taxable - TAX.higher) * 0.45);
+      const ni = r2(Math.max(0, Math.min(gross, TAX.niUEL) - TAX.niPT) * 0.08 + Math.max(0, gross - TAX.niUEL) * 0.02);
+      return { hours, basicPay, holPay, gross, tax, ni, net: r2(gross - tax - ni) };
+    }
+
+    function money(x) {
+      return '£' + x.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     function daysLabel(n) {
@@ -671,6 +722,16 @@
       $('week-sub').textContent = w.days
         ? `${decimal(w.net)} · ${daysLabel(w.days)} · w pracy ${fmt(w.gross)}, przerwy ${fmt(w.brk)}`
         : 'Brak wpisów w tym tygodniu';
+      $('week-pay').hidden = !w.days;
+      if (w.days && !state.rate) {
+        $('pay-net').textContent = '—';
+        $('pay-sub').textContent = 'Wpisz stawkę za godzinę w Ustawieniach (niżej), a policzę kwotę na rękę.';
+      } else if (w.days) {
+        const p = payFor(w.net);
+        $('pay-net').textContent = money(p.net);
+        $('pay-sub').textContent = `brutto ${money(p.gross)} (praca ${money(p.basicPay)} + holiday ${money(p.holPay)})`
+          + ` · podatek ${money(p.tax)} · NI ${money(p.ni)} · wypłata ok. pt ${dm(addDays(monday, 11))}`;
+      }
       renderWeeks();
     }
 
@@ -698,6 +759,9 @@
         const right = document.createElement('span');
         right.className = 'h';
         right.textContent = fmt(w.net);
+        const paySmall = document.createElement('small');
+        paySmall.textContent = money(payFor(w.net).net);
+        if (state.rate) right.append(paySmall);
         btn.append(left, right);
         btn.addEventListener('click', () => {
           monday = mon;
@@ -718,7 +782,13 @@
         const r = minutes(entry);
         if (r && k.startsWith(prefix)) { monthNet += r.net; monthDays += 1; }
       }
-      $('month').textContent = `${MONTHS_NOM[ref.getMonth()]} ${ref.getFullYear()}: ${fmt(monthNet)} (${decimal(monthNet)}), ${daysLabel(monthDays)}`;
+      // Take-home is weekly (tax week1/month1), so the month adds up the weeks that end (Sunday) in that month.
+      let monthPay = 0;
+      for (const [, mon] of list) {
+        if (key(addDays(mon, 6)).startsWith(prefix)) monthPay += payFor(weekStats(mon).net).net;
+      }
+      $('month').textContent = `${MONTHS_NOM[ref.getMonth()]} ${ref.getFullYear()}: ${fmt(monthNet)} (${decimal(monthNet)}), ${daysLabel(monthDays)}`
+        + (monthPay ? ` · na rękę ok. ${money(r2(monthPay))} (tygodnie kończące się w tym miesiącu)` : '');
     }
 
     function render() {
@@ -737,6 +807,10 @@
       }
       const w = weekStats(monday);
       lines.push(`Razem: ${fmt(w.net)} (${decimal(w.net)}), ${daysLabel(w.days)}, przerwy odjęte: ${fmt(w.brk)}`);
+      if (w.days && state.rate) {
+        const p = payFor(w.net);
+        lines.push(`Na rękę ok. ${money(p.net)} (brutto ${money(p.gross)}, podatek ${money(p.tax)}, NI ${money(p.ni)})`);
+      }
       return lines.join('\n');
     }
 
@@ -817,6 +891,21 @@
       // Saved days keep their own break, so nothing on screen needs recalculating.
       save();
     });
+
+    function moneySetting(id, field, max) {
+      const input = $(id);
+      input.value = state[field] ? state[field].toFixed(2) : '';
+      input.placeholder = '0.00';
+      input.addEventListener('change', () => {
+        const v = r2(Number(input.value));
+        state[field] = Number.isFinite(v) && v >= 0 ? Math.min(v, max) : 0;
+        input.value = state[field] ? state[field].toFixed(2) : '';
+        save();
+        renderSummary();
+      });
+    }
+    moneySetting('rate', 'rate', 200);
+    moneySetting('hol', 'hol', 50);
 
     render();
 
