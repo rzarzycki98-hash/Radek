@@ -116,7 +116,7 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   progu 72 h 9.11 ok. 20:00, sprawdzić we wtorek. Zapytania o kursy: 367 (OK), HTTP 429 tylko dla SWE (poza agentem). ClubElo nadal 502.
   Skills.sh nadal czeka na odblokowanie przez Radka. Bez zmian w kodzie i zasadach.
 
-- **9.11 – Godziny: zarobek na rękę** (poza agentem; Radek z czatu w aplikacji, na podstawie jednego paska, „później wyślę
+- **9.11 – Godziny: zarobek na rękę** (wersja 5: na górze karty duża kwota „na czysto” jak „Payment” na payslipie, wyliczenie pod „Jak to wyszło”, godziny niżej; poza agentem; Radek z czatu w aplikacji, na podstawie jednego paska, „później wyślę
   więcej”). Strona `godziny/` (wersja 4, `sw.js` → `godziny-v4`) liczy dla każdego tygodnia kwotę na rękę: godziny po przerwie
   (2 miejsca po przecinku) × stawka + holiday pay za godzinę, podatek PAYE 2026/27 jak przy kodzie 1257L w1m1 (każdy tydzień
   osobno: wolne £12579/52, dochód do opodatkowania w dół do pełnych funtów, 20% do £725, 40%, 45%), NI tabela A (8% od £242

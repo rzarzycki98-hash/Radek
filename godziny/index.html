@@ -267,9 +267,13 @@
 
     .version { margin-top: 28px; text-align: center; }
 
-    .pay { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.3); }
-    .pay .money { font-size: 1.6rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
-    .pay .sub { font-variant-numeric: tabular-nums; }
+    .summary .money { font-size: 1.5rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+    .summary .sub { font-variant-numeric: tabular-nums; }
+    #week-pay + .hours { margin-top: 12px; padding-top: 12px; border-top: 1px solid currentColor; border-top-color: rgba(127, 127, 127, 0.45); }
+    #week-pay[hidden] + .hours { margin-top: 0; padding-top: 0; border-top: 0; }
+    .pay-details { margin-top: 6px; font-size: 0.9rem; }
+    .pay-details summary { cursor: pointer; text-decoration: underline; opacity: 0.9; }
+    .pay-details .sub { margin-top: 4px; }
     .weeks .h small { display: block; text-align: right; font-weight: 400; }
     .setting + .setting { margin-top: 8px; }
 
@@ -299,13 +303,19 @@
     </div>
 
     <section class="summary" aria-live="polite">
-      <div class="label">Razem w tym tygodniu (po odjęciu przerw)</div>
-      <div id="week-total" class="total"></div>
-      <div id="week-sub" class="sub"></div>
-      <div id="week-pay" class="pay" hidden>
-        <div class="label">Na rękę (szacunek)</div>
-        <div id="pay-net" class="money"></div>
-        <div id="pay-sub" class="sub"></div>
+      <div id="week-pay" hidden>
+        <div class="label">Dostaniesz na czysto (jak „Payment” na payslipie)</div>
+        <div id="pay-net" class="total"></div>
+        <div id="pay-when" class="sub"></div>
+        <details class="pay-details">
+          <summary>Jak to wyszło</summary>
+          <div id="pay-sub" class="sub"></div>
+        </details>
+      </div>
+      <div class="hours">
+        <div class="label">Godziny w tym tygodniu (po odjęciu przerw)</div>
+        <div id="week-total" class="money"></div>
+        <div id="week-sub" class="sub"></div>
       </div>
     </section>
 
@@ -346,7 +356,7 @@
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
 
-    <p class="muted version">Wersja 4 · 9.11.2026</p>
+    <p class="muted version">Wersja 5 · 9.11.2026</p>
   </main>
 
   <div id="toast" class="toast" role="status" hidden></div>
@@ -725,13 +735,17 @@
       $('week-pay').hidden = !w.days;
       if (w.days && !state.rate) {
         $('pay-net').textContent = '—';
-        $('pay-sub').textContent = 'Wpisz stawkę za godzinę w Ustawieniach (niżej), a policzę kwotę na rękę.';
+        $('pay-when').textContent = 'Wpisz stawkę za godzinę w Ustawieniach (niżej), a policzę kwotę na czysto.';
+        $('pay-sub').textContent = '';
       } else if (w.days) {
         const p = payFor(w.net);
         $('pay-net').textContent = money(p.net);
-        $('pay-sub').textContent = `brutto ${money(p.gross)} (praca ${money(p.basicPay)} + holiday ${money(p.holPay)})`
-          + ` · podatek ${money(p.tax)} · NI ${money(p.ni)} · wypłata ok. pt ${dm(addDays(monday, 11))}`;
+        $('pay-when').textContent = `Wypłata ok. pt ${dm(addDays(monday, 11))} · liczy się na nowo po każdym wpisie`;
+        $('pay-sub').textContent = `${p.hours.toFixed(2)} h × ${money(state.rate)} = ${money(p.basicPay)}`
+          + ` + holiday pay ${money(p.holPay)} = brutto ${money(p.gross)}`
+          + ` − podatek ${money(p.tax)} − NI ${money(p.ni)} = ${money(p.net)}`;
       }
+      $('pay-sub').closest('details').hidden = !(w.days && state.rate);
       renderWeeks();
     }
 

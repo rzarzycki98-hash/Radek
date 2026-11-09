@@ -44,8 +44,8 @@ with sync_playwright() as p:
         pg.goto(f"http://127.0.0.1:{port}/godziny/index.html")
         # old data without a rate: hint instead of a wrong £0.00
         pg.locator("#weeks button", has_text="19.10").click()
-        if pg.inner_text("#pay-net") != "—" or "Wpisz stawkę" not in pg.inner_text("#pay-sub"):
-            bad.append(f"{scheme}: no rate -> expected a hint, got {pg.inner_text('#pay-sub')!r}")
+        if pg.inner_text("#pay-net") != "—" or "Wpisz stawkę" not in pg.inner_text("#pay-when"):
+            bad.append(f"{scheme}: no rate -> expected a hint, got {pg.inner_text('#pay-when')!r}")
         if "£" in pg.inner_text("#weeks") or "Na rękę" in pg.evaluate("summaryText()"):
             bad.append(f"{scheme}: no rate -> money shown anyway")
         pg.evaluate(f"localStorage.setItem('godziny-v1', {json.dumps(json.dumps(PAY_STATE))})")
@@ -61,6 +61,7 @@ with sync_playwright() as p:
         sub_txt = pg.inner_text("#pay-sub")
         if net_txt != "£600.30":
             bad.append(f"{scheme}: week 19-25.10 shows {net_txt!r}, expected '£600.30'")
+        sub_txt = pg.inner_text("#pay-when") + " " + pg.evaluate("$('pay-sub').textContent")
         for part in ("£739.50", "£99.40", "£39.80", "pt 30.10"):
             if part not in sub_txt:
                 bad.append(f"{scheme}: summary line lacks {part!r}: {sub_txt!r}")
@@ -70,6 +71,15 @@ with sync_playwright() as p:
             bad.append(f"{scheme}: October total lacks £600.30: {pg.inner_text('#month')!r}")
         if pg.evaluate("summaryText()").find("Na rękę ok. £600.30") < 0:
             bad.append(f"{scheme}: shared summary lacks the take-home line")
+        before = pg.inner_text("#pay-net")
+        pg.locator('.day[data-key="2026-10-24"] [data-field="s"]').click()
+        pg.locator('.picker button', has_text="Zapisz").click()   # start: suggested from the last entry
+        pg.locator('.picker button', has_text="Zapisz").click()   # end: suggested from the last entry
+        if pg.inner_text("#pay-net") == before:
+            bad.append(f"{scheme}: adding Saturday did not update the amount at once")
+        pg.locator('.day[data-key="2026-10-24"] .clear').click()
+        if pg.inner_text("#pay-net") != before:
+            bad.append(f"{scheme}: clearing Saturday did not bring back {before}")
         if pg.input_value("#rate") != "15.00" or pg.input_value("#hol") != "2.00":
             bad.append(f"{scheme}: default pay settings not shown")
         # changing the rate recalculates and is remembered
