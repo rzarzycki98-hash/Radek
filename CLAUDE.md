@@ -129,7 +129,9 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   (`sat`; pusta = zwykła; zmiana nocna liczy się do dnia, w którym się zaczęła). Stawki wpisuje się raz, zostają w telefonie.
   Przy jednej stawce brutto może różnić się od paska o 1p (pasek zaokrągla osobno pracę i holiday pay). Test łapie złą
   sobotę (sprawdzone). Zmiana stawki nie przebudowuje strony, gdy wartość się nie zmieniła (żeby nie zjadać stuknięcia –
-  błędu nie udało się odtworzyć w teście). **Gdy Radek przyśle kolejne paski:** porównać kwoty, sprawdzić nadgodziny/inne
+  błędu nie udało się odtworzyć w teście). Drugi pasek (tydzień do 1.11): 22 h zwykłych + 11.5 h po wyższej stawce
+  (18.47 + 2.53 holiday = 21.00, czyli sobota razem z holiday pay), kod nadal 1257L w1m1 – strona z sobotą 21 daje £534.78,
+  pasek £534.79 (1p z zaokrąglenia). **Gdy Radek przyśle kolejne paski:** porównać kwoty, sprawdzić nadgodziny/inne
   stawki i czy kod podatkowy nadal ma w1m1.
 
 **Do sprawdzenia w najbliższych dniach:**
