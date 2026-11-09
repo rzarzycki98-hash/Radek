@@ -15,7 +15,8 @@ shutil.copytree(SRC, os.path.join(site, "godziny"), ignore=shutil.ignore_pattern
 
 # Test week: Mon-Fri 07:00-16:27 = 9 h 27 min - 45 min break = 8 h 42 min = 8.7 h; 5 days = 43.5 h.
 # OLD_STATE has no "rate"/"hol" keys, like data saved by version 3 on Radek's phone: the page must ask for the rate.
-# PAY_STATE adds made-up rates (real ones are typed in on the phone only).
+# PAY_STATE adds made-up rates (real ones are typed in on the phone only) in the version 4-5 format:
+# rate 15.00 + holiday pay 2.00 must become one rate of 17.00 (holiday pay is now part of the rate).
 OLD_STATE = {"brk": 45, "days": {f"2026-10-{d}": {"s": "07:00", "e": "16:27", "b": 45} for d in range(19, 24)}}
 PAY_STATE = dict(OLD_STATE, rate=15.00, hol=2.00)
 
@@ -51,7 +52,7 @@ with sync_playwright() as p:
         pg.evaluate(f"localStorage.setItem('godziny-v1', {json.dumps(json.dumps(PAY_STATE))})")
         pg.reload()
         for mins, (g, t, n, net) in EXPECT.items():
-            r = pg.evaluate(f"payFor({mins})")
+            r = pg.evaluate(f"payFor({{net: {mins}, sat: 0}})")
             got = (r["gross"], r["tax"], r["ni"], r["net"])
             if got != (g, t, n, net):
                 bad.append(f"{scheme}: payFor({mins}) = {got}, expected {(g, t, n, net)}")
@@ -80,19 +81,44 @@ with sync_playwright() as p:
         pg.locator('.day[data-key="2026-10-24"] .clear').click()
         if pg.inner_text("#pay-net") != before:
             bad.append(f"{scheme}: clearing Saturday did not bring back {before}")
-        if pg.input_value("#rate") != "15.00" or pg.input_value("#hol") != "2.00":
+        if pg.input_value("#rate") != "17.00" or pg.input_value("#sat") != "" or pg.locator("#hol").count():
             bad.append(f"{scheme}: default pay settings not shown")
         # changing the rate recalculates and is remembered
-        pg.fill("#rate", "17.00")
+        pg.fill("#rate", "18.00")
         pg.dispatch_event("#rate", "change")
         if pg.inner_text("#pay-net") == "£600.30":
             bad.append(f"{scheme}: changing the rate did not change take-home pay")
-        if json.loads(pg.evaluate("localStorage.getItem('godziny-v1')")).get("rate") != 17:
+        if json.loads(pg.evaluate("localStorage.getItem('godziny-v1')")).get("rate") != 18:
             bad.append(f"{scheme}: new rate not saved")
         if pg.evaluate("document.documentElement.scrollWidth") > 390:
             bad.append(f"{scheme}: horizontal scroll")
-        pg.fill("#rate", "15.00")
+        pg.fill("#rate", "17.00")
         pg.dispatch_event("#rate", "change")
+        # Saturday 07:00-16:27 (8.7 h): without a Saturday rate it is paid like any day,
+        # with a Saturday rate of 20.00: 43.5 h x 17 + 8.7 h x 20 = 913.50 gross
+        pg.evaluate("state.days['2026-10-24'] = {s: '07:00', e: '16:27', b: 45}; save(); render()")
+        if pg.inner_text("#pay-net") != "£706.77":
+            bad.append(f"{scheme}: Saturday without own rate shows {pg.inner_text('#pay-net')!r}, expected '£706.77'")
+        pg.fill("#sat", "20.00")
+        pg.dispatch_event("#sat", "change")
+        if pg.inner_text("#pay-net") != "£725.58":
+            bad.append(f"{scheme}: Saturday at 20.00 shows {pg.inner_text('#pay-net')!r}, expected '£725.58'")
+        if "sobota 8.70 h × £20.00" not in pg.evaluate("$('pay-sub').textContent"):
+            bad.append(f"{scheme}: Saturday line missing in 'Jak to wyszło'")
+        if json.loads(pg.evaluate("localStorage.getItem('godziny-v1')")).get("sat") != 20:
+            bad.append(f"{scheme}: Saturday rate not saved")
+        # typing a rate and then tapping a week straight away must open that week (no lost tap)
+        pg.click("#today")
+        pg.fill("#sat", "20.00")
+        pg.dispatch_event("#sat", "change")   # first "change" (keyboard Done); the tap's blur fires a second one
+        pg.locator("#weeks button", has_text="19.10").click()
+        if "19–25" not in pg.inner_text("#week-title"):
+            bad.append(f"{scheme}: tap on a week right after typing a rate was lost")
+        pg.reload()
+        if pg.input_value("#sat") != "20.00" or pg.input_value("#rate") != "17.00":
+            bad.append(f"{scheme}: rates not kept after reopening the page")
+        pg.locator("#weeks button", has_text="19.10").click()
+        pg.locator('.day[data-key="2026-10-24"] .clear').click()
         pg.screenshot(path=os.path.join(OUT, f"godziny-{scheme}.png"), full_page=True)
         # empty week: no pay box
         pg.click("#next")

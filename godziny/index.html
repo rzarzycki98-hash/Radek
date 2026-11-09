@@ -341,11 +341,13 @@
       <input id="rate" type="number" min="0" max="200" step="0.01" inputmode="decimal">
     </label>
     <label class="setting">
-      <span>Holiday pay za godzinę (£)</span>
-      <input id="hol" type="number" min="0" max="50" step="0.01" inputmode="decimal">
+      <span>Stawka w sobotę (£)</span>
+      <input id="sat" type="number" min="0" max="200" step="0.01" inputmode="decimal">
     </label>
+    <p class="muted">Stawki wpisujesz raz – zostają zapisane w tym telefonie na stałe, aż je zmienisz. Stawka brutto
+      za godzinę razem z holiday pay. Sobota bez stawki = zwykła stawka; zmiana nocna liczy się do dnia, w którym się zaczęła.</p>
     <p class="muted">Na rękę liczone tak jak na pasku z 25.10.2026: godziny po odjęciu
-      przerwy × stawka + holiday pay, minus podatek (kod 1257L w1m1 – każdy tydzień osobno) i National Insurance
+      przerwy × stawka, minus podatek (kod 1257L w1m1 – każdy tydzień osobno) i National Insurance
       (tabela A), rok podatkowy 2026/27. To szacunek – liczy się kwota na prawdziwym pasku.</p>
 
     <h2>Kopia zapasowa</h2>
@@ -356,7 +358,7 @@
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
 
-    <p class="muted version">Wersja 5 · 9.11.2026</p>
+    <p class="muted version">Wersja 6 · 9.11.2026</p>
   </main>
 
   <div id="toast" class="toast" role="status" hidden></div>
@@ -399,9 +401,15 @@
     function load() {
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (saved && saved.days) return Object.assign({ rate: 0, hol: 0 }, saved);
+        if (saved && saved.days) {
+          const st = Object.assign({ rate: 0, sat: 0 }, saved);
+          // Version 4-5 kept holiday pay separately; it is now part of the hourly rate.
+          if (st.hol > 0 && st.rate > 0) st.rate = Math.round((st.rate + st.hol) * 100) / 100;
+          delete st.hol;
+          return st;
+        }
       } catch (e) {}
-      return { brk: DEFAULT_BREAK, rate: 0, hol: 0, days: {} };
+      return { brk: DEFAULT_BREAK, rate: 0, sat: 0, days: {} };
     }
 
     function save() {
@@ -473,30 +481,33 @@
     }
 
     function weekStats(mon) {
-      let net = 0, gross = 0, brk = 0, days = 0;
+      let net = 0, gross = 0, brk = 0, days = 0, sat = 0;
       for (let i = 0; i < 7; i++) {
         const r = minutes(state.days[key(addDays(mon, i))]);
         if (!r) continue;
         net += r.net; gross += r.gross; brk += r.brk; days += 1;
+        if (i === 5) sat = r.net;  // Saturday: own rate (a night shift counts to the day it started)
       }
-      return { net, gross, brk, days };
+      return { net, gross, brk, days, sat };
     }
 
     const r2 = (x) => Math.round(x * 100 + 1e-9) / 100;
 
-    // Weekly take-home pay the way the payslip works it out: hours (2 decimals) × rate + holiday pay,
-    // taxable pay rounded down to whole pounds, tax by band, NI on gross pay.
-    function payFor(netMin) {
-      const hours = r2(netMin / 60);
+    // Weekly take-home pay the way the payslip works it out: hours (2 decimals) × rate (holiday pay included),
+    // Saturday hours at the Saturday rate, taxable pay rounded down to whole pounds, tax by band, NI on gross pay.
+    function payFor(w) {
+      const satRate = state.sat || state.rate;
+      const satHours = r2(w.sat / 60);
+      const hours = r2((w.net - w.sat) / 60);
       const basicPay = r2(hours * state.rate);
-      const holPay = r2(hours * state.hol);
-      const gross = r2(basicPay + holPay);
+      const satPay = r2(satHours * satRate);
+      const gross = r2(basicPay + satPay);
       const taxable = Math.max(0, Math.floor(gross - TAX.free + 1e-9));
       const tax = r2(Math.min(taxable, TAX.basic) * 0.2
         + Math.max(0, Math.min(taxable, TAX.higher) - TAX.basic) * 0.4
         + Math.max(0, taxable - TAX.higher) * 0.45);
       const ni = r2(Math.max(0, Math.min(gross, TAX.niUEL) - TAX.niPT) * 0.08 + Math.max(0, gross - TAX.niUEL) * 0.02);
-      return { hours, basicPay, holPay, gross, tax, ni, net: r2(gross - tax - ni) };
+      return { hours, satHours, satRate, basicPay, satPay, gross, tax, ni, net: r2(gross - tax - ni) };
     }
 
     function money(x) {
@@ -738,11 +749,12 @@
         $('pay-when').textContent = 'Wpisz stawkę za godzinę w Ustawieniach (niżej), a policzę kwotę na czysto.';
         $('pay-sub').textContent = '';
       } else if (w.days) {
-        const p = payFor(w.net);
+        const p = payFor(w);
         $('pay-net').textContent = money(p.net);
         $('pay-when').textContent = `Wypłata ok. pt ${dm(addDays(monday, 11))} · liczy się na nowo po każdym wpisie`;
         $('pay-sub').textContent = `${p.hours.toFixed(2)} h × ${money(state.rate)} = ${money(p.basicPay)}`
-          + ` + holiday pay ${money(p.holPay)} = brutto ${money(p.gross)}`
+          + (p.satHours ? ` + sobota ${p.satHours.toFixed(2)} h × ${money(p.satRate)} = ${money(p.satPay)}` : '')
+          + ` → brutto ${money(p.gross)}`
           + ` − podatek ${money(p.tax)} − NI ${money(p.ni)} = ${money(p.net)}`;
       }
       $('pay-sub').closest('details').hidden = !(w.days && state.rate);
@@ -774,7 +786,7 @@
         right.className = 'h';
         right.textContent = fmt(w.net);
         const paySmall = document.createElement('small');
-        paySmall.textContent = money(payFor(w.net).net);
+        paySmall.textContent = money(payFor(w).net);
         if (state.rate) right.append(paySmall);
         btn.append(left, right);
         btn.addEventListener('click', () => {
@@ -799,7 +811,7 @@
       // Take-home is weekly (tax week1/month1), so the month adds up the weeks that end (Sunday) in that month.
       let monthPay = 0;
       for (const [, mon] of list) {
-        if (key(addDays(mon, 6)).startsWith(prefix)) monthPay += payFor(weekStats(mon).net).net;
+        if (key(addDays(mon, 6)).startsWith(prefix)) monthPay += payFor(weekStats(mon)).net;
       }
       $('month').textContent = `${MONTHS_NOM[ref.getMonth()]} ${ref.getFullYear()}: ${fmt(monthNet)} (${decimal(monthNet)}), ${daysLabel(monthDays)}`
         + (monthPay ? ` · na rękę ok. ${money(r2(monthPay))} (tygodnie kończące się w tym miesiącu)` : '');
@@ -822,7 +834,7 @@
       const w = weekStats(monday);
       lines.push(`Razem: ${fmt(w.net)} (${decimal(w.net)}), ${daysLabel(w.days)}, przerwy odjęte: ${fmt(w.brk)}`);
       if (w.days && state.rate) {
-        const p = payFor(w.net);
+        const p = payFor(w);
         lines.push(`Na rękę ok. ${money(p.net)} (brutto ${money(p.gross)}, podatek ${money(p.tax)}, NI ${money(p.ni)})`);
       }
       return lines.join('\n');
@@ -906,20 +918,23 @@
       save();
     });
 
-    function moneySetting(id, field, max) {
+    function moneySetting(id, field, max, placeholder) {
       const input = $(id);
       input.value = state[field] ? state[field].toFixed(2) : '';
-      input.placeholder = '0.00';
+      input.placeholder = placeholder;
       input.addEventListener('change', () => {
         const v = r2(Number(input.value));
-        state[field] = Number.isFinite(v) && v >= 0 ? Math.min(v, max) : 0;
-        input.value = state[field] ? state[field].toFixed(2) : '';
+        const next = Number.isFinite(v) && v >= 0 ? Math.min(v, max) : 0;
+        input.value = next ? next.toFixed(2) : '';
+        // The browser can fire "change" again on blur; re-rendering then would swallow the tap that caused the blur.
+        if (next === state[field]) return;
+        state[field] = next;
         save();
         renderSummary();
       });
     }
-    moneySetting('rate', 'rate', 200);
-    moneySetting('hol', 'hol', 50);
+    moneySetting('rate', 'rate', 200, '0.00');
+    moneySetting('sat', 'sat', 200, 'jak zwykła');
 
     render();
 

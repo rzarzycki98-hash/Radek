@@ -124,7 +124,12 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   miesiąca (tygodnie kończące się w miesiącu), tekst do wysłania. **Stawki nie ma w kodzie** (repo publiczne) – Radek wpisuje
   ją raz w Ustawieniach (zapis w telefonie, `rate`, `hol`); bez stawki strona prosi o nią. Wzór zgodny z paskiem co do pensa
   (sprawdzone poza repo); test: `godziny/testy/test_zarobek.py` (zmyślone stawki, Chromium 390 px, jasny i ciemny; sprawdzony
-  też na zepsutej stawce podatku – łapie). **Gdy Radek przyśle kolejne paski:** porównać kwoty, sprawdzić nadgodziny/inne
+  też na zepsutej stawce podatku – łapie). **Wersja 6 (9.11, prośba Radka):** bez osobnego holiday pay – jedna stawka
+  brutto za godzinę razem z holiday pay (stare `hol` dodaje się do `rate` przy wczytaniu) i osobna **stawka w sobotę**
+  (`sat`; pusta = zwykła; zmiana nocna liczy się do dnia, w którym się zaczęła). Stawki wpisuje się raz, zostają w telefonie.
+  Przy jednej stawce brutto może różnić się od paska o 1p (pasek zaokrągla osobno pracę i holiday pay). Test łapie złą
+  sobotę (sprawdzone). Zmiana stawki nie przebudowuje strony, gdy wartość się nie zmieniła (żeby nie zjadać stuknięcia –
+  błędu nie udało się odtworzyć w teście). **Gdy Radek przyśle kolejne paski:** porównać kwoty, sprawdzić nadgodziny/inne
   stawki i czy kod podatkowy nadal ma w1m1.
 
 **Do sprawdzenia w najbliższych dniach:**
