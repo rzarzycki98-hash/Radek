@@ -24612,6 +24612,30 @@
    "profit": -1.0,
    "close_odds": 5.6,
    "clv": 0.0168
+  },
+  {
+   "id": "E3|2026-11-14|Crewe|Newport County|market",
+   "match": "E3|2026-11-14|Crewe|Newport County",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "E3",
+   "league_name": "Anglia · League Two",
+   "date": "2026-11-14",
+   "time": "15:00",
+   "ko": "2026-11-14T15:00+00:00",
+   "home": "Crewe",
+   "away": "Newport County",
+   "side": "Under",
+   "prob": 0.5289,
+   "odds": 1.94,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0262,
+   "grade": "few",
+   "added": "2026-11-12T09:18+00:00",
+   "status": "open",
+   "last_odds": 1.94
   }
  ],
  "summary": {
@@ -24634,7 +24658,7 @@
   "market_ou": {
    "settled": 49,
    "won": 19,
-   "open": 3,
+   "open": 4,
    "profit": -12.11,
    "roi": -0.2471,
    "clv": -0.0273
@@ -24648,5 +24672,5 @@
    "clv": 0.0157
   }
  },
- "updated": "2026-11-10T17:10+00:00"
+ "updated": "2026-11-12T09:18+00:00"
 }
