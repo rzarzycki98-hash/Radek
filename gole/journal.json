@@ -24684,13 +24684,85 @@
    "added": "2026-11-12T17:17+00:00",
    "status": "open",
    "last_odds": 2.08
+  },
+  {
+   "id": "SC3|2026-11-14|Dumbarton|Annan Athletic|model",
+   "match": "SC3|2026-11-14|Dumbarton|Annan Athletic",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "SC3",
+   "league_name": "Szkocja · League Two",
+   "date": "2026-11-14",
+   "time": "15:00",
+   "ko": "2026-11-14T15:00+00:00",
+   "home": "Dumbarton",
+   "away": "Annan Athletic",
+   "side": "Under",
+   "prob": 0.4797,
+   "odds": 2.25,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0794,
+   "grade": "no",
+   "added": "2026-11-13T17:13+00:00",
+   "status": "open",
+   "last_odds": 2.25
+  },
+  {
+   "id": "BRA|2026-11-14|Chapecoense-SC|Vasco|model|1x2",
+   "match": "BRA|2026-11-14|Chapecoense-SC|Vasco",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-11-14",
+   "time": "23:30",
+   "ko": "2026-11-14T23:30+00:00",
+   "home": "Chapecoense-SC",
+   "away": "Vasco",
+   "side": "1",
+   "prob": 0.1472,
+   "odds": 7.0,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0305,
+   "grade": "no",
+   "added": "2026-11-13T17:13+00:00",
+   "status": "open",
+   "last_odds": 7.0
+  },
+  {
+   "id": "BRA|2026-11-14|Chapecoense-SC|Vasco|market|1x2",
+   "match": "BRA|2026-11-14|Chapecoense-SC|Vasco",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-11-14",
+   "time": "23:30",
+   "ko": "2026-11-14T23:30+00:00",
+   "home": "Chapecoense-SC",
+   "away": "Vasco",
+   "side": "1",
+   "prob": 0.1472,
+   "odds": 7.0,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0305,
+   "grade": "no",
+   "added": "2026-11-13T17:13+00:00",
+   "status": "open",
+   "last_odds": 7.0
   }
  ],
  "summary": {
   "model_ou": {
    "settled": 79,
    "won": 32,
-   "open": 9,
+   "open": 10,
    "profit": -13.34,
    "roi": -0.1689,
    "clv": -0.038
@@ -24698,7 +24770,7 @@
   "model_x": {
    "settled": 339,
    "won": 71,
-   "open": 15,
+   "open": 16,
    "profit": -23.7,
    "roi": -0.0699,
    "clv": 0.0194
@@ -24714,11 +24786,11 @@
   "market_x": {
    "settled": 388,
    "won": 81,
-   "open": 4,
+   "open": 5,
    "profit": -23.36,
    "roi": -0.0602,
    "clv": 0.0157
   }
  },
- "updated": "2026-11-12T21:06+00:00"
+ "updated": "2026-11-13T17:13+00:00"
 }
