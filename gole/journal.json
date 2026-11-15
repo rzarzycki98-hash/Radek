@@ -10135,8 +10135,9 @@
    "edge": 0.0807,
    "grade": "few",
    "added": "2026-10-22T01:02+00:00",
-   "status": "open",
-   "last_odds": 2.36
+   "status": "void",
+   "last_odds": 2.36,
+   "profit": 0.0
   },
   {
    "id": "RUS|2026-10-25|FK Rostov|Lokomotiv Moscow|model|1x2",
@@ -24997,6 +24998,54 @@
    "added": "2026-11-14T11:34+00:00",
    "status": "open",
    "last_odds": 1.83
+  },
+  {
+   "id": "SP2|2026-11-15|Granada|Las Palmas|model|1x2",
+   "match": "SP2|2026-11-15|Granada|Las Palmas",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "SP2",
+   "league_name": "Hiszpania · LaLiga 2",
+   "date": "2026-11-15",
+   "time": "15:15",
+   "ko": "2026-11-15T15:15+00:00",
+   "home": "Granada",
+   "away": "Las Palmas",
+   "side": "2",
+   "prob": 0.2392,
+   "odds": 4.5,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0766,
+   "grade": "watch",
+   "added": "2026-11-15T06:45+00:00",
+   "status": "open",
+   "last_odds": 4.5
+  },
+  {
+   "id": "SP2|2026-11-15|Granada|Las Palmas|market|1x2",
+   "match": "SP2|2026-11-15|Granada|Las Palmas",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "SP2",
+   "league_name": "Hiszpania · LaLiga 2",
+   "date": "2026-11-15",
+   "time": "15:15",
+   "ko": "2026-11-15T15:15+00:00",
+   "home": "Granada",
+   "away": "Las Palmas",
+   "side": "2",
+   "prob": 0.2392,
+   "odds": 4.5,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0766,
+   "grade": "watch",
+   "added": "2026-11-15T06:45+00:00",
+   "status": "open",
+   "last_odds": 4.5
   }
  ],
  "summary": {
@@ -25027,11 +25076,11 @@
   "market_x": {
    "settled": 388,
    "won": 81,
-   "open": 9,
+   "open": 10,
    "profit": -23.36,
    "roi": -0.0602,
    "clv": 0.0157
   }
  },
- "updated": "2026-11-14T11:34+00:00"
+ "updated": "2026-11-15T06:45+00:00"
 }
