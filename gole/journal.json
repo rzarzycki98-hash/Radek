@@ -25046,6 +25046,30 @@
    "added": "2026-11-15T06:45+00:00",
    "status": "open",
    "last_odds": 4.5
+  },
+  {
+   "id": "SP2|2026-11-22|Cordoba|Oviedo|market",
+   "match": "SP2|2026-11-22|Cordoba|Oviedo",
+   "strategy": "market",
+   "mkt": "ou",
+   "league": "SP2",
+   "league_name": "Hiszpania · LaLiga 2",
+   "date": "2026-11-22",
+   "time": "13:00",
+   "ko": "2026-11-22T13:00+00:00",
+   "home": "Cordoba",
+   "away": "Oviedo",
+   "side": "Over",
+   "prob": 0.5891,
+   "odds": 1.74,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0251,
+   "grade": "no",
+   "added": "2026-11-15T21:05+00:00",
+   "status": "open",
+   "last_odds": 1.74
   }
  ],
  "summary": {
@@ -25068,7 +25092,7 @@
   "market_ou": {
    "settled": 49,
    "won": 19,
-   "open": 5,
+   "open": 6,
    "profit": -12.11,
    "roi": -0.2471,
    "clv": -0.0273
@@ -25082,5 +25106,5 @@
    "clv": 0.0157
   }
  },
- "updated": "2026-11-15T06:45+00:00"
+ "updated": "2026-11-15T21:05+00:00"
 }
