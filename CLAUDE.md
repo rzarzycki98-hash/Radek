@@ -158,6 +158,9 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   tego repo” na końcu `SKILL.md`. Sprawdzone w chmurze: plik wideo → klatki działa (ffmpeg jest); YouTube zablokowany
   przez proxy (403), więc linki tylko przez silnik `gemini`. Radek wybrał (z opcji): zapis na `main` i darmowy klucz
   Gemini (wpisywany w bezpiecznym okienku środowiska, nie w repo). Test skilli zielony. Agent i jego dane bez zmian.
+  **Czeka na Radka:** klucz Gemini – okienko na klucz (`request_credential`) nie otworzyło się w jego wersji aplikacji
+  na telefonie; trzeba poprosić ponownie z claude.ai na komputerze albo po aktualizacji aplikacji (host
+  `generativelanguage.googleapis.com`, nagłówek `x-goog-api-key`). Do tego czasu skill ogląda tylko pliki wideo z rozmowy.
 
 **Do sprawdzenia w najbliższych dniach:**
 
