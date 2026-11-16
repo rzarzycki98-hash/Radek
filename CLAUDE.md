@@ -134,6 +134,24 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   pasek £534.79 (1p z zaokrąglenia). **Gdy Radek przyśle kolejne paski:** porównać kwoty, sprawdzić nadgodziny/inne
   stawki i czy kod podatkowy nadal ma w1m1.
 
+- **16.11 – poniedziałkowe sprawdzenie (rutyna):** 8 ostatnich aktualizacji GitHuba zielonych, 0 błędów agenta, w kodzie agenta
+  bez zmian od 9.11 (doszły tylko Godziny; testów agenta nie puszczano, „Linia Goli – testy” ostatni raz 21.10 – zielone).
+  Portfel £1013.68 (+£13.68; tydzień −£40.18), rozliczone 23 (11 trafionych; piłka 17 i +£26.88, NBA 6 i −£13.20), otwarte 8
+  (1 NBA na 17.11, 7 piłkarskich na 21–23.11 – wszystkie Under, 5 z Premier League). „Vs zamknięcie” −4.6% (piłka −5.9%, NBA 0.0%)
+  – wciąż gorsze niż zamknięcie; gotowość: nie (dzień 31/90, zakłady 23/200). Raport tygodnia 9–15.11 jest (6 rozliczonych,
+  1 trafiony, 3 nowe: 2 Over / 1 Under – NBA). Słaby tydzień to głównie NBA: 4 zakłady, 4 przegrane. Over/Under piłka: 7 dni
+  oceny 22/20, zakłady 0/0 (przerwa na reprezentacje, mało meczów); 30 dni oceny 237/166, zakłady 2/22. Rozliczenia w porządku:
+  nic nie czeka dłużej niż 2 dni, każdy rozliczony zakład ma ocenę po meczu; 1 zakład NBA bez „vs zamknięcie” (Utah – Miami,
+  postawiony 36 min przed meczem, nie było późniejszego kursu – tak ma być, `pm_cat: bez_porownania`). **ESPN zadziałał pierwszy
+  raz:** ocena meczu Leuven – Mechelen (B1, 7.11) rozliczona z ESPN (`res_src: "ESPN"` w `agent_analizy.json`; zakładu tam nie
+  było). football-data: najnowszy wynik 8.11 we wszystkich ligach (weekend 14–15.11 bez meczów ligowych), `stale` B1, P1, SC0
+  (po 1 meczu). Zapytania o kursy: 301 (OK, 15 dni do końca miesiąca), kursy we wszystkich 11 ligach. „Zdrowie”: 2 z 42 przebiegów
+  z problemem `odds` (ostatni 13.11), bez wpływu. ClubElo nadal 502. Skills.sh i skrypt wtyczek nadal czekają na Radka.
+  Bez zmian w kodzie i zasadach. **Propozycja dla Radka (do decyzji, nic nie zmienione):** waga modelu w Premier League wzrosła
+  do 0.6 (`w_ou`; w pozostałych 10 ligach 0) i to stamtąd jest większość Underów, a kursy tych zakładów są gorsze niż zamknięcie.
+  Opcje: (a) zostawić – nauka agenta sama zareaguje po 30 rozliczonych zakładach piłkarskich (jest 17); (b) puścić `/diagnoza`
+  i sprawdzić na historii, czy waga 0.6 w E0 naprawdę poprawia wynik; (c) ograniczyć wagę modelu z góry (np. do 0.3).
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
