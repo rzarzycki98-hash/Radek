@@ -166,6 +166,13 @@ osi czasu.
   na `main`. Doszedł test skilli Claude z przebiegiem na GitHubie. W sieci krążą podróbki find-skills (jedna każe wysłać
   nazwę komputera na fałszywy adres udający Vercel), dlatego poprawka każe przeczytać każdy skill przed instalacją.
 
+### 16.11.2026 – skill „watch” (oglądanie filmów)
+
+- Radek wysłał zrzut z TikToka (github.com/bradautomates/claude-video) i napisał „zainstaluj tego skila”. Skill zamienia
+  film w klatki i napisy, żeby Claude mógł odpowiadać na pytania o film. Kod sprawdzony, skopiowany do repo z poprawką
+  na chmurę (YouTube jest tam zablokowany). **Decyzje Radka:** zapis na `main`; linki z YouTube przez darmowy klucz
+  Google Gemini (film ogląda wtedy model Google). Pliki wideo wysłane w rozmowie działają bez klucza.
+
 ## Pomysły Radka – co się z nimi stało
 
 | Pomysł | Co się stało |
@@ -188,6 +195,7 @@ osi czasu.
 | „32 things to install in Claude” (25.10) | Zrobione: wszystko, co darmowe i działa bez kont (ok. 200 wtyczek, gstack, find-skills); łączniki do firm (Slack, Notion, Zapier i inne) pominięte |
 | find-skills w chmurze (4.11) | Zrobione: poprawka (instalacja do repo, zapasowe szukanie, sprawdzenie bezpieczeństwa) i test na GitHubie; odblokowanie skills.sh czeka na Radka |
 | Over, gdy model spodziewa się 2.6+ gola (21.10) | Na historii traciło (−3.7%); dodane jako taktyka na sucho `xg` – pieniądze tylko, jeśli się sprawdzi |
+| Skill do oglądania filmów z TikToka (16.11) | Zrobione: `watch` w `.claude/skills`; pliki wideo działają od razu, YouTube przez darmowy klucz Gemini |
 | Wynik 1X2 dla agenta | Odrzucone – Radek wybrał gole |
 | Powiadomienia na telefon | Odrzucone – Radek wybrał raport tylko na stronie |
 

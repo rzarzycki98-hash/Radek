@@ -152,6 +152,13 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   Opcje: (a) zostawić – nauka agenta sama zareaguje po 30 rozliczonych zakładach piłkarskich (jest 17); (b) puścić `/diagnoza`
   i sprawdzić na historii, czy waga 0.6 w E0 naprawdę poprawia wynik; (c) ograniczyć wagę modelu z góry (np. do 0.3).
 
+- **16.11 – skill `watch` (oglądanie filmów)** (Radek wysłał zrzut z TikToka: github.com/bradautomates/claude-video,
+  „zainstaluj tego skila”): kod przeczytany (MIT, bez wysyłania danych; łączy się tylko z YouTube, Google Gemini i –
+  na życzenie – Groq/OpenAI), skopiowany do `.claude/skills/watch` (wersja 0.3.2, commit 03ceb42) z sekcją „Poprawka dla
+  tego repo” na końcu `SKILL.md`. Sprawdzone w chmurze: plik wideo → klatki działa (ffmpeg jest); YouTube zablokowany
+  przez proxy (403), więc linki tylko przez silnik `gemini`. Radek wybrał (z opcji): zapis na `main` i darmowy klucz
+  Gemini (wpisywany w bezpiecznym okienku środowiska, nie w repo). Test skilli zielony. Agent i jego dane bez zmian.
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
