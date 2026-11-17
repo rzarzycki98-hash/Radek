@@ -358,7 +358,7 @@
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
 
-    <p class="muted version">Wersja 6 · 9.11.2026</p>
+    <p class="muted version">Wersja 7 · 17.11.2026</p>
   </main>
 
   <div id="toast" class="toast" role="status" hidden></div>
@@ -384,12 +384,11 @@
       higher: (125140 - 12570) / 52,  // 40% up to here, 45% above
       niPT: 242, niUEL: 967,          // employee NI: 8% between PT and UEL, 2% above
     };
-    const DAY_NAMES = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
-    const SHORT_DAYS = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'];
-    const MONTHS = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia',
-      'września', 'października', 'listopada', 'grudnia'];
-    const MONTHS_NOM = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień',
-      'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
+    const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const SHORT_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+      'September', 'October', 'November', 'December'];
+    const MONTHS_NOM = MONTHS;
     const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
     const KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -553,7 +552,7 @@
         clear.type = 'button';
         clear.className = 'clear';
         clear.textContent = '×';
-        clear.setAttribute('aria-label', `Wyczyść ${DAY_NAMES[i].toLowerCase()}`);
+        clear.setAttribute('aria-label', `Wyczyść: ${DAY_NAMES[i]}`);
         clear.addEventListener('click', () => {
           delete state.days[k];
           save();

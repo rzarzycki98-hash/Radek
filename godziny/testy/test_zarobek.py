@@ -119,6 +119,13 @@ with sync_playwright() as p:
             bad.append(f"{scheme}: rates not kept after reopening the page")
         pg.locator("#weeks button", has_text="19.10").click()
         pg.locator('.day[data-key="2026-10-24"] .clear').click()
+        # day and month names in English (screenshots go to the agency)
+        names = pg.locator(".day-name").all_inner_texts()
+        want = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        if [n.split()[0] for n in names] != want:
+            bad.append(f"{scheme}: day names not English: {names}")
+        if "October" not in pg.inner_text("#week-title") or "Mon 19.10" not in pg.evaluate("summaryText()"):
+            bad.append(f"{scheme}: month/short day not English: {pg.inner_text('#week-title')!r}")
         pg.screenshot(path=os.path.join(OUT, f"godziny-{scheme}.png"), full_page=True)
         # empty week: no pay box
         pg.click("#next")
