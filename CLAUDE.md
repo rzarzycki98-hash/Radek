@@ -162,6 +162,11 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   na telefonie; trzeba poprosić ponownie z claude.ai na komputerze albo po aktualizacji aplikacji (host
   `generativelanguage.googleapis.com`, nagłówek `x-goog-api-key`). Do tego czasu skill ogląda tylko pliki wideo z rozmowy.
 
+- **17.11 – Godziny wersja 7** (Radek z czatu w aplikacji: screeny dla agencji CLS): nazwy dni (Monday…Sunday, skróty
+  Mon…Sun w podsumowaniu) i miesięcy po angielsku; reszta napisów po polsku. `sw.js` → `godziny-v7`. Test
+  `test_zarobek.py` sprawdza angielskie nazwy (pada na wersji 6 – sprawdzone). Jeśli Radek zechce, przetłumaczyć też
+  „W pracy”, „przerwa”, „wolne”, „Tydzień”, „dziś”.
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
