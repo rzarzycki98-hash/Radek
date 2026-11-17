@@ -77,8 +77,8 @@ with sync_playwright() as p:
                 bad.append(f"{scheme}: Timesheet totals lack {part!r}: {tot!r}")
         if "£" in pg.inner_text("#ts"):
             bad.append(f"{scheme}: money shown on the Timesheet")
-        if "+1 = finished the next day" not in pg.inner_text("#ts-note"):
-            bad.append(f"{scheme}: night shift note missing")
+        if "finish − start" in pg.inner_text("#ts") or pg.locator("#ts-note").count():
+            bad.append(f"{scheme}: the explanation line under the totals is back (Radek asked to remove it)")
         bottom = pg.evaluate("document.querySelector('.ts-sheet').getBoundingClientRect().bottom")
         if bottom > 700:
             bad.append(f"{scheme}: Timesheet does not fit on one screen (bottom at {bottom:.0f} px of 700)")

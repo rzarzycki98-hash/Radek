@@ -174,7 +174,7 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   pole „Your name” w Settings, zapis tylko w telefonie (`name`), nie w repo. Test `godziny/testy/test_timesheet.py`
   (brak polskich słów, 7 wierszy, sumy, bez £, mieści się w 390×700, bez wychodzenia tabeli za kartę przy 390 i 360 px –
   sprawdzone, że łapie zbyt szeroką tabelę). `sw.js` → `godziny-v8`. Podsumowanie „Share week summary” nadal zawiera
-  kwotę na rękę, jeśli jest stawka (nie zmieniano).
+  kwotę na rękę, jeśli jest stawka (nie zmieniano). Wersja 9 (17.11): bez linijki wyjaśnienia pod sumami (prośba Radka; test pilnuje).
 
 **Do sprawdzenia w najbliższych dniach:**
 

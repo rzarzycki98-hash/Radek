@@ -319,7 +319,6 @@
     .ts-total .big { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
     .ts-total .dec { color: #4a5566; font-variant-numeric: tabular-nums; }
     .ts-sub { margin-top: 2px; color: #4a5566; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
-    .ts-note { margin-top: 8px; color: #687384; font-size: 0.75rem; }
     @media (max-width: 380px) {
       .ts { padding-left: 8px; padding-right: 8px; }
       .ts-sheet { padding-left: 8px; padding-right: 8px; }
@@ -400,7 +399,7 @@
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
 
-    <p class="muted version">Version 8 · 17/11/2026</p>
+    <p class="muted version">Version 9 · 17/11/2026</p>
   </main>
 
   <section id="ts" class="ts" hidden>
@@ -425,7 +424,6 @@
         <span><span id="ts-total" class="big"></span> <span id="ts-dec" class="dec"></span></span>
       </div>
       <div id="ts-sub" class="ts-sub"></div>
-      <div id="ts-note" class="ts-note"></div>
     </div>
   </section>
 
@@ -901,7 +899,6 @@
       const sun = addDays(monday, 6);
       $('ts-name').textContent = state.name || '';
       $('ts-week').textContent = `Week ${isoWeek(monday)} · ${rangeLabel(monday)} ${sun.getFullYear()} (Mon–Sun)`;
-      let night = false;
       const rows = [];
       for (let i = 0; i < 7; i++) {
         const date = addDays(monday, i);
@@ -911,7 +908,6 @@
         const cells = [DAY_NAMES[i], dm(date)];
         if (r) {
           const overnight = toMin(entry.e) < toMin(entry.s);
-          night = night || overnight;
           cells.push(entry.s, entry.e + (overnight ? '*' : ''), hm(r.brk), hm(r.net));
         } else if (entry && (entry.s || entry.e)) {
           cells.push(entry.s || '—', entry.e || '—', '—', '—');
@@ -936,7 +932,6 @@
       $('ts-total').textContent = fmt(w.net);
       $('ts-dec').textContent = `(${decimal(w.net)})`;
       $('ts-sub').textContent = `Days worked: ${w.days} · Time on site: ${fmt(w.gross)} · Breaks: ${fmt(w.brk)}`;
-      $('ts-note').textContent = 'Hours = finish − start − break.' + (night ? ' +1 = finished the next day.' : '');
     }
 
     function openTimesheet() {
