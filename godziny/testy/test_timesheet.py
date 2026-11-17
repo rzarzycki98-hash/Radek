@@ -41,7 +41,7 @@ errors, bad = [], []
 with sync_playwright() as p:
     b = p.chromium.launch()
     for scheme in ("light", "dark"):
-        ctx = b.new_context(viewport={"width": 390, "height": 700}, color_scheme=scheme, device_scale_factor=2)
+        ctx = b.new_context(viewport={"width": 390, "height": 700}, color_scheme=scheme, device_scale_factor=2, accept_downloads=True)
         ctx.add_init_script(f"if (!localStorage.getItem('godziny-v1')) localStorage.setItem('godziny-v1', {json.dumps(json.dumps(STATE))})")
         pg = ctx.new_page()
         pg.on("pageerror", lambda e: errors.append(str(e)))
@@ -96,6 +96,40 @@ with sync_playwright() as p:
             if gap < -0.5:
                 bad.append(f"{scheme}: table sticks out of the card by {-gap:.1f} px at {width} px")
         pg.set_viewport_size({"width": 390, "height": 700})
+        # Full screen: only the sheet is left (no Back, arrows or buttons); a tap on the screen brings them back
+        pg.click("#ts-full")
+        if not pg.evaluate("document.body.classList.contains('shot')"):
+            bad.append(f"{scheme}: Full screen did not start")
+        for sel in ("#ts-back", "#ts-prev", "#ts-next", "#ts-full", "#ts-img", ".ts-hint"):
+            if pg.is_visible(sel):
+                bad.append(f"{scheme}: {sel} still visible in full screen")
+        top = pg.evaluate("document.querySelector('.ts-sheet').getBoundingClientRect().top")
+        if top > 24:
+            bad.append(f"{scheme}: sheet not at the top in full screen ({top:.0f} px)")
+        pg.screenshot(path=os.path.join(OUT, f"fullscreen-{scheme}.png"))
+        pg.click(".ts-sheet")
+        if pg.evaluate("document.body.classList.contains('shot')") or not pg.is_visible("#ts-back"):
+            bad.append(f"{scheme}: a tap did not leave full screen")
+        # Save image: a PNG of the sheet (download where the phone cannot share files, share sheet where it can)
+        if scheme == "light":
+            with pg.expect_download() as dl:
+                pg.click("#ts-img")
+            path = os.path.join(OUT, dl.value.suggested_filename)
+            dl.value.save_as(path)
+            data = open(path, "rb").read()
+            w_px, h_px = int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
+            if dl.value.suggested_filename != "timesheet-week-47-2026.png" or data[:8] != b"\x89PNG\r\n\x1a\n":
+                bad.append(f"{scheme}: image file wrong: {dl.value.suggested_filename!r}")
+            elif not (1000 <= w_px <= 1300 and 1000 <= h_px <= 2000):
+                bad.append(f"{scheme}: image size {w_px}x{h_px} px looks wrong")
+        else:
+            pg.evaluate("""window.__shared = null; navigator.canShare = () => true;
+                navigator.share = async (d) => { window.__shared = d.files.map(f => [f.name, f.type, f.size]); }; 0""")
+            pg.click("#ts-img")
+            pg.wait_for_function("window.__shared")
+            shared = pg.evaluate("window.__shared")
+            if not shared or shared[0][0] != "timesheet-week-47-2026.png" or shared[0][1] != "image/png" or shared[0][2] < 20000:
+                bad.append(f"{scheme}: shared image wrong: {shared}")
         # week arrows on the Timesheet, then back to the normal page on the same week
         pg.click("#ts-next")
         if "Week 48" not in pg.inner_text("#ts-week") or pg.inner_text("#ts-total") != "0 h":

@@ -319,6 +319,11 @@
     .ts-total .big { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
     .ts-total .dec { color: #4a5566; font-variant-numeric: tabular-nums; }
     .ts-sub { margin-top: 2px; color: #4a5566; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+    .ts-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .ts-hint { margin-top: 8px; }
+    /* Screenshot mode: only the sheet is left on screen (browser bar and phone status bar go too, in full screen). */
+    body.shot .ts-bar, body.shot .ts-actions, body.shot .ts-hint { display: none; }
+    body.shot .ts { padding-top: 16px; }
     @media (max-width: 380px) {
       .ts { padding-left: 8px; padding-right: 8px; }
       .ts-sheet { padding-left: 8px; padding-right: 8px; }
@@ -395,7 +400,7 @@
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
 
-    <p class="muted version">Version 10 · 17/11/2026</p>
+    <p class="muted version">Version 11 · 17/11/2026</p>
   </main>
 
   <section id="ts" class="ts" hidden>
@@ -421,6 +426,12 @@
       </div>
       <div id="ts-sub" class="ts-sub"></div>
     </div>
+    <div class="ts-actions">
+      <button id="ts-full" class="primary" type="button">Full screen</button>
+      <button id="ts-img" class="pill" type="button">Save image</button>
+    </div>
+    <p class="muted ts-hint">Full screen hides the browser bar and buttons: take the screenshot, then tap the screen to go back.
+      Save image makes a picture of the timesheet you can send straight away.</p>
   </section>
 
   <div id="toast" class="toast" role="status" hidden></div>
@@ -931,6 +942,84 @@
       $('ts-sub').textContent = `Days worked: ${w.days} · Time on site: ${fmt(w.gross)} · Breaks: ${fmt(w.brk)}`;
     }
 
+    // Screenshot mode: hide everything but the sheet; full screen also hides Chrome's bar and the phone's status bar.
+    function enterShot(e) {
+      e.stopPropagation();  // the same tap must not reach the "tap to go back" handler below
+      document.body.classList.add('shot');
+      window.scrollTo(0, 0);
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
+    }
+
+    function exitShot() {
+      document.body.classList.remove('shot');
+      if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    }
+
+    // A picture of the sheet, drawn from what is on screen (same layout, fonts and colours), 3x for sharp text.
+    function sheetImage() {
+      const sheet = document.querySelector('.ts-sheet');
+      const box = sheet.getBoundingClientRect();
+      const pad = 12, scale = 3;
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.ceil((box.width + 2 * pad) * scale);
+      canvas.height = Math.ceil((box.height + 2 * pad) * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, box.width + 2 * pad, box.height + 2 * pad);
+      const ox = pad - box.left, oy = pad - box.top;
+      sheet.querySelectorAll('th, td').forEach((c) => {
+        const cs = getComputedStyle(c);
+        const bw = parseFloat(cs.borderBottomWidth);
+        if (!bw) return;
+        const r = c.getBoundingClientRect();
+        ctx.fillStyle = cs.borderBottomColor;
+        ctx.fillRect(r.left + ox, r.bottom - bw + oy, r.width, bw);
+      });
+      const walker = document.createTreeWalker(sheet, NodeFilter.SHOW_TEXT);
+      const range = document.createRange();
+      ctx.textBaseline = 'middle';
+      // Word by word, each at its own place on screen: keeps wrapped lines wrapped and right-aligned columns aligned.
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        const cs = getComputedStyle(node.parentElement);
+        const right = /right|end/.test(getComputedStyle(node.parentElement.closest('td, th, div, span') || node.parentElement).textAlign);
+        ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+        ctx.fillStyle = cs.color;
+        ctx.textAlign = right ? 'right' : 'left';
+        for (const m of node.textContent.matchAll(/\S+/g)) {
+          range.setStart(node, m.index);
+          range.setEnd(node, m.index + m[0].length);
+          const r = range.getClientRects()[0];
+          if (r) ctx.fillText(m[0], (right ? r.right : r.left) + ox, r.top + r.height / 2 + oy);
+        }
+      }
+      return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    }
+
+    async function saveImage() {
+      const blob = await sheetImage();
+      if (!blob) { toast('Could not make the image'); return; }
+      const name = `timesheet-week-${isoWeek(monday)}-${addDays(monday, 6).getFullYear()}.png`;
+      const file = new File([blob], name, { type: 'image/png' });
+      if (navigator.canShare && navigator.share && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'Timesheet' });
+          return;
+        } catch (e) {
+          if (e.name === 'AbortError') return;
+        }
+      }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      toast('Image saved');
+    }
+
     function openTimesheet() {
       closePicker();
       $('ts').hidden = false;
@@ -940,6 +1029,7 @@
     }
 
     function closeTimesheet() {
+      exitShot();
       $('ts').hidden = true;
       document.querySelector('main').hidden = false;
       render();
@@ -1026,6 +1116,13 @@
     $('share').addEventListener('click', share);
     $('ts-open').addEventListener('click', openTimesheet);
     $('ts-back').addEventListener('click', closeTimesheet);
+    $('ts-full').addEventListener('click', enterShot);
+    $('ts-img').addEventListener('click', saveImage);
+    $('ts').addEventListener('click', () => { if (document.body.classList.contains('shot')) exitShot(); });
+    // Leaving full screen with the phone's Back gesture also ends screenshot mode.
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) document.body.classList.remove('shot');
+    });
     $('ts-prev').addEventListener('click', () => { monday = addDays(monday, -7); render(); });
     $('ts-next').addEventListener('click', () => { monday = addDays(monday, 7); render(); });
 
