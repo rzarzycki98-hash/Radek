@@ -372,11 +372,7 @@
       <span>Your name (shown on the timesheet)</span>
       <input id="name" type="text" maxlength="60" autocomplete="name" placeholder="First and last name">
     </label>
-    <label class="setting">
-      <span>Break deducted from each day (min)</span>
-      <input id="break" type="number" min="0" max="240" step="5" inputmode="numeric">
-    </label>
-    <p class="muted">A new break length applies to new entries – days already entered keep their own break.</p>
+    <p class="muted">Break: 45 min is deducted from every shift (as the agency does).</p>
     <label class="setting">
       <span>Hourly rate (£)</span>
       <input id="rate" type="number" min="0" max="200" step="0.01" inputmode="decimal">
@@ -399,7 +395,7 @@
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
 
-    <p class="muted version">Version 9 · 17/11/2026</p>
+    <p class="muted version">Version 10 · 17/11/2026</p>
   </main>
 
   <section id="ts" class="ts" hidden>
@@ -441,7 +437,8 @@
 
   <script>
     const STORAGE_KEY = 'godziny-v1';
-    const DEFAULT_BREAK = 45;
+    // The agency always deducts 45 minutes from every shift (Radek, 17.11.2026), whatever was saved before.
+    const BREAK = 45;
     // Pay rates are typed in on the phone only (public repository: no private data in the code).
     // UK PAYE 2026/27, England, weekly, tax code 1257L on a week1/month1 basis, NI category A.
     const TAX = {
@@ -473,7 +470,7 @@
           return st;
         }
       } catch (e) {}
-      return { brk: DEFAULT_BREAK, rate: 0, sat: 0, days: {} };
+      return { brk: BREAK, rate: 0, sat: 0, days: {} };
     }
 
     function save() {
@@ -519,7 +516,7 @@
       let gross = toMin(entry.e) - toMin(entry.s);
       if (gross === 0) return null;
       if (gross < 0) gross += 24 * 60;
-      const brk = Number.isFinite(entry.b) ? entry.b : state.brk;
+      const brk = BREAK;
       return { gross, brk: Math.min(brk, gross), net: Math.max(0, gross - brk) };
     }
 
@@ -688,7 +685,7 @@
     function savePicker() {
       const { k, field } = picker;
       const prev = state.days[k] || {};
-      const entry = { s: prev.s || '', e: prev.e || '', b: Number.isFinite(prev.b) ? prev.b : state.brk };
+      const entry = { s: prev.s || '', e: prev.e || '', b: BREAK };
       entry[field] = `${pad(picker.h)}:${pad(picker.m)}`;
       state.days[k] = entry;
       save();
@@ -1003,8 +1000,7 @@
         let count = 0;
         for (const [k, entry] of Object.entries(data.days)) {
           if (!KEY_RE.test(k) || !entry || !TIME_RE.test(entry.s || '') || !TIME_RE.test(entry.e || '')) continue;
-          const b = Number(entry.b);
-          state.days[k] = { s: entry.s, e: entry.e, b: Number.isFinite(b) && b >= 0 ? b : state.brk };
+          state.days[k] = { s: entry.s, e: entry.e, b: BREAK };
           count += 1;
         }
         save();
@@ -1048,16 +1044,6 @@
     $('import-file').addEventListener('change', (e) => {
       if (e.target.files[0]) importBackup(e.target.files[0]);
       e.target.value = '';
-    });
-
-    const breakInput = $('break');
-    breakInput.value = state.brk;
-    breakInput.addEventListener('change', () => {
-      const v = Math.round(Number(breakInput.value));
-      state.brk = Number.isFinite(v) && v >= 0 ? Math.min(v, 240) : DEFAULT_BREAK;
-      breakInput.value = state.brk;
-      // Saved days keep their own break, so nothing on screen needs recalculating.
-      save();
     });
 
     function moneySetting(id, field, max, placeholder) {

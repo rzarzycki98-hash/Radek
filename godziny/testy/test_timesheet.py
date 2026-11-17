@@ -14,7 +14,7 @@ site = tempfile.mkdtemp(prefix="godziny-ts-")
 shutil.copytree(SRC, os.path.join(site, "godziny"), ignore=shutil.ignore_patterns("testy"))
 
 # Week 47 (16-22.11.2026): Mon 03:30-18:30 (like Radek's screenshot), Tue only a start, Wed night shift 22:00-06:00,
-# Sat 06:00-14:00 with a 30 min break kept from the time of entry. Made-up rate: the Timesheet must not show money.
+# Sat 06:00-14:00 saved with a 30 min break by an old version: the agency always deducts 45 min, so it must count 45. Made-up rate: the Timesheet must not show money.
 STATE = {"brk": 45, "rate": 15.0, "name": "Test Driver", "days": {
     "2026-11-16": {"s": "03:30", "e": "18:30", "b": 45},
     "2026-11-17": {"s": "07:00", "e": "", "b": 45},
@@ -27,7 +27,7 @@ EXPECT_ROWS = [
     ["Wednesday", "18/11", "22:00", "06:00+1", "45m", "7h 15m"],
     ["Thursday", "19/11", "—", "—", "—", "Day off"],
     ["Friday", "20/11", "—", "—", "—", "Day off"],
-    ["Saturday", "21/11", "06:00", "14:00", "30m", "7h 30m"],
+    ["Saturday", "21/11", "06:00", "14:00", "45m", "7h 15m"],
     ["Sunday", "22/11", "—", "—", "—", "Day off"],
 ]
 POLISH = re.compile(r"[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]|\b(Tydzień|wolne|dziś|przerwa|godziny|Godziny|Ustawienia|Zapisz|Wyślij|stawka|Stawka|brutto|podatek|kopię)\b")
@@ -57,6 +57,8 @@ with sync_playwright() as p:
         if found:
             bad.append(f"{scheme}: Polish text left on the page: {found}")
         pg.locator('.picker button', has_text="Cancel").click()
+        if pg.locator("#break").count():
+            bad.append(f"{scheme}: break setting still on the page (the break is always 45 min)")
         if pg.input_value("#name") != "Test Driver":
             bad.append(f"{scheme}: name not shown in Settings")
         # Timesheet
@@ -72,7 +74,7 @@ with sync_playwright() as p:
             if part not in head:
                 bad.append(f"{scheme}: Timesheet header lacks {part!r}: {head!r}")
         tot = pg.inner_text("#ts-total") + " " + pg.inner_text("#ts-dec") + " " + pg.inner_text("#ts-sub")
-        for part in ("29 h", "(29.00 h)", "Days worked: 3", "Time on site: 31 h", "Breaks: 2 h"):
+        for part in ("28 h 45 min", "(28.75 h)", "Days worked: 3", "Time on site: 31 h", "Breaks: 2 h 15 min"):
             if part not in tot:
                 bad.append(f"{scheme}: Timesheet totals lack {part!r}: {tot!r}")
         if "£" in pg.inner_text("#ts"):
