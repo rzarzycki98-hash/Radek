@@ -174,7 +174,20 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   pole „Your name” w Settings, zapis tylko w telefonie (`name`), nie w repo. Test `godziny/testy/test_timesheet.py`
   (brak polskich słów, 7 wierszy, sumy, bez £, mieści się w 390×700, bez wychodzenia tabeli za kartę przy 390 i 360 px –
   sprawdzone, że łapie zbyt szeroką tabelę). `sw.js` → `godziny-v8`. Podsumowanie „Share week summary” nadal zawiera
-  kwotę na rękę, jeśli jest stawka (nie zmieniano). Wersja 9 (17.11): bez linijki wyjaśnienia pod sumami (prośba Radka; test pilnuje). **Wersja 10 (17.11):** przerwa zawsze 45 min – „agencja zawsze odlicza 45 minut”; Radek wybrał (z opcji) blokadę na stałe: stała `BREAK`, każdy dzień liczy 45 min także przy starym zapisanym `b` i przy wczytaniu kopii, ustawienie przerwy usunięte, kolumna Break zostaje (test pilnuje). **Wersja 11 (17.11):** Radek chce screen bez paska Chrome, godziny telefonu i przycisków. Pod kartą Timesheet: „Full screen” (`body.shot` chowa Back/strzałki/przyciski + `requestFullscreen`, co na Androidzie chowa pasek Chrome i pasek telefonu; stuknięcie albo gest Wstecz wraca) i „Save image” (PNG karty rysowany z tego, co na ekranie, słowo po słowie, ×3; udostępnianie przez share sheet, a bez niego pobranie pliku `timesheet-week-47-2026.png`). Test sprawdza oba (share na atrapie). W okienku w aplikacji (Custom Tab) pełny ekran może nie zadziałać – wtedy znikają tylko przyciski.
+  kwotę na rękę, jeśli jest stawka (nie zmieniano). Wersja 9 (17.11): bez linijki wyjaśnienia pod sumami (prośba Radka; test pilnuje). **Wersja 10 (17.11):** przerwa zawsze 45 min – „agencja zawsze odlicza 45 minut”; Radek wybrał (z opcji) blokadę na stałe: stała `BREAK`, każdy dzień liczy 45 min także przy starym zapisanym `b` i przy wczytaniu kopii, ustawienie przerwy usunięte, kolumna Break zostaje (test pilnuje). **Wersja 11 (17.11):** Radek chce screen bez paska Chrome, godziny telefonu i przycisków. Pod kartą Timesheet: „Full screen” (`body.shot` chowa Back/strzałki/przyciski + `requestFullscreen`, co na Androidzie chowa pasek Chrome i pasek telefonu; stuknięcie albo gest Wstecz wraca) i „Save image” (PNG karty rysowany z tego, co na ekranie, słowo po słowie, ×3; udostępnianie przez share sheet, a bez niego pobranie pliku `timesheet-week-47-2026.png`). Test sprawdza oba (share na atrapie). W okienku w aplikacji (Custom Tab) pełny ekran może nie zadziałać – wtedy znikają tylko przyciski. **Wersja 12 (17.11): nauka z payslipów.** Radek chce, żeby strona uczyła się stawki z cotygodniowych payslipów.
+  Wybory (z opcji): zdjęcie payslipa wysyła Claude w czacie, Claude odpisuje linijką do wklejenia; nauka stawek + poprawki
+  netto; średnia z 4 ostatnich; ostrzeżenie, gdy zapłacone godziny ≠ wpisane; pola stawek uzupełniają się same; 2 stare paski
+  dodane na start (linijki dostał w czacie – prawdziwych kwot NIE ma w repo). **Format linijki (Claude tworzy ją ze zdjęcia):**
+  `PAYSLIP w/c DD/MM/YYYY | basic H h £PAY | sat H h £PAY | gross £G | tax £T | NI £N | net £NET` – w/c = poniedziałek tygodnia
+  pracy (nie data wypłaty), basic = godziny i kwota zwykłe razem z holiday pay, sat = wyższa stawka (sobota, razem z holiday
+  pay), net = „Payment”; basic + sat musi dać gross (±5p), inne potrącenia (emerytura) strona liczy sama jako gross − tax − NI − net.
+  Kilka linijek naraz można wkleić. Strona: sekcja „Payslips” (pole, „Add payslip”, lista z ×, „Learned from…”), `state.slips`
+  (klucz = poniedziałek; `bh bp sh sp g t ni n`), `learn()`: stawka = suma kwot ÷ suma godzin z 4 ostatnich, `state.corr` =
+  średnia (net z paska − net ze wzoru strony dla tego samego gross), doliczana do szacunku. Tydzień z paskiem pokazuje kwotę
+  z paska (✓ na liście tygodni, suma miesiąca też), ostrzeżenie „⚠ Payslip paid … h, your log has … h”. Kopia zapasowa
+  przenosi paski. Timesheet bez zmian (bez pieniędzy). Test `godziny/testy/test_payslips.py` (zmyślone kwoty; sprawdzony
+  na 3 zepsutych wersjach – łapie: wszystkie paski zamiast 4, brak poprawki, brak ostrzeżenia). Gdy Radek przyśle payslip
+  z innymi pozycjami (nadgodziny, niedziela, bonus): dopytać i ewentualnie rozszerzyć format.
 
 **Do sprawdzenia w najbliższych dniach:**
 

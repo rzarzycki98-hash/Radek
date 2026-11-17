@@ -278,6 +278,25 @@
     .weeks .h small { display: block; text-align: right; font-weight: 400; }
     .setting + .setting { margin-top: 8px; }
 
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      font: 0.9rem/1.35 ui-monospace, Menlo, Consolas, monospace;
+      resize: vertical;
+    }
+    .warn { color: var(--danger); }
+    .summary .warn { color: inherit; font-weight: 600; }
+    .slips { list-style: none; margin: 8px 0 0; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .slips li { display: flex; align-items: center; gap: 8px; padding: 10px 6px 10px 14px; border-top: 1px solid var(--border); }
+    .slips li:first-child { border-top: 0; }
+    .slips .info { flex: 1; min-width: 0; font-weight: 600; }
+    .slips small { display: block; font-weight: 400; color: var(--muted); }
+    .slips small.warn { color: var(--danger); }
+
     .toast {
       position: fixed;
       left: 50%;
@@ -348,6 +367,7 @@
         <div class="label">Take-home pay (like “Payment” on your payslip)</div>
         <div id="pay-net" class="total"></div>
         <div id="pay-when" class="sub"></div>
+        <div id="pay-warn" class="sub warn" hidden></div>
         <details class="pay-details">
           <summary>How this was worked out</summary>
           <div id="pay-sub" class="sub"></div>
@@ -372,6 +392,16 @@
     <ul id="weeks" class="weeks"></ul>
     <p id="weeks-empty" class="muted" hidden>No entries yet – enter your hours above.</p>
 
+    <h2>Payslips</h2>
+    <p class="muted">Send a photo of your payslip to Claude in the chat, paste the PAYSLIP line you get back here
+      and tap Add. The page learns your rates from the last 4 payslips. ✓ in Weeks = amount from a payslip.</p>
+    <textarea id="slip-in" rows="3" placeholder="PAYSLIP w/c 16/11/2026 | basic … h £… | sat … h £… | gross £… | tax £… | NI £… | net £…"></textarea>
+    <div class="actions">
+      <button id="slip-add" class="primary" type="button">Add payslip</button>
+    </div>
+    <p id="slip-learned" class="muted"></p>
+    <ul id="slips" class="slips"></ul>
+
     <h2>Settings</h2>
     <label class="setting">
       <span>Your name (shown on the timesheet)</span>
@@ -386,7 +416,7 @@
       <span>Saturday rate (£)</span>
       <input id="sat" type="number" min="0" max="200" step="0.01" inputmode="decimal">
     </label>
-    <p class="muted">Enter the rates once – they stay saved on this phone until you change them. Gross hourly rate
+    <p class="muted">Rates update by themselves from each payslip you add (you can also type them). Gross hourly rate
       including holiday pay. No Saturday rate = normal rate; a night shift counts to the day it started.</p>
     <p class="muted">Take-home pay is worked out like the payslip of 25/10/2026: hours after the break
       × rate, minus tax (code 1257L w1m1 – each week on its own) and National Insurance
@@ -400,7 +430,7 @@
       <input id="import-file" type="file" accept="application/json,.json" hidden>
     </div>
 
-    <p class="muted version">Version 11 · 17/11/2026</p>
+    <p class="muted version">Version 12 · 17/11/2026</p>
   </main>
 
   <section id="ts" class="ts" hidden>
@@ -574,13 +604,169 @@
       const basicPay = r2(hours * state.rate);
       const satPay = r2(satHours * satRate);
       const gross = r2(basicPay + satPay);
+      const { tax, ni } = taxNi(gross);
+      const corr = state.corr || 0;
+      return { hours, satHours, satRate, basicPay, satPay, gross, tax, ni, corr, net: r2(gross - tax - ni + corr) };
+    }
+
+    // ---- Payslips: Radek pastes one line per payslip (read from a photo by Claude in the chat).
+    // The page learns the hourly rates and an average net adjustment (pension, tax code changes)
+    // from the last SLIP_LEARN payslips. Payslips stay on this phone only (public repository).
+    const SLIP_LEARN = 4;
+
+    function slipOf(mon) {
+      return (state.slips || {})[key(mon)] || null;
+    }
+
+    // Money a week brings home: the payslip when there is one, otherwise the page's estimate.
+    function weekPay(mon, w) {
+      const slip = slipOf(mon);
+      if (slip) return slip.n;
+      return state.rate && w.days ? payFor(w).net : null;
+    }
+
+    // Logged hours minus paid hours for a week with a payslip (positive = hours not paid).
+    function slipDiff(mon) {
+      const slip = slipOf(mon);
+      if (!slip) return 0;
+      return r2(r2(weekStats(mon).net / 60) - r2(slip.bh + slip.sh));
+    }
+
+    function parseSlip(line) {
+      const date = line.match(/w\/c\s*(\d{1,2})\/(\d{1,2})\/(\d{4})/i);
+      const num = (t) => Number(String(t).replace(/,/g, ''));
+      const hoursPay = (label) => {
+        const m = line.match(new RegExp('\\b' + label + '\\s+([\\d.]+)\\s*h\\s*£?\\s*([\\d,]*\\.?\\d+)', 'i'));
+        return m ? [num(m[1]), num(m[2])] : null;
+      };
+      const amount = (label) => {
+        const m = line.match(new RegExp('\\b' + label + '\\s*£?\\s*([\\d,]*\\.?\\d+)', 'i'));
+        return m ? num(m[1]) : null;
+      };
+      if (!date) throw new Error('no week date (w/c dd/mm/yyyy)');
+      const d = new Date(Number(date[3]), Number(date[2]) - 1, Number(date[1]));
+      if (d.getDate() !== Number(date[1])) throw new Error('wrong date');
+      const basic = hoursPay('basic') || [0, 0];
+      const sat = hoursPay('sat') || [0, 0];
+      const slip = {
+        bh: basic[0], bp: basic[1], sh: sat[0], sp: sat[1],
+        g: amount('gross'), t: amount('tax'), ni: amount('NI'), n: amount('net'),
+      };
+      if ([slip.g, slip.t, slip.ni, slip.n].some((x) => x === null || !Number.isFinite(x))) {
+        throw new Error('gross, tax, NI or net missing');
+      }
+      if (Object.values(slip).some((x) => !Number.isFinite(x) || x < 0)) throw new Error('a number is wrong');
+      if (Math.abs(slip.bp + slip.sp - slip.g) > 0.05) throw new Error('basic + Saturday pay is not the gross');
+      if (slip.n > slip.g || slip.bh + slip.sh <= 0) throw new Error('net or hours look wrong');
+      return { k: key(mondayOf(d)), slip };
+    }
+
+    function taxNi(gross) {
       const taxable = Math.max(0, Math.floor(gross - TAX.free + 1e-9));
       const tax = r2(Math.min(taxable, TAX.basic) * 0.2
         + Math.max(0, Math.min(taxable, TAX.higher) - TAX.basic) * 0.4
         + Math.max(0, taxable - TAX.higher) * 0.45);
       const ni = r2(Math.max(0, Math.min(gross, TAX.niUEL) - TAX.niPT) * 0.08 + Math.max(0, gross - TAX.niUEL) * 0.02);
-      return { hours, satHours, satRate, basicPay, satPay, gross, tax, ni, net: r2(gross - tax - ni) };
+      return { tax, ni };
     }
+
+    // Rates = paid money ÷ paid hours over the last payslips; adjustment = what the payslips paid on top of
+    // (or below) the page's tax and NI sum for the same gross.
+    function learn() {
+      const keys = Object.keys(state.slips || {}).sort().reverse().slice(0, SLIP_LEARN);
+      if (!keys.length) { state.corr = 0; return; }
+      let bh = 0, bp = 0, sh = 0, sp = 0, corr = 0;
+      for (const k of keys) {
+        const s = state.slips[k];
+        bh += s.bh; bp += s.bp; sh += s.sh; sp += s.sp;
+        const tn = taxNi(s.g);
+        corr += s.n - r2(s.g - tn.tax - tn.ni);
+      }
+      if (bh > 0) state.rate = r2(bp / bh);
+      if (sh > 0) state.sat = r2(sp / sh);
+      state.corr = r2(corr / keys.length);
+      $('rate').value = state.rate ? state.rate.toFixed(2) : '';
+      $('sat').value = state.sat ? state.sat.toFixed(2) : '';
+    }
+
+    function addSlips() {
+      const lines = $('slip-in').value.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+      const errors = [];
+      let added = 0;
+      for (const line of lines) {
+        try {
+          const { k, slip } = parseSlip(line);
+          state.slips = state.slips || {};
+          state.slips[k] = slip;
+          added += 1;
+        } catch (e) {
+          errors.push(e.message);
+        }
+      }
+      if (added) {
+        learn();
+        save();
+        $('slip-in').value = '';
+        render();
+      }
+      if (errors.length) toast(`${added ? `Added ${added}. ` : ''}Not added: ${errors[0]}`);
+      else if (added) toast(added === 1 ? 'Payslip added' : `Added ${added} payslips`);
+      else toast('Paste the PAYSLIP line first');
+    }
+
+    function renderSlips() {
+      const keys = Object.keys(state.slips || {}).sort().reverse();
+      $('slips').hidden = !keys.length;
+      const sign = (x) => (x < 0 ? '−' : '+') + money(Math.abs(x));
+      $('slip-learned').textContent = keys.length
+        ? `Learned from the last ${Math.min(keys.length, SLIP_LEARN)} of ${keys.length} payslip${keys.length === 1 ? '' : 's'}: `
+          + `rate ${money(state.rate)}, Saturday ${money(state.sat || state.rate)}, net adjustment ${sign(state.corr || 0)} a week.`
+        : 'No payslips yet.';
+      $('slips').replaceChildren(...keys.map((k) => {
+        const mon = fromKey(k);
+        const s = state.slips[k];
+        const w = weekStats(mon);
+        const li = document.createElement('li');
+        const info = document.createElement('div');
+        info.className = 'info';
+        info.append(`Week ${isoWeek(mon)} · ${dm(mon)}–${dm(addDays(mon, 6))}`);
+        const small = document.createElement('small');
+        small.textContent = `Payslip ${money(s.n)} · ${r2(s.bh + s.sh).toFixed(2)} h paid`
+          + (w.days && state.rate ? ` · page estimate ${money(payFor(w).net)}` : '');
+        info.append(small);
+        const diff = slipDiff(mon);
+        if (w.days && diff) {
+          const warn = document.createElement('small');
+          warn.className = 'warn';
+          warn.textContent = hoursWarning(mon);
+          info.append(warn);
+        }
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'clear';
+        del.textContent = '×';
+        del.setAttribute('aria-label', `Remove payslip for week ${isoWeek(mon)}`);
+        del.addEventListener('click', () => {
+          delete state.slips[k];
+          learn();
+          save();
+          render();
+          toast('Payslip removed');
+        });
+        li.append(info, del);
+        return li;
+      }));
+    }
+
+    function hoursWarning(mon) {
+      const s = slipOf(mon);
+      const diff = slipDiff(mon);
+      const paid = r2(s.bh + s.sh).toFixed(2);
+      const logged = r2(weekStats(mon).net / 60).toFixed(2);
+      return `⚠ Payslip paid ${paid} h, your log has ${logged} h – `
+        + (diff > 0 ? `${diff.toFixed(2)} h not paid` : `${Math.abs(diff).toFixed(2)} h more than logged`);
+    }
+
 
     function money(x) {
       return '£' + x.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -815,8 +1001,20 @@
       $('week-sub').textContent = w.days
         ? `${decimal(w.net)} · ${daysLabel(w.days)} · on site ${fmt(w.gross)}, breaks ${fmt(w.brk)}`
         : 'No entries this week';
-      $('week-pay').hidden = !w.days;
-      if (w.days && !state.rate) {
+      const slip = slipOf(monday);
+      $('week-pay').hidden = !w.days && !slip;
+      $('pay-warn').hidden = !(slip && w.days && slipDiff(monday));
+      if (!$('pay-warn').hidden) $('pay-warn').textContent = hoursWarning(monday);
+      if (slip) {
+        const est = w.days && state.rate ? payFor(w).net : null;
+        $('pay-net').textContent = money(slip.n);
+        $('pay-when').textContent = 'From your payslip' + (est !== null ? ` · page estimate ${money(est)}` : '');
+        const other = r2(slip.g - slip.t - slip.ni - slip.n);
+        $('pay-sub').textContent = `Payslip: ${slip.bh.toFixed(2)} h = ${money(slip.bp)}`
+          + (slip.sh ? ` + Saturday ${slip.sh.toFixed(2)} h = ${money(slip.sp)}` : '')
+          + ` → gross ${money(slip.g)} − tax ${money(slip.t)} − NI ${money(slip.ni)}`
+          + (Math.abs(other) >= 0.01 ? ` − other ${money(other)}` : '') + ` = ${money(slip.n)}`;
+      } else if (w.days && !state.rate) {
         $('pay-net').textContent = '—';
         $('pay-when').textContent = 'Enter your hourly rate in Settings (below) to see take-home pay.';
         $('pay-sub').textContent = '';
@@ -827,10 +1025,13 @@
         $('pay-sub').textContent = `${p.hours.toFixed(2)} h × ${money(state.rate)} = ${money(p.basicPay)}`
           + (p.satHours ? ` + Saturday ${p.satHours.toFixed(2)} h × ${money(p.satRate)} = ${money(p.satPay)}` : '')
           + ` → gross ${money(p.gross)}`
-          + ` − tax ${money(p.tax)} − NI ${money(p.ni)} = ${money(p.net)}`;
+          + ` − tax ${money(p.tax)} − NI ${money(p.ni)}`
+          + (p.corr ? ` ${p.corr < 0 ? '−' : '+'} payslip adjustment ${money(Math.abs(p.corr))}` : '')
+          + ` = ${money(p.net)}`;
       }
-      $('pay-sub').closest('details').hidden = !(w.days && state.rate);
+      $('pay-sub').closest('details').hidden = !(slip || (w.days && state.rate));
       renderWeeks();
+      renderSlips();
     }
 
     function renderWeeks() {
@@ -857,9 +1058,12 @@
         const right = document.createElement('span');
         right.className = 'h';
         right.textContent = fmt(w.net);
-        const paySmall = document.createElement('small');
-        paySmall.textContent = money(payFor(w).net);
-        if (state.rate) right.append(paySmall);
+        const pay = weekPay(mon, w);
+        if (pay !== null) {
+          const paySmall = document.createElement('small');
+          paySmall.textContent = money(pay) + (slipOf(mon) ? ' ✓' : '');
+          right.append(paySmall);
+        }
         btn.append(left, right);
         btn.addEventListener('click', () => {
           monday = mon;
@@ -883,7 +1087,7 @@
       // Take-home is weekly (tax week1/month1), so the month adds up the weeks that end (Sunday) in that month.
       let monthPay = 0;
       for (const [, mon] of list) {
-        if (key(addDays(mon, 6)).startsWith(prefix)) monthPay += payFor(weekStats(mon)).net;
+        if (key(addDays(mon, 6)).startsWith(prefix)) monthPay += weekPay(mon, weekStats(mon)) || 0;
       }
       $('month').textContent = `${MONTHS[ref.getMonth()]} ${ref.getFullYear()}: ${fmt(monthNet)} (${decimal(monthNet)}), ${daysLabel(monthDays)}`
         + (monthPay ? ` · take-home approx. ${money(r2(monthPay))} (weeks ending this month)` : '');
@@ -1093,9 +1297,18 @@
           state.days[k] = { s: entry.s, e: entry.e, b: BREAK };
           count += 1;
         }
+        let slips = 0;
+        for (const [k, sl] of Object.entries(data.slips || {})) {
+          const fields = ['bh', 'bp', 'sh', 'sp', 'g', 't', 'ni', 'n'];
+          if (!KEY_RE.test(k) || !sl || fields.some((f) => !Number.isFinite(sl[f]))) continue;
+          state.slips = state.slips || {};
+          state.slips[k] = Object.fromEntries(fields.map((f) => [f, sl[f]]));
+          slips += 1;
+        }
+        if (slips) learn();
         save();
         render();
-        toast(`Loaded ${daysLabel(count)}`);
+        toast(`Loaded ${daysLabel(count)}` + (slips ? ` and ${slips} payslip${slips === 1 ? '' : 's'}` : ''));
       } catch (e) {
         toast('This is not a work hours backup file');
       }
@@ -1160,6 +1373,7 @@
     }
     moneySetting('rate', 'rate', 200, '0.00');
     moneySetting('sat', 'sat', 200, 'same as weekday');
+    $('slip-add').addEventListener('click', addSlips);
 
     render();
 
