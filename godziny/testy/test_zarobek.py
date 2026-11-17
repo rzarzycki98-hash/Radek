@@ -44,10 +44,10 @@ with sync_playwright() as p:
         pg.on("pageerror", lambda e: errors.append(str(e)))
         pg.goto(f"http://127.0.0.1:{port}/godziny/index.html")
         # old data without a rate: hint instead of a wrong £0.00
-        pg.locator("#weeks button", has_text="19.10").click()
-        if pg.inner_text("#pay-net") != "—" or "Wpisz stawkę" not in pg.inner_text("#pay-when"):
+        pg.locator("#weeks button", has_text="19/10").click()
+        if pg.inner_text("#pay-net") != "—" or "Enter your hourly rate" not in pg.inner_text("#pay-when"):
             bad.append(f"{scheme}: no rate -> expected a hint, got {pg.inner_text('#pay-when')!r}")
-        if "£" in pg.inner_text("#weeks") or "Na rękę" in pg.evaluate("summaryText()"):
+        if "£" in pg.inner_text("#weeks") or "Take-home" in pg.evaluate("summaryText()"):
             bad.append(f"{scheme}: no rate -> money shown anyway")
         pg.evaluate(f"localStorage.setItem('godziny-v1', {json.dumps(json.dumps(PAY_STATE))})")
         pg.reload()
@@ -57,25 +57,25 @@ with sync_playwright() as p:
             if got != (g, t, n, net):
                 bad.append(f"{scheme}: payFor({mins}) = {got}, expected {(g, t, n, net)}")
         # open the payslip week from the weeks list
-        pg.locator("#weeks button", has_text="19.10").click()
+        pg.locator("#weeks button", has_text="19/10").click()
         net_txt = pg.inner_text("#pay-net")
         sub_txt = pg.inner_text("#pay-sub")
         if net_txt != "£600.30":
             bad.append(f"{scheme}: week 19-25.10 shows {net_txt!r}, expected '£600.30'")
         sub_txt = pg.inner_text("#pay-when") + " " + pg.evaluate("$('pay-sub').textContent")
-        for part in ("£739.50", "£99.40", "£39.80", "pt 30.10"):
+        for part in ("£739.50", "£99.40", "£39.80", "Fri 30/10"):
             if part not in sub_txt:
                 bad.append(f"{scheme}: summary line lacks {part!r}: {sub_txt!r}")
         if "£600.30" not in pg.inner_text("#weeks"):
             bad.append(f"{scheme}: weeks list lacks £600.30")
         if "£600.30" not in pg.inner_text("#month"):
             bad.append(f"{scheme}: October total lacks £600.30: {pg.inner_text('#month')!r}")
-        if pg.evaluate("summaryText()").find("Na rękę ok. £600.30") < 0:
+        if pg.evaluate("summaryText()").find("Take-home approx. £600.30") < 0:
             bad.append(f"{scheme}: shared summary lacks the take-home line")
         before = pg.inner_text("#pay-net")
         pg.locator('.day[data-key="2026-10-24"] [data-field="s"]').click()
-        pg.locator('.picker button', has_text="Zapisz").click()   # start: suggested from the last entry
-        pg.locator('.picker button', has_text="Zapisz").click()   # end: suggested from the last entry
+        pg.locator('.picker button', has_text="Save").click()   # start: suggested from the last entry
+        pg.locator('.picker button', has_text="Save").click()   # end: suggested from the last entry
         if pg.inner_text("#pay-net") == before:
             bad.append(f"{scheme}: adding Saturday did not update the amount at once")
         pg.locator('.day[data-key="2026-10-24"] .clear').click()
@@ -103,28 +103,28 @@ with sync_playwright() as p:
         pg.dispatch_event("#sat", "change")
         if pg.inner_text("#pay-net") != "£725.58":
             bad.append(f"{scheme}: Saturday at 20.00 shows {pg.inner_text('#pay-net')!r}, expected '£725.58'")
-        if "sobota 8.70 h × £20.00" not in pg.evaluate("$('pay-sub').textContent"):
-            bad.append(f"{scheme}: Saturday line missing in 'Jak to wyszło'")
+        if "Saturday 8.70 h × £20.00" not in pg.evaluate("$('pay-sub').textContent"):
+            bad.append(f"{scheme}: Saturday line missing in 'How this was worked out'")
         if json.loads(pg.evaluate("localStorage.getItem('godziny-v1')")).get("sat") != 20:
             bad.append(f"{scheme}: Saturday rate not saved")
         # typing a rate and then tapping a week straight away must open that week (no lost tap)
         pg.click("#today")
         pg.fill("#sat", "20.00")
         pg.dispatch_event("#sat", "change")   # first "change" (keyboard Done); the tap's blur fires a second one
-        pg.locator("#weeks button", has_text="19.10").click()
+        pg.locator("#weeks button", has_text="19/10").click()
         if "19–25" not in pg.inner_text("#week-title"):
             bad.append(f"{scheme}: tap on a week right after typing a rate was lost")
         pg.reload()
         if pg.input_value("#sat") != "20.00" or pg.input_value("#rate") != "17.00":
             bad.append(f"{scheme}: rates not kept after reopening the page")
-        pg.locator("#weeks button", has_text="19.10").click()
+        pg.locator("#weeks button", has_text="19/10").click()
         pg.locator('.day[data-key="2026-10-24"] .clear').click()
         # day and month names in English (screenshots go to the agency)
         names = pg.locator(".day-name").all_inner_texts()
         want = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         if [n.split()[0] for n in names] != want:
             bad.append(f"{scheme}: day names not English: {names}")
-        if "October" not in pg.inner_text("#week-title") or "Mon 19.10" not in pg.evaluate("summaryText()"):
+        if "October" not in pg.inner_text("#week-title") or "Mon 19/10" not in pg.evaluate("summaryText()"):
             bad.append(f"{scheme}: month/short day not English: {pg.inner_text('#week-title')!r}")
         pg.screenshot(path=os.path.join(OUT, f"godziny-{scheme}.png"), full_page=True)
         # empty week: no pay box
