@@ -187,7 +187,14 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   z paska (✓ na liście tygodni, suma miesiąca też), ostrzeżenie „⚠ Payslip paid … h, your log has … h”. Kopia zapasowa
   przenosi paski. Timesheet bez zmian (bez pieniędzy). Test `godziny/testy/test_payslips.py` (zmyślone kwoty; sprawdzony
   na 3 zepsutych wersjach – łapie: wszystkie paski zamiast 4, brak poprawki, brak ostrzeżenia). Gdy Radek przyśle payslip
-  z innymi pozycjami (nadgodziny, niedziela, bonus): dopytać i ewentualnie rozszerzyć format.
+  z innymi pozycjami (nadgodziny, niedziela, bonus): dopytać i ewentualnie rozszerzyć format. **Wersja 13 (17.11): night outy.** Radek
+  „czasami robię night-outy”. Wybory (z opcji): przycisk 🌙 przy każdym dniu (`entry.n = 1`, też dzień bez godzin; odznaczenie
+  pustego dnia usuwa wpis), noc przypisana do dnia, po którym spał w kabinie; na Timesheet 🌙 przy nazwie dnia i „Night outs: N 🌙”
+  na dole (bez pieniędzy); karta tygodnia i podsumowanie liczą noce; kopia zapasowa je przenosi. **Zapłata za night out
+  jeszcze nieznana** (Radek nie wie, ile CLS płaci) – strona nie dolicza pieniędzy. Gdy przyjdzie payslip z night outem:
+  jeśli kwota jest w gross, obecna linijka PAYSLIP zostanie odrzucona (basic + sat ≠ gross) – trzeba rozszerzyć format
+  (np. `| nights N £X`) i naukę o stawkę za noc (uwaga: czy opodatkowana). Test `godziny/testy/test_nightout.py`
+  (sprawdzony na 2 zepsutych wersjach – łapie utratę nocy przy edycji godziny i w kopii).
 
 **Do sprawdzenia w najbliższych dniach:**
 
