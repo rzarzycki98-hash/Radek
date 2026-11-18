@@ -24668,7 +24668,7 @@
    "grade": null,
    "added": "2026-11-12T17:17+00:00",
    "status": "open",
-   "last_odds": 1.97
+   "last_odds": 2.0
   },
   {
    "id": "BRA|2026-11-19|Vitoria|Bragantino|model",
@@ -25169,13 +25169,85 @@
    "added": "2026-11-16T18:39+00:00",
    "status": "open",
    "last_odds": 2.1
+  },
+  {
+   "id": "BRA|2026-11-18|Remo|Chapecoense-SC|model|1x2",
+   "match": "BRA|2026-11-18|Remo|Chapecoense-SC",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-11-18",
+   "time": "23:00",
+   "ko": "2026-11-18T23:00+00:00",
+   "home": "Remo",
+   "away": "Chapecoense-SC",
+   "side": "2",
+   "prob": 0.1848,
+   "odds": 5.75,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0625,
+   "grade": "no",
+   "added": "2026-11-18T07:39+00:00",
+   "status": "open",
+   "last_odds": 5.75
+  },
+  {
+   "id": "BRA|2026-11-18|Remo|Chapecoense-SC|market|1x2",
+   "match": "BRA|2026-11-18|Remo|Chapecoense-SC",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "BRA",
+   "league_name": "Brazylia · Serie A",
+   "date": "2026-11-18",
+   "time": "23:00",
+   "ko": "2026-11-18T23:00+00:00",
+   "home": "Remo",
+   "away": "Chapecoense-SC",
+   "side": "2",
+   "prob": 0.1848,
+   "odds": 5.75,
+   "book": "Bet365",
+   "book_key": "B365",
+   "user_book": false,
+   "edge": 0.0625,
+   "grade": "no",
+   "added": "2026-11-18T07:39+00:00",
+   "status": "open",
+   "last_odds": 5.75
+  },
+  {
+   "id": "JPN|2026-11-21|Sanfrecce Hiroshima|Yokohama F. Marinos|model",
+   "match": "JPN|2026-11-21|Sanfrecce Hiroshima|Yokohama F. Marinos",
+   "strategy": "model",
+   "mkt": "ou",
+   "league": "JPN",
+   "league_name": "Japonia · J1 League",
+   "date": "2026-11-21",
+   "time": "05:00",
+   "ko": "2026-11-21T05:00+00:00",
+   "home": "Sanfrecce Hiroshima",
+   "away": "Yokohama F. Marinos",
+   "side": "Under",
+   "prob": 0.3949,
+   "odds": 2.62,
+   "book": "William Hill",
+   "book_key": "williamhill",
+   "user_book": false,
+   "edge": 0.0347,
+   "grade": null,
+   "added": "2026-11-18T07:39+00:00",
+   "status": "open",
+   "last_odds": 2.62
   }
  ],
  "summary": {
   "model_ou": {
    "settled": 80,
    "won": 32,
-   "open": 10,
+   "open": 11,
    "profit": -14.34,
    "roi": -0.1792,
    "clv": -0.0388
@@ -25183,7 +25255,7 @@
   "model_x": {
    "settled": 343,
    "won": 71,
-   "open": 13,
+   "open": 14,
    "profit": -27.7,
    "roi": -0.0808,
    "clv": 0.0196
@@ -25199,11 +25271,11 @@
   "market_x": {
    "settled": 392,
    "won": 81,
-   "open": 7,
+   "open": 8,
    "profit": -27.36,
    "roi": -0.0698,
    "clv": 0.0158
   }
  },
- "updated": "2026-11-17T13:34+00:00"
+ "updated": "2026-11-18T07:39+00:00"
 }
