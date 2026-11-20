@@ -161,6 +161,14 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   **Czeka na Radka:** klucz Gemini – okienko na klucz (`request_credential`) nie otworzyło się w jego wersji aplikacji
   na telefonie; trzeba poprosić ponownie z claude.ai na komputerze albo po aktualizacji aplikacji (host
   `generativelanguage.googleapis.com`, nagłówek `x-goog-api-key`). Do tego czasu skill ogląda tylko pliki wideo z rozmowy.
+  **20.11:** Radek poprosił o skill github.com/mikefutia/claude-vision („video-analyzer”, MIT, film → Gemini → raport).
+  Kod przeczytany (czysty), ale to duplikat `watch` (ten sam klucz Gemini, starszy model `gemini-3-flash-preview`, bez
+  trybu bez klucza) – Radek wybrał (z opcji): **nie instalować**. Klucz Gemini: zamiast `request_credential` – „Network
+  secret” środowiska (Edit cloud environment → Network secrets → Add secret: host `generativelanguage.googleapis.com`,
+  nagłówek `x-goog-api-key` bez prefiksu); Radek dodaje go sam z laptopa. **Do sprawdzenia po dodaniu:** domyślny model
+  `watch` `gemini-3.7-flash` nie figuruje w cenniku Google (20.11: są `gemini-3.8-flash`, `gemini-3.6-flash`) – gdy da 404,
+  ustawić zmienną środowiska `WATCH_GEMINI_MODEL=gemini-3.8-flash` (to nie sekret). Darmowy poziom Gemini: Google używa
+  treści do ulepszania usług – tylko publiczne filmy.
 
 - **17.11 – Godziny wersja 7** (Radek z czatu w aplikacji: screeny dla agencji CLS): nazwy dni (Monday…Sunday, skróty
   Mon…Sun w podsumowaniu) i miesięcy po angielsku; reszta napisów po polsku. `sw.js` → `godziny-v7`. Test

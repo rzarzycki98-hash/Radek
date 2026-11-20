@@ -172,6 +172,9 @@ osi czasu.
   film w klatki i napisy, żeby Claude mógł odpowiadać na pytania o film. Kod sprawdzony, skopiowany do repo z poprawką
   na chmurę (YouTube jest tam zablokowany). **Decyzje Radka:** zapis na `main`; linki z YouTube przez darmowy klucz
   Google Gemini (film ogląda wtedy model Google). Pliki wideo wysłane w rozmowie działają bez klucza.
+- 20.11: Radek poprosił o drugi taki skill (mikefutia/claude-vision). Robi to samo co `watch`, tylko mniej (bez klucza
+  nie działa wcale). **Decyzja Radka:** nie instalować, zostać przy `watch`, a klucz Gemini dodać teraz z laptopa
+  jako „Network secret” środowiska (klucz nigdy w czacie ani w repo).
 
 ## Pomysły Radka – co się z nimi stało
 
