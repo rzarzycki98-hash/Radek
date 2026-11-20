@@ -21632,7 +21632,7 @@
    "grade": "few",
    "added": "2026-11-05T01:28+00:00",
    "status": "open",
-   "last_odds": 21.0
+   "last_odds": 23.0
   },
   {
    "id": "D1|2026-11-20|Bayern Munich|FC Koln|market|1x2",
@@ -21656,7 +21656,7 @@
    "grade": "few",
    "added": "2026-11-05T01:28+00:00",
    "status": "open",
-   "last_odds": 21.0
+   "last_odds": 23.0
   },
   {
    "id": "F1|2026-11-21|Nice|Paris SG|model|1x2",
@@ -25528,7 +25528,7 @@
    "grade": "no",
    "added": "2026-11-18T17:19+00:00",
    "status": "open",
-   "last_odds": 2.95
+   "last_odds": 2.8
   },
   {
    "id": "POL|2026-11-23|Wieczysta Krakow|Motor Lublin|market|1x2",
@@ -25552,7 +25552,7 @@
    "grade": "no",
    "added": "2026-11-18T17:19+00:00",
    "status": "open",
-   "last_odds": 2.95
+   "last_odds": 2.8
   },
   {
    "id": "RUS|2026-11-21|Orenburg|Baltika|model|1x2",
@@ -25576,7 +25576,7 @@
    "grade": "few",
    "added": "2026-11-18T17:19+00:00",
    "status": "open",
-   "last_odds": 2.62
+   "last_odds": 2.63
   },
   {
    "id": "RUS|2026-11-21|Akron Togliatti|Fakel Voronezh|model|1x2",
@@ -25600,7 +25600,7 @@
    "grade": "few",
    "added": "2026-11-18T17:19+00:00",
    "status": "open",
-   "last_odds": 3.77
+   "last_odds": 3.93
   },
   {
    "id": "RUS|2026-11-21|Rubin Kazan|Zenit|model",
@@ -25624,7 +25624,7 @@
    "grade": null,
    "added": "2026-11-18T17:19+00:00",
    "status": "open",
-   "last_odds": 1.88
+   "last_odds": 1.89
   },
   {
    "id": "RUS|2026-11-21|Rubin Kazan|Zenit|model|1x2",
@@ -25672,7 +25672,7 @@
    "grade": "few",
    "added": "2026-11-18T17:19+00:00",
    "status": "open",
-   "last_odds": 4.0
+   "last_odds": 4.03
   },
   {
    "id": "RUS|2026-11-22|Dynamo Moscow|Krasnodar|model|1x2",
@@ -25720,7 +25720,7 @@
    "grade": "few",
    "added": "2026-11-18T17:19+00:00",
    "status": "open",
-   "last_odds": 6.36
+   "last_odds": 6.31
   },
   {
    "id": "RUS|2026-11-22|Rodina Moscow|Lokomotiv Moscow|model|1x2",
@@ -25768,7 +25768,7 @@
    "grade": "no",
    "added": "2026-11-19T01:54+00:00",
    "status": "open",
-   "last_odds": 3.33
+   "last_odds": 3.44
   },
   {
    "id": "D2|2026-11-22|Cottbus|Hertha|model|1x2",
@@ -25792,7 +25792,7 @@
    "grade": "no",
    "added": "2026-11-19T01:54+00:00",
    "status": "open",
-   "last_odds": 4.85
+   "last_odds": 4.78
   },
   {
    "id": "SP2|2026-11-23|Ceuta|Almeria|model|1x2",
@@ -26081,6 +26081,150 @@
    "added": "2026-11-19T01:54+00:00",
    "status": "open",
    "last_odds": 3.5
+  },
+  {
+   "id": "T1|2026-11-21|Galatasaray|Samsunspor|model|1x2",
+   "match": "T1|2026-11-21|Galatasaray|Samsunspor",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "T1",
+   "league_name": "Turcja · Süper Lig",
+   "date": "2026-11-21",
+   "time": "13:00",
+   "ko": "2026-11-21T13:00+00:00",
+   "home": "Galatasaray",
+   "away": "Samsunspor",
+   "side": "2",
+   "prob": 0.0923,
+   "odds": 12.5,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.1542,
+   "grade": "no",
+   "added": "2026-11-20T07:27+00:00",
+   "status": "open",
+   "last_odds": 12.5
+  },
+  {
+   "id": "T1|2026-11-21|Galatasaray|Samsunspor|market|1x2",
+   "match": "T1|2026-11-21|Galatasaray|Samsunspor",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "T1",
+   "league_name": "Turcja · Süper Lig",
+   "date": "2026-11-21",
+   "time": "13:00",
+   "ko": "2026-11-21T13:00+00:00",
+   "home": "Galatasaray",
+   "away": "Samsunspor",
+   "side": "2",
+   "prob": 0.0923,
+   "odds": 12.5,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.1542,
+   "grade": "no",
+   "added": "2026-11-20T07:27+00:00",
+   "status": "open",
+   "last_odds": 12.5
+  },
+  {
+   "id": "JPN|2026-11-20|Kashiwa Reysol|Chiba|model|1x2",
+   "match": "JPN|2026-11-20|Kashiwa Reysol|Chiba",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "JPN",
+   "league_name": "Japonia · J1 League",
+   "date": "2026-11-20",
+   "time": "10:00",
+   "ko": "2026-11-20T10:00+00:00",
+   "home": "Kashiwa Reysol",
+   "away": "Chiba",
+   "side": "2",
+   "prob": 0.1612,
+   "odds": 6.4,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0315,
+   "grade": "few",
+   "added": "2026-11-20T07:27+00:00",
+   "status": "open",
+   "last_odds": 6.4
+  },
+  {
+   "id": "JPN|2026-11-20|Kashiwa Reysol|Chiba|market|1x2",
+   "match": "JPN|2026-11-20|Kashiwa Reysol|Chiba",
+   "strategy": "market",
+   "mkt": "x",
+   "league": "JPN",
+   "league_name": "Japonia · J1 League",
+   "date": "2026-11-20",
+   "time": "10:00",
+   "ko": "2026-11-20T10:00+00:00",
+   "home": "Kashiwa Reysol",
+   "away": "Chiba",
+   "side": "2",
+   "prob": 0.1612,
+   "odds": 6.4,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0315,
+   "grade": "few",
+   "added": "2026-11-20T07:27+00:00",
+   "status": "open",
+   "last_odds": 6.4
+  },
+  {
+   "id": "POL|2026-11-21|Radomiak Radom|Wisla|model|1x2",
+   "match": "POL|2026-11-21|Radomiak Radom|Wisla",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "POL",
+   "league_name": "Polska · Ekstraklasa",
+   "date": "2026-11-21",
+   "time": "19:15",
+   "ko": "2026-11-21T19:15+00:00",
+   "home": "Radomiak Radom",
+   "away": "Wisla",
+   "side": "1",
+   "prob": 0.3144,
+   "odds": 3.4,
+   "book": "Grosvenor",
+   "book_key": "grosvenor",
+   "user_book": false,
+   "edge": 0.0688,
+   "grade": "no",
+   "added": "2026-11-20T07:27+00:00",
+   "status": "open",
+   "last_odds": 3.4
+  },
+  {
+   "id": "RUS|2026-11-20|FK Rostov|Krylya Sovetov|model|1x2",
+   "match": "RUS|2026-11-20|FK Rostov|Krylya Sovetov",
+   "strategy": "model",
+   "mkt": "x",
+   "league": "RUS",
+   "league_name": "Rosja · Premier Liga",
+   "date": "2026-11-20",
+   "time": "16:30",
+   "ko": "2026-11-20T16:30+00:00",
+   "home": "FK Rostov",
+   "away": "Krylya Sovetov",
+   "side": "1",
+   "prob": 0.4607,
+   "odds": 2.25,
+   "book": "Pinnacle",
+   "book_key": "pinnacle",
+   "user_book": false,
+   "edge": 0.0366,
+   "grade": "few",
+   "added": "2026-11-20T07:27+00:00",
+   "status": "open",
+   "last_odds": 2.25
   }
  ],
  "summary": {
@@ -26095,7 +26239,7 @@
   "model_x": {
    "settled": 343,
    "won": 71,
-   "open": 33,
+   "open": 37,
    "profit": -27.7,
    "roi": -0.0808,
    "clv": 0.0196
@@ -26111,11 +26255,11 @@
   "market_x": {
    "settled": 392,
    "won": 81,
-   "open": 20,
+   "open": 22,
    "profit": -27.36,
    "roi": -0.0698,
    "clv": 0.0158
   }
  },
- "updated": "2026-11-19T01:54+00:00"
+ "updated": "2026-11-20T07:27+00:00"
 }
