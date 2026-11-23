@@ -204,6 +204,24 @@ portfel £1001.60, 4 rozliczone zakłady (2 trafione), 4 otwarte, 7 z 8 zakład�
   (np. `| nights N £X`) i naukę o stawkę za noc (uwaga: czy opodatkowana). Test `godziny/testy/test_nightout.py`
   (sprawdzony na 2 zepsutych wersjach – łapie utratę nocy przy edycji godziny i w kopii).
 
+- **23.11 – poniedziałkowe sprawdzenie (rutyna):** 8 ostatnich aktualizacji GitHuba zielonych (ale co ok. 8–9 h zamiast
+  co 4 h – opóźnienia harmonogramu GitHuba, bez wpływu), 0 błędów agenta, kod agenta bez zmian od 9.11 (testów nie puszczano).
+  Portfel £1022.81 (+£22.81), rozliczone 24 (12 trafionych; piłka 17 i +£26.88, NBA 7 i −£4.07), otwarte 13 (6 meczów
+  z 21–22.11 rozegranych, czekają na wynik; 7 przyszłych) – **wszystkie Under, 11 z 13 z Premier League**, taktyka „Model +
+  rynek”. „Vs zamknięcie” −4.6% (piłka −5.9%) – wciąż gorsze niż zamknięcie; gotowość: nie (dzień 37/90, zakłady 24/200).
+  Raport tygodnia 16–22.11 jest (1 rozliczony – NBA, trafiony +£9.13; 3 nowe: 0 Over / 3 Under; krytyk zablokował 2).
+  Over/Under piłka: 7 dni oceny 94/85, zakłady 0/6; 30 dni oceny 276/193, zakłady 1/19. Rozliczenia w porządku: brak
+  zakładu z pustą oceną po meczu; 2 zakłady NBA bez „vs zamknięcie” (`bez_porownania`, tak ma być); CLV z giełdy Betfair 13,
+  ostatni kurs u bukmachera 5, średnia 4. football-data: najnowszy wynik 8.11 we wszystkich ligach (14–15.11 przerwa,
+  weekend 21–22.11 jeszcze nie opublikowany); „stale” B1, D1, F1, P1, SP1 to piątkowe mecze 20.11 bez zakładów – normalne.
+  Jedyny stary mecz bez wyniku: Estoril – Maritimo (P1, 8.11, bez zakładu; ESPN też go nie rozliczył – pewnie przełożony).
+  Zapytania o kursy: 167 (8 dni do końca miesiąca, OK); „Zdrowie”: 5 z 42 przebiegów z problemem `odds` (chwilowe, bez błędów
+  w ostatnim). ClubElo nadal nie działa (teraz timeout zamiast 502). Waga modelu: E0 nadal 0.6, pozostałe 10 lig 0.
+  Bez zmian w kodzie i zasadach. **Propozycja z 16.11 nadal czeka na Radka i jest pilniejsza:** prawie wszystkie zakłady
+  to Under w Premier League z wagi modelu 0.6, a kursy tych zakładów są gorsze niż zamknięcie. Opcje: (a) zostawić – nauka
+  zareaguje po 30 rozliczonych zakładach piłkarskich (jest 17, a 13 otwartych dojdzie w ciągu 10 dni); (b) `/diagnoza` –
+  sprawdzić na historii, czy waga 0.6 w E0 poprawia wynik; (c) ograniczyć wagę modelu z góry (np. do 0.3).
+
 **Do sprawdzenia w najbliższych dniach:**
 
 0. **Nowe skille:** w poniedziałek 26.10 „Raport tygodnia” za 19–25.10 (karta na stronie Agent, `agent.json` → `weekly`);
